@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"name": "ApolloCrossDev",
+			"path": "."
+		},
+	],
+	"settings": {
+		"files.associations": {
+		},
+		"C_Cpp.intelliSenseCacheSize": 512,
+		"search.useIgnoreFiles": false,
+		"explorer.excludeGitIgnore": false,
+		"C_Cpp.codeAnalysis.exclude": {}
+	}
+}
