@@ -17,6 +17,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "Support/Hardware.h"
+#include "Source/Includes/ResourceHandling.h"
 
 //-----------------------------------------------------------------------------
 // Code
@@ -31,6 +32,8 @@ uint32_t main( int argc, char* argv[] )
 {
 	uint32_t keyReturn = 0;
 
+	// Initialize the system and hardware	
+	// ResourceHandling_Init();
 	Hardware_Init();
 
 	while( true )
