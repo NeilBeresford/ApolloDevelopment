@@ -18,6 +18,7 @@
 #include "stdbool.h"
 #include "Support/Hardware.h"
 #include "Source/Includes/ResourceHandling.h"
+#include "Source/Includes/FontManager.h"
 
 //-----------------------------------------------------------------------------
 // Code
@@ -33,7 +34,8 @@ uint32_t main(int argc, char *argv[])
 	uint32_t keyReturn = 0;
 
 	// Initialize the system and hardware
-	// ResourceHandling_Init();
+	ResourceHandling_Init();
+	FontManager_Init();
 	Hardware_Init();
 
 	while (true)
@@ -42,6 +44,8 @@ uint32_t main(int argc, char *argv[])
 		Hardware_WaitVBL();
 		Hardware_FlipScreen();
 		Hardware_TestScreen();
+
+		FontManager_TestPrint( 10, 10, eFontID_Basic8x8, "Neil Beresford" );
 
 		keyReturn = Hardware_ReadKey();
 		if (keyReturn == 0x45)
