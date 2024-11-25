@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "flagstruct.h": "c"
     },
     "git.ignoreLimitWarning": true
 }
