@@ -16,9 +16,10 @@
 
 #include "stdint.h"
 #include "stdbool.h"
-#include "Support/Hardware.h"
-#include "Source/Includes/ResourceHandling.h"
-#include "Source/Includes/FontManager.h"
+#include "Includes/Hardware.h"
+#include "Includes/HWScreen.h"
+#include "Includes/ResourceHandling.h"
+#include "Includes/FontModule.h"
 
 //-----------------------------------------------------------------------------
 // Code
@@ -35,17 +36,17 @@ uint32_t main(int argc, char *argv[])
 
 	// Initialize the system and hardware
 	ResourceHandling_Init();
-	FontManager_Init();
 	Hardware_Init();
+	HWSCREEN_SetImagePalette();
 
 	while (true)
 	{
 
 		Hardware_WaitVBL();
 		Hardware_FlipScreen();
-		Hardware_TestScreen();
+		HWSCREEN_DisplayImage();
 
-		FontManager_TestPrint( 10, 10, eFontID_Basic8x8, "Neil Beresford" );
+		FontModule_DisplayString();
 
 		keyReturn = Hardware_ReadKey();
 		if (keyReturn == 0x45)

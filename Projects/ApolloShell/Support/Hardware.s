@@ -25,6 +25,7 @@
     XDEF _Hardware_ReadKey
 	XDEF _Hardware_ClearScreen
 	XDEF _Hardware_TestScreen
+	XDEF screenPtr
 
 ;-----------------------------------------------------------------------------
 ; Defines
