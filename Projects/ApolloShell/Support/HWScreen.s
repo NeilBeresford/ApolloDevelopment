@@ -48,13 +48,16 @@ _HWSCREEN_ClearScreen
 ;** ---------------------------------------------------------------------------
 ;	@brief 		Sets the palette from the stored image.
 ;	@ingroup 	MainShell
+;	@param [IN]	A0 - PaletteBuffer - The image palette colours
 ;	@return 	none
 ; --------------------------------------------------------------------------- */
 _HWSCREEN_SetImagePalette:
 
 	movem.l d0/a0,-(sp)
 
-	lea		ScreenPalette,a0
+	cmp.l   #0,a0
+	beq     .exit
+
 	move.l  (a0)+,d0
 	subq.l  #1,d0
 
@@ -63,19 +66,21 @@ _HWSCREEN_SetImagePalette:
 	move.l  (a0)+,$dff388
 	dbf 	d0,.loop
 
+.exit:
+
 	movem.l (sp)+,d0/a0
 	rts
 
 ;** ---------------------------------------------------------------------------
 ;	@brief 		Displays the image stored.
 ;	@ingroup 	MainShell
+;	@param [IN]	A0 - ScreenBuffer - The image to display
 ;	@return 	none
 ; --------------------------------------------------------------------------- */
 _HWSCREEN_DisplayImage:
 
 	movem.l d0/a0-a1,-(sp)
 
-	lea		ScreenBuffer,a0
 	move.l  screenPtr,a1
 	move.l  #(SCREENSIZE/4)-1,d0
 
@@ -92,12 +97,6 @@ _HWSCREEN_DisplayImage:
 ;------------------------------------------------------------------------------
 
 	SECTION hwscreenD,DATA_F
-
-ScreenBuffer:
-
-	INCBIN "/home/neil/Development/ApolloCrossDev/Projects/ApolloShell/Graphics/NeilImage.png.RAW"
-
-ScreenBufferEnd:
 
 ScreenPalette:
 

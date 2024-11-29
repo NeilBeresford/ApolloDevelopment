@@ -16,10 +16,12 @@
 
 #include "stdint.h"
 #include "stdbool.h"
+#include "stdio.h"
 #include "Includes/Hardware.h"
 #include "Includes/HWScreen.h"
 #include "Includes/ResourceHandling.h"
 #include "Includes/FontModule.h"
+#include "Includes/LIB_Files.h"
 
 //-----------------------------------------------------------------------------
 // Code
@@ -32,19 +34,28 @@
  --------------------------------------------------------------------------- */
 uint32_t main(int argc, char *argv[])
 {
-	uint32_t keyReturn = 0;
+	uint32_t 	keyReturn 		= 0;
+	uint8_t* 	fileBuffer 		= NULL;
+	uint32_t* 	paletteBuffer 	= NULL;
+
+	printf("Apollo V4 Shell\n");
+	printf("Press 'ESC' to exit\n");
+	printf("Loading files...\n");
+
+	// load in the files...
+	if ( LIB_Files_Load("Data/NeilImage.png.RAW", 		&fileBuffer, NULL)		== false ) { printf("Failed to load screen\n"); return 1; }
+	if ( LIB_Files_Load("Data/NeilImage.png.RAW.pal", 	&paletteBuffer, NULL)	== false ) { printf("Failed to load palette\n"); return 1; }
 
 	// Initialize the system and hardware
 	ResourceHandling_Init();
 	Hardware_Init();
-	HWSCREEN_SetImagePalette();
+	HWSCREEN_SetImagePalette( paletteBuffer );
 
 	while (true)
 	{
-
 		Hardware_WaitVBL();
 		Hardware_FlipScreen();
-		HWSCREEN_DisplayImage();
+		HWSCREEN_DisplayImage( fileBuffer);
 
 		FontModule_DisplayString();
 
@@ -56,6 +67,9 @@ uint32_t main(int argc, char *argv[])
 	}
 
 	Hardware_Close();
+
+	free(fileBuffer);
+	free(paletteBuffer);
 
 	// return succes
 	return 0;
