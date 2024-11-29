@@ -15,13 +15,23 @@
 
 //-----------------------------------------------------------------------------
 
+#include "stdint.h"
+#include "stdbool.h"
+#include "Hardware.h"
+
+//-----------------------------------------------------------------------------
+// External Data
+//-----------------------------------------------------------------------------
+
+extern uint8_t* ScreenBuffer;
+
 //-----------------------------------------------------------------------------
 // External Functionality
 //-----------------------------------------------------------------------------
 
 extern void HWSCREEN_ClearScreen( void );
-extern void HWSCREEN_SetImagePalette( void );
-extern void HWSCREEN_DisplayImage( void );
+extern _REG void HWSCREEN_SetImagePalette( _A0(uint32_t* palette) );
+extern _REG void HWSCREEN_DisplayImage( _A0(uint8_t* screen) );
 
 //-----------------------------------------------------------------------------
 
