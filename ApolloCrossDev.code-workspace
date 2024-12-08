@@ -7,6 +7,7 @@
 	],
 	"settings": {
 		"files.associations": {
+			"hwscreen.h": "c"
 		},
 		"C_Cpp.intelliSenseCacheSize": 512,
 		"search.useIgnoreFiles": false,

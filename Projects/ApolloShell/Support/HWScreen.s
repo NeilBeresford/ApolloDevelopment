@@ -17,6 +17,7 @@
 ; External Function Defs
 ;-----------------------------------------------------------------------------
 
+	XDEF _HWSCREEN_GetScreenBuffer
 	XDEF _HWSCREEN_ClearScreen
 	XDEF _HWSCREEN_SetImagePalette
 	XDEF _HWSCREEN_DisplayImage
@@ -25,6 +26,16 @@
 ;-----------------------------------------------------------------------------
 ; Defines
 ;-----------------------------------------------------------------------------
+
+;** ---------------------------------------------------------------------------
+; 	@brief 		Returns the screen buffer
+;	@ingroup 	MainShell
+;	@return 	D0 - ScreenBuffer - The screen buffer
+; --------------------------------------------------------------------------- */
+_HWSCREEN_GetScreenBuffer
+
+	move.l	screenPtr,d0
+	rts
 
 ;** ---------------------------------------------------------------------------
 ;	@brief 		Clears the screen
@@ -103,6 +114,9 @@ ScreenPalette:
 	INCBIN "/home/neil/Development/ApolloCrossDev/Projects/ApolloShell/Graphics/NeilImage.png.RAW.pal"
 
 ScreenPaletteEnd:
+
+ScreenBuffer:	dc.l 0
+
 
 
 ;------------------------------------------------------------------------------

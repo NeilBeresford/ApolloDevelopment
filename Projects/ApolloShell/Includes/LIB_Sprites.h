@@ -1,0 +1,84 @@
+/** ---------------------------------------------------------------------------
+	@file		LIB_Sprites.h
+	@defgroup 	MainShell Apollo V4 Shell
+	@brief		Apollo V4 development - Shell
+	@date		2020-06-01
+	@version	0.1
+	@copyright	Neil Beresford 2024
+ -----------------------------------------------------------------------------
+	Notes
+
+--------------------------------------------------------------------------- */
+
+#ifndef _LIB_SPRITES_H_
+#define _LIB_SPRITES_H_
+
+//-----------------------------------------------------------------------------
+// typedefs and enums
+//-----------------------------------------------------------------------------
+
+/**-----------------------------------------------------------------------------
+    @brief      Sprite Bank emums
+    @ingroup 	MainShell
+ ---------------------------------------------------------------------------- */
+typedef enum
+{
+    eSpriteBank_0 = 0,  //!< 0 Sprite Bank 0
+    eSpriteBank_1,      //!< 1 Sprite Bank 1
+    eSpriteBank_2,      //!< 2 Sprite Bank 2
+    eSpriteBank_3,      //!< 3 Sprite Bank 3
+    eSpriteBank_4,      //!< 4 Sprite Bank 4
+    eSpriteBank_5,      //!< 5 Sprite Bank 5
+    eSpriteBank_6,      //!< 6 Sprite Bank 6
+    eSpriteBank_7,      //!< 7 Sprite Bank 7
+    eSpriteBank_8,      //!< 8 Sprite Bank 8
+    eSpriteBank_9,      //!< 9 Sprite Bank 9
+    eSpriteBank_Total   //!< 10 Total number of sprite banks
+
+} eSpriteBank_t;        //!< Sprite Bank emums
+
+/**-----------------------------------------------------------------------------
+    @brief      Sprite types
+    @ingroup 	MainShell
+ ---------------------------------------------------------------------------- */
+typedef enum
+{
+    eSpriteType_Raw = 0,    //!< 0 SpriteType_Raw
+    eSpriteType_Compressed, //!< 1 SpriteType_Compressed
+    eSpriteType_Total       //!< 2 Total number of sprite types
+
+} eSpriteType_t;            //!< Sprite types
+
+
+/*-----------------------------------------------------------------------------
+    @brief      Sprite structure
+    @ingroup 	MainShell
+ ---------------------------------------------------------------------------- */
+typedef struct
+{
+    uint32_t        ulSpriteID;     //!< Sprite ID
+    uint32_t        ulSpriteSize;   //!< Sprite size   
+    uint8_t*        pSpriteData;    //!< Pointer to the sprite data
+    eSpriteType_t   ulSpriteType;  //!< Sprite type
+    uint16_t        ulSpriteWidth;  //!< Sprite width
+    uint16_t        ulSpriteHeight; //!< Sprite height
+    
+
+} SpriteBank_t, *pSpriteBank_t;     //!< Sprite structure
+
+//-----------------------------------------------------------------------------
+// External Functionality
+//-----------------------------------------------------------------------------
+
+void LIB_Sprites_Init( void );
+void LIB_Sprites_Close( void );
+bool LIB_Sprites_RegisterBank( eSpriteBank_t eBank, eSpriteType_t eType, uint32_t ulResourceID, uint8_t* pSpriteData, uint32_t ulSpriteSize, uint16_t sprW, uint16_t sprH );
+bool LIB_Sprites_Draw( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, uint32_t y );
+
+//-----------------------------------------------------------------------------
+
+#endif // _LIB_SPRITES_H_
+
+//-----------------------------------------------------------------------------
+// End of file: LIB_Sprites.h
+//-----------------------------------------------------------------------------
