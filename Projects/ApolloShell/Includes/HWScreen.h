@@ -29,7 +29,8 @@ extern uint8_t* ScreenBuffer;
 // External Functionality
 //-----------------------------------------------------------------------------
 
-extern void HWSCREEN_ClearScreen( void );
+extern _REG uint8_t* HWSCREEN_GetScreenBuffer( void );
+extern _REG void HWSCREEN_ClearScreen( void );
 extern _REG void HWSCREEN_SetImagePalette( _A0(uint32_t* palette) );
 extern _REG void HWSCREEN_DisplayImage( _A0(uint8_t* screen) );
 
