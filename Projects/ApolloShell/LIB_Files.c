@@ -41,7 +41,7 @@ bool LIB_Files_Load( char* pszFileName, uint8_t** pFileBuffer, uint32_t* pFileSi
     {
         FILE* fp = fopen( pszFileName, "r" );
 
-        printf( "Loading file: %-30s", pszFileName );
+        printf( "Loading file: %-40s", pszFileName );
 
         if ( fp != NULL )
         {

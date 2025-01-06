@@ -48,12 +48,12 @@ _FontModule_DisplayString:
 	movem.l	d0-a6,-(SP)
 
 	move.l  #10,d0
-	move.l  #60,d1
+	move.l  #80,d1
 	lea		TestString,a0
 
 	move.l	d0,d3
 	clr.l	d2
-	move.b	#$99,fontCol 
+	move.b	#$10,fontCol 
 .print:
 	move.b	(a0)+,d2
 	beq	.endPrint
@@ -182,7 +182,7 @@ fontData:
 
 TestString:
 
-	dc.b	"123456",$99,$95," Neil Beresford",10,"RULES! ?/@!$%^&*()_+-",0
+	dc.b	"123456",$99,$11," Neil Beresford",10,"RULES! ?/@!$%^&*()_+-",0
 
 	EVEN
 
