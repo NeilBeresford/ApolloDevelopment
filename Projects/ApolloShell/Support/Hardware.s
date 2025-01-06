@@ -13,6 +13,7 @@
     include "Defines.i"
     include "Macros.i"
 
+	CNOP 0,4
 ;-----------------------------------------------------------------------------
 ; External Function Defs
 ;-----------------------------------------------------------------------------
@@ -25,7 +26,18 @@
     XDEF _Hardware_ReadKey
 	XDEF _Hardware_ClearScreen
 	XDEF _Hardware_TestScreen
+	XDEF _Hardware_SwapLong
+	XDEF _Hardware_GetScreenWidth
+	XDEF _Hardware_GetScreenHeight
+	XDEF _Hardware_SetScreenmode
+	XDEF _Hardware_CopyBackScreen
+	XDEF _Hardware_CopyBack2ToBack1
+	XDEF _Hardware_SetBackscreenBuffers
+	XDEF _Hardware_GetScreenmode
+	XDEF _Hardware_GetDebug
 	XDEF screenPtr
+	XDEF backScreen1
+	XDEF backScreen2
 
 ;-----------------------------------------------------------------------------
 ; Defines
@@ -144,6 +156,19 @@ _Hardware_Init
 	rts
 
 ;** ---------------------------------------------------------------------------
+;	@brief 		Sets the back screen buffers
+;	@ingroup 	MainShell
+;	@return 	none
+; --------------------------------------------------------------------------- */
+_Hardware_SetBackscreenBuffers
+
+	move.l	#backScreens,D0
+	move.l	D0,backScreen1
+	add.l	#BACKSCREENWIDTH*BACKSCREENHEIGHT,D0
+	move.l	D0,backScreen2
+	rts
+
+;** ---------------------------------------------------------------------------
 ;	@brief 		Initialize the hardware, closing the workbench
 ;	@ingroup 	MainShell
 ;	@return 	none
@@ -216,9 +241,69 @@ _Hardware_FlipScreen
 ; --------------------------------------------------------------------------- */
 _Hardware_GetScreenPtr
 
+	cmp.l	#0,screenmode
+	beq.s	.normal
+.back
+	cmp.l	#2,screenmode
+	beq.s	.back2
+	move.l	backScreen1,d0
+	rts
+.back2
+	move.l	backScreen2,d0
+	rts
+.normal			
 	move.l screenPtr,d0
 	rts
 
+;** ---------------------------------------------------------------------------
+;	@brief 		Sets the screen mode
+;	@ingroup 	MainShell
+;	@param 		d0 - screen mode
+;	@return 	none
+; --------------------------------------------------------------------------- */
+_Hardware_SetScreenmode
+	move.l	d0,screenmode
+	rts	
+
+;** ---------------------------------------------------------------------------
+;	@brief 		Returns the screen mode
+;	@ingroup 	MainShell
+;	@return 	d0 - screen mode
+; --------------------------------------------------------------------------- */
+_Hardware_GetScreenmode
+	move.l	screenmode,d0
+	rts
+
+
+;** ---------------------------------------------------------------------------
+;	@brief 		Returns the screen width
+;	@ingroup 	MainShell
+;	@return 	d0 - screen width
+; --------------------------------------------------------------------------- */
+_Hardware_GetScreenWidth
+	cmp.l	#0,screenmode
+	beq.s	.normal
+.back
+	move.l	#BACKSCREENWIDTH,d0
+	rts
+.normal
+	move.l	#SCREENWIDTH,d0
+	rts
+
+;** ---------------------------------------------------------------------------
+;	@brief 		Returns the screen height
+;	@ingroup 	MainShell
+;	@return 	d0 - screen height
+; --------------------------------------------------------------------------- */
+_Hardware_GetScreenHeight
+	cmp.l	#0,screenmode
+	beq.s	.normal
+.back
+	move.l	#BACKSCREENHEIGHT,d0
+	rts
+.normal
+	move.l	#SCREENHEIGHT,d0
+	rts
 
 ;** ---------------------------------------------------------------------------
 ;	@brief 		Clears the screen
@@ -237,6 +322,73 @@ _Hardware_ClearScreen
 	dbra 	d2,.clear
 
 	movem.l (sp)+,d1-d2/a0
+	rts
+
+
+;** ---------------------------------------------------------------------------
+;	@brief 		Copies the back screen 2 to the back screen 1
+;	@ingroup 	MainShell
+;	@return 	none
+; --------------------------------------------------------------------------- */
+_Hardware_CopyBack2ToBack1
+
+	movem.l d0/a0-a1,-(sp)
+
+	move.l	backScreen2,a0
+	move.l	backScreen1,a1
+	move.l	#(BACKSCREENWIDTH*BACKSCREENHEIGHT)/4,d0
+.copy
+	move.l	(a0)+,(a1)+
+	subq.l	#1,d0
+	bne.s	.copy
+
+	movem.l (sp)+,d0/a0-a1
+	rts
+
+
+
+;** ---------------------------------------------------------------------------
+;	@brief 		Copies the back screen to the front screen
+;	@ingroup 	MainShell
+;	@param 		d0 - SCrollX
+;	@param 		d1 - SCrollY
+;	@return 	none
+; --------------------------------------------------------------------------- */
+_Hardware_CopyBackScreen
+
+	movem.l d0-d7/a0-a1,-(sp)
+
+	move.l 	screenPtr,a0
+	move.l 	backScreen2,a1
+	move.l 	#BACKSCREENWIDTH,d2
+	move.l 	#BACKSCREENHEIGHT,d3
+	move.l 	#SCREENWIDTH,d4
+	move.l 	#SCREENHEIGHT,d5
+	move.l 	d0,d6
+	move.l 	d1,d7
+
+	; get the start of the back screen to copy
+	mulu 	d2,d7
+	add.l 	d6,d7
+	add.l 	d7,a1
+
+	; calculate the modulos
+	move.l 	d2,d0
+	sub.l 	d4,d0
+	asr.l 	#2,d4
+	subq.l 	#1,d4
+	subq.l 	#1,d5
+	; copy the back screen to the main screen
+.copy
+	move.l 	d4,d3
+.copy2
+	move.l 	(a1)+,(a0)+
+	DBEQ 	d3,.copy2
+	add.l 	d0,a1
+	DBEQ 	d5,.copy
+
+	; end of the copy
+	movem.l (sp)+,d0-d7/a0-a1
 	rts
 
 ;** ---------------------------------------------------------------------------
@@ -259,7 +411,23 @@ _Hardware_TestScreen
 	movem.l (sp)+,d1-d2/a0
 	rts
 
+;** ---------------------------------------------------------------------------
+;	@brief 		Get the debug value
+;	@ingroup 	MainShell
+; 	@param 		d0 - debug number required
+;	@return 	d0 - debug value
+; --------------------------------------------------------------------------- */
+_Hardware_GetDebug
 
+	movem.l	a0,-(SP)
+
+	asl.l	#2,d0
+	lea		debug1,a0
+	add.l	d0,a0
+	move.l	(a0),d0
+
+	movem.l	(SP)+,a0
+	rts
 
 ;** ---------------------------------------------------------------------------
 ;	@brief 		Reads for a key press
@@ -281,7 +449,17 @@ _Hardware_ReadKey
 	movem.l (SP)+,D1-A6	
 	rts
 
-	
+	CNOP 0,4
+;** ---------------------------------------------------------------------------
+;	@brief 		swaps byte order
+;	@ingroup 	MainShell
+;	@param 		d0 - long to swap
+;	@return 	d0 - swapped result
+; --------------------------------------------------------------------------- */
+_Hardware_SwapLong
+
+	perm #@3210,d0,d0									* swap LONG
+	rts
 
 ;-----------------------------------------------------------------------------
 
@@ -317,15 +495,24 @@ cybergfxname	dc.b 	"cybergraphics.library",0
 		even
 
 screen			dc.l	0
-
 screenPtr		dc.l	0
 screenPtr2		dc.l	0
 screenPtr3		dc.l	0
+backScreen1		dc.l	0
+backScreen2		dc.l	0
+screenmode		dc.l	0
+
+debug1			dc.l	0
+debug2			dc.l	0
+debug3			dc.l	0
+debug4			dc.l	0
+
+		even
 
 	SECTION	screens,BSS_C
 
-screens			ds.b	245824 		; Removed TOTALSCREENSSIZE as it was causing an erorr with vasam when savbing this file
-
+screens			ds.b	(SCREENWIDTH*SCREENHEIGHT)*3+64 		; Removed TOTALSCREENSSIZE as it was causing an erorr with vasam when saving this file
+backScreens		ds.b	(BACKSCREENWIDTH*BACKSCREENHEIGHT)*2
 
 ;-----------------------------------------------------------------------------
 

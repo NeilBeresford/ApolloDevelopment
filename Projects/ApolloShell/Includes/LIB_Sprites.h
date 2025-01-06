@@ -59,7 +59,8 @@ typedef struct
     uint32_t        ulSpriteID;     //!< Sprite ID
     uint32_t        ulSpriteSize;   //!< Sprite size   
     uint8_t*        pSpriteData;    //!< Pointer to the sprite data
-    eSpriteType_t   ulSpriteType;  //!< Sprite type
+    eSpriteType_t   ulSpriteType;   //!< Sprite type
+    uint32_t        ulNumSprites;   //!< Sprite width
     uint16_t        ulSpriteWidth;  //!< Sprite width
     uint16_t        ulSpriteHeight; //!< Sprite height
     
@@ -72,7 +73,7 @@ typedef struct
 
 void LIB_Sprites_Init( void );
 void LIB_Sprites_Close( void );
-bool LIB_Sprites_RegisterBank( eSpriteBank_t eBank, eSpriteType_t eType, uint32_t ulResourceID, uint8_t* pSpriteData, uint32_t ulSpriteSize, uint16_t sprW, uint16_t sprH );
+bool LIB_Sprites_RegisterBank( eSpriteBank_t eBank, eSpriteType_t eType, uint32_t ulResourceID, uint8_t* pSpriteData, uint32_t ulSpriteSize, uint32_t ulNumSprs, uint16_t sprW, uint16_t sprH );
 bool LIB_Sprites_Draw( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, uint32_t y );
 
 //-----------------------------------------------------------------------------

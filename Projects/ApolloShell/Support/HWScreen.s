@@ -69,11 +69,8 @@ _HWSCREEN_SetImagePalette:
 	cmp.l   #0,a0
 	beq     .exit
 
-	move.l  (a0)+,d0
-	subq.l  #1,d0
-
+	move.l   #255,d0
 .loop:	
-
 	move.l  (a0)+,$dff388
 	dbf 	d0,.loop
 
