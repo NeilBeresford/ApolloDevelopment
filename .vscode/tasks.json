@@ -1,7 +1,7 @@
 {
     "version": "2.0.0",
     "options": {
-    "env": { "APOLLO_V4_HOST": "192.168.0.149:Ram Disk/" }
+    "env": { "APOLLO_V4_HOST": "192.168.0.149:Development/Games/Worms/" }
     },
     "tasks": [
         {

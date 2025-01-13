@@ -115,13 +115,13 @@ upload:
 	@echo "\e[37m------------------------------------------------------------------\e[0m"
 	@echo "\e[1;31mApollo\e[1;30mExplorer\e[37m Upload\e[30m"
 	@$(ACP) $(EXE) "$(APOLLO_V4_HOST)"
-	@$(ACP) $(GDB) "$(APOLLO_V4_HOST)"
+#	@$(ACP) $(GDB) "$(APOLLO_V4_HOST)"
 	@$(ACP) -r $(PROJECT_DIR)/Data "$(APOLLO_V4_HOST)"
-	@cp Projects/_icons/ApolloIcon.info $(PROJECT_DIR)/$(PROJECT_NAME).info
-	@cp Projects/_icons/ApolloIcon_Debug.info $(PROJECT_DIR)/$(PROJECT_NAME)_Debug.info
-	@$(ACP) $(PROJECT_DIR)/*.info "$(APOLLO_V4_HOST)"
-	@echo "bgdbserver $(PROJECT_NAME)" > $(EXE)_Debug
-	@$(ACP) $(EXE)_Debug "$(APOLLO_V4_HOST)"
+#	@cp Projects/_icons/ApolloIcon.info $(PROJECT_DIR)/$(PROJECT_NAME).info
+#	@cp Projects/_icons/ApolloIcon_Debug.info $(PROJECT_DIR)/$(PROJECT_NAME)_Debug.info
+#	@$(ACP) $(PROJECT_DIR)/*.info "$(APOLLO_V4_HOST)"
+#	@echo "bgdbserver $(PROJECT_NAME)" > $(EXE)_Debug
+#	@$(ACP) $(EXE)_Debug "$(APOLLO_V4_HOST)"
 
 cleanafter:
 	@echo "\e[37m------------------------------------------------------------------\e[30m"
