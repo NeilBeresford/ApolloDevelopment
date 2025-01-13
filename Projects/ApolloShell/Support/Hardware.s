@@ -31,10 +31,12 @@
 	XDEF _Hardware_GetScreenHeight
 	XDEF _Hardware_SetScreenmode
 	XDEF _Hardware_CopyBackScreen
+	XDEF _Hardware_CopyBackScreenMap
 	XDEF _Hardware_CopyBack2ToBack1
 	XDEF _Hardware_SetBackscreenBuffers
 	XDEF _Hardware_GetScreenmode
 	XDEF _Hardware_GetDebug
+	XDEF _Hardware_RandomNumber
 	XDEF screenPtr
 	XDEF backScreen1
 	XDEF backScreen2
@@ -345,6 +347,30 @@ _Hardware_CopyBack2ToBack1
 	movem.l (sp)+,d0/a0-a1
 	rts
 
+;** ---------------------------------------------------------------------------
+;	@brief 		Generates a random number
+;	@ingroup 	MainShell
+;	@return 	d0 - random number
+; --------------------------------------------------------------------------- */
+_Hardware_RandomNumber
+
+	; generate a random number
+	movem.l d1-d2,-(sp)
+
+	moveq	#$AF-$100,d1
+	moveq   #18,d2
+	move.l  RanSeed,d0
+.ran0
+    add.l   d0,d0
+	bcc.s   .ran1
+	eor.l   d1,d0
+.ran1
+	dbf     d2,.ran0
+	move.l  d0,RanSeed			
+
+	movem.l (sp)+,d1-d2
+	rts
+
 
 
 ;** ---------------------------------------------------------------------------
@@ -359,11 +385,12 @@ _Hardware_CopyBackScreen
 	movem.l d0-d7/a0-a1,-(sp)
 
 	move.l 	screenPtr,a0
+	add.l 	#42*SCREENWIDTH,a0
 	move.l 	backScreen2,a1
 	move.l 	#BACKSCREENWIDTH,d2
 	move.l 	#BACKSCREENHEIGHT,d3
 	move.l 	#SCREENWIDTH,d4
-	move.l 	#SCREENHEIGHT,d5
+	move.l 	#SCREENHEIGHT-120,d5
 	move.l 	d0,d6
 	move.l 	d1,d7
 
@@ -389,6 +416,68 @@ _Hardware_CopyBackScreen
 
 	; end of the copy
 	movem.l (sp)+,d0-d7/a0-a1
+	rts
+
+;** ---------------------------------------------------------------------------
+;	@brief 		Copies the back screen map view to the front screen
+;	@ingroup 	MainShell
+;	@return 	none
+; --------------------------------------------------------------------------- */
+_Hardware_CopyBackScreenMap
+
+	movem.l d0-d7/a0-a2,-(sp)
+
+	moveq	#0,d0
+	moveq	#0,d1
+
+	; clear the top and bottom of the screen
+	move.l 	screenPtr,a2
+	add.l 	#42*SCREENWIDTH,a2
+	move.l 	#(28*(SCREENWIDTH/4))-1,d2
+.loop1
+	move.l 	d0,(a2)+
+	dbra 	d2,.loop1
+	move.l 	screenPtr,a2
+	add.l 	#370*SCREENWIDTH,a2
+	move.l 	#(32*(SCREENWIDTH/4))-1,d2
+.loop2
+	move.l 	d0,(a2)+
+	dbra 	d2,.loop2
+
+	; copy the back screen to the main screen, drawing a maop view 
+
+	move.l 	screenPtr,a0
+	add.l 	#70*SCREENWIDTH,a0
+	move.l 	backScreen2,a1
+	move.l 	#BACKSCREENWIDTH,d2
+	move.l 	#BACKSCREENHEIGHT,d3
+	move.l 	#SCREENWIDTH,d4
+	move.l 	#300,d5
+	move.l 	d0,d6
+	move.l 	d1,d7
+
+	; get the start of the back screen to copy
+	mulu 	d2,d7
+	add.l 	d6,d7
+	add.l 	d7,a1
+
+	; calculate the modulos
+	move.l 	d2,d0
+	sub.l 	d4,d0
+	subq.l 	#1,d4
+	subq.l 	#1,d5
+	; copy the back screen to the main screen
+.copy
+	move.l 	d4,d3
+.copy2
+	move.b 	(a1)+,(a0)+
+	addq.l	#3,a1
+	DBEQ 	d3,.copy2
+	add.l   #2*BACKSCREENWIDTH,a1
+	DBEQ 	d5,.copy
+
+	; end of the copy
+	movem.l (sp)+,d0-d7/a0-a2
 	rts
 
 ;** ---------------------------------------------------------------------------
@@ -472,6 +561,8 @@ ECS			dc.w	0				; Graphics chip ID
 SCREENMASK	dc.w	0
 DMACONSTORE	dc.w	0
 INTENASTORE	dc.w	0
+
+RanSeed		dc.l	$12345678
 
 * Tags for ask OS for a screen
 modetags		dc.l	$80050001,SCREENWIDTH

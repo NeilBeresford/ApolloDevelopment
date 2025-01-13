@@ -8,7 +8,9 @@
 	"settings": {
 		"files.associations": {
 			"hwscreen.h": "c",
-			"lib_sprites.h": "c"
+			"lib_sprites.h": "c",
+			"math.h": "c",
+			"string.h": "c"
 		},
 		"C_Cpp.intelliSenseCacheSize": 512,
 		"search.useIgnoreFiles": false,

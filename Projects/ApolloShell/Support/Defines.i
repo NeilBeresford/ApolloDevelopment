@@ -22,7 +22,7 @@ SCREENMODE 		    = $0501							; Set to 640x480 mode
 SCREENCLEARCOLOUR	= $98989898						; Set to a light green
 
 BACKSCREENWIDTH     = SCREENWIDTH*4                 ; Back screen width (640*4)
-BACKSCREENHEIGHT    = 916                           ; Back screen height
+BACKSCREENHEIGHT    = 900                           ; Back screen height
 
 ;-----------------------------------------------------------------------------
 ; End of file: Defines.i
