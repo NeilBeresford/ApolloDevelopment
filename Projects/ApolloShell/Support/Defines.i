@@ -21,7 +21,7 @@ SCREENCOLORDEPTH 	= 8								; 256 colours
 SCREENMODE 		    = $0501							; Set to 640x480 mode
 SCREENCLEARCOLOUR	= $98989898						; Set to a light green
 
-BACKSCREENWIDTH     = SCREENWIDTH*4                 ; Back screen width (640*4)
+BACKSCREENWIDTH     = SCREENWIDTH*3                 ; Back screen width (640*4)
 BACKSCREENHEIGHT    = 900                           ; Back screen height
 
 ;-----------------------------------------------------------------------------

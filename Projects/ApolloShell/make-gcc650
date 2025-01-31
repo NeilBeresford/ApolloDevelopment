@@ -10,11 +10,11 @@ DIR = $(notdir $(shell pwd))
 PREFIX 	= Compilers/GCC-6.50
 TARGET 	= m68k-amigaos
 ACP 	= ./.vscode/acp
-GDB		= ./.vscode/bgdbserver
+GDB	= ./.vscode/bgdbserver
 
 #Define Project Name and Directory
-PROJECT_NAME	= ApolloShell
-PROJECT_DIR		= Projects/ApolloShell
+PROJECT_NAME	= AmiWorms
+PROJECT_DIR	= Projects/ApolloShell
 
 # Define GNU C-Compiler Type (C = Default, switch comment to change to C++)
 C_COMPILER	= $(PREFIX)/bin/m68k-amigaos-gcc

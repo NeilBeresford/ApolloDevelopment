@@ -7,6 +7,16 @@
 	@copyright	Neil Beresford 2024	
  -----------------------------------------------------------------------------
 	Notes
+    
+    Quick summary of functionality -
+    - ResourceHandling_Init()                   Initialize the resource handling
+    - ResourceHandling_Close()                  Tidy and close the resource handling
+    - ResourceHandling_Add()                    Add a resource to the resource handling
+    - ResourceHandling_Remove()                 Remove a resource
+    - ResourceHandling_Get()                    Get resource information
+    - ResourceHandling_InitStatus()             Initialize the status of the resource handling
+    - ResourceHandling_LoadGroups()             Load groups of resources
+    - ResourceHandling_GetGroupStartResource()  Get the start resource ID of a group
 
 --------------------------------------------------------------------------- */
 
@@ -18,13 +28,14 @@
 #include "stdbool.h"
 #include "stdlib.h"
 #include "Includes/FlagStruct.h"
+#include "Includes/ResourceFiles.h"
 #include "Includes/ResourceHandling.h"
 
 //-----------------------------------------------------------------------------
 // Defines
 //-----------------------------------------------------------------------------
 
-#define TOTAL_RESOURCES 	( 1000 )
+#define TOTAL_RESOURCES 	( 2000 )
 #define START_RESOURCE_ID 	( 0x1000 )
 
 //-----------------------------------------------------------------------------
@@ -73,6 +84,10 @@ typedef struct
     ResourceHeader_t 	Resource[ TOTAL_RESOURCES ];
     uint32_t 		    ulResourceCount;
     uint32_t 		    ulCurrentResourceID;
+    uint8_t             tmpFileName[ 256 ];
+    uint32_t            ulTotalFiles;
+    uint32_t            ulCurLoadedFile;
+    bool                bStatusNeeded;
 
 } RHCtrl_t, *pRHCtrl_t;
 
@@ -146,51 +161,36 @@ bool ResourceHandling_Close( void )
 /** ----------------------------------------------------------------------------
     @brief 		Add ressource to the resource handling
     @ingroup 	MainShell
-    @param      pulResourceID   - Resource ID pointer, for external reference
+    @param      ulResourceID   - Resource ID index
     @param      ulResourceSize  - Resource size
     @param      ulResourceType  - Resource type
     @param      pszResourceName - Resource name
     @param      pResourceData   - Resource data
     @return 	bool            - true if successful
  -----------------------------------------------------------------------------*/
-bool ResourceHandling_Add( uint32_t* pulResourceID, uint32_t ulResourceSize, uint32_t ulResourceType, uint8_t* pszResourceName, uint8_t* pResourceData )
+bool ResourceHandling_Add( uint32_t ulResourceID, uint32_t ulResourceSize, uint32_t ulResourceType, uint8_t* pszResourceName, uint8_t* pResourceData )
 {
     bool bReturn = false;
 
-    if ( pulResourceID != NULL && sRHCtrl.Flags.Initialized == 1 )
+    if ( ulResourceID < TOTAL_RESOURCES && sRHCtrl.Flags.Initialized == 1 )
     {
         // validate the remaining parameters
         if (ulResourceSize > 0 && ulResourceType < eResourceType_Total && pszResourceName != NULL && pResourceData != NULL)
         {
-            // check if we can store the resource
-            if ( sRHCtrl.ulResourceCount < TOTAL_RESOURCES )
+            if ( sRHCtrl.Resource[ ulResourceID ].ulResourceType == eResourceType_NotSet )
             {
-                uint32_t ulIndex = 0;
+                // add the resource
+                sRHCtrl.Resource[ ulResourceID ].ulResourceID    = sRHCtrl.ulCurrentResourceID;
+                sRHCtrl.Resource[ ulResourceID ].ulResourceSize  = ulResourceSize;
+                sRHCtrl.Resource[ ulResourceID ].ulResourceType  = ulResourceType;
+                sRHCtrl.Resource[ ulResourceID ].pszResourceName = pszResourceName;
+                sRHCtrl.Resource[ ulResourceID ].pResourceData   = pResourceData;
 
-                while( ulIndex < sRHCtrl.ulResourceCount )
-                {
-                    if ( sRHCtrl.Resource[ ulIndex ].ulResourceType == eResourceType_NotSet )
-                    {
-                        // add the resource
-                        sRHCtrl.Resource[ ulIndex ].ulResourceID    = sRHCtrl.ulCurrentResourceID;
-                        sRHCtrl.Resource[ ulIndex ].ulResourceSize  = ulResourceSize;
-                        sRHCtrl.Resource[ ulIndex ].ulResourceType  = ulResourceType;
-                        sRHCtrl.Resource[ ulIndex ].pszResourceName = pszResourceName;
-                        sRHCtrl.Resource[ ulIndex ].pResourceData   = pResourceData;
+                // increment the resource count
+                sRHCtrl.ulResourceCount++;
 
-                        // return the resource ID
-                        *pulResourceID = ulIndex;
-
-                        // increment the resource count
-                        sRHCtrl.ulResourceCount++;
-                        sRHCtrl.ulCurrentResourceID++;
-
-                        // return success
-                        bReturn = true;
-                        break;
-                    }
-                    ulIndex++;
-               }
+                // return success
+                bReturn = true;
             }
             // Add the resource
             bReturn = true;
@@ -212,28 +212,19 @@ bool ResourceHandling_Remove( uint32_t ulResourceID )
 
     if ( sRHCtrl.Flags.Initialized == 1 )
     {
-        uint32_t ulIndex = 0;
+        // remove the resource
+        free( sRHCtrl.Resource[ ulResourceID ].pResourceData );
+        sRHCtrl.Resource[ ulResourceID ].ulResourceID    = 0;
+        sRHCtrl.Resource[ ulResourceID ].ulResourceSize  = 0;
+        sRHCtrl.Resource[ ulResourceID ].ulResourceType  = eResourceType_NotSet;
+        sRHCtrl.Resource[ ulResourceID ].pszResourceName = NULL;
+        sRHCtrl.Resource[ ulResourceID ].pResourceData   = NULL;
 
-        while ( ulIndex < sRHCtrl.ulResourceCount )
-        {
-            if ( sRHCtrl.Resource[ ulIndex ].ulResourceID == ulResourceID )
-            {
-                // remove the resource
-                sRHCtrl.Resource[ ulIndex ].ulResourceID    = 0;
-                sRHCtrl.Resource[ ulIndex ].ulResourceSize  = 0;
-                sRHCtrl.Resource[ ulIndex ].ulResourceType  = eResourceType_NotSet;
-                sRHCtrl.Resource[ ulIndex ].pszResourceName = NULL;
-                sRHCtrl.Resource[ ulIndex ].pResourceData   = NULL;
+        // decrement the resource count
+        sRHCtrl.ulResourceCount--;
 
-                // decrement the resource count
-                sRHCtrl.ulResourceCount--;
-
-                // return success
-                bReturn = true;
-                break;
-            }
-            ulIndex++;
-        }
+        // return success
+        bReturn = true;
 
     }
 
@@ -254,51 +245,190 @@ bool ResourceHandling_Get( uint32_t ulResourceID, eResourceGet_t eType, uint32_t
 
     if ( sRHCtrl.Flags.Initialized == 1 )
     {
-        uint32_t ulIndex = 0;
-
-        while ( ulIndex < sRHCtrl.ulResourceCount )
+        uint32_t ulIndex = ulResourceID;
+        // get the resource data
+        switch( eType )
         {
-            if ( sRHCtrl.Resource[ ulIndex ].ulResourceID == ulResourceID )
+            case eResourceGet_Size:
             {
-                // get the resource data
-                switch( eType )
-                {
-                    case eResourceGet_Size:
-                    {
-                        *pReturnData = sRHCtrl.Resource[ ulIndex ].ulResourceSize;
-                        break;
-                    }
-                    case eResourceGet_Type:
-                    {
-                        *pReturnData = sRHCtrl.Resource[ ulIndex ].ulResourceType;
-                        break;
-                    }
-                    case eResourceGet_Name:
-                    {
-                        *pReturnData = (uint32_t)sRHCtrl.Resource[ ulIndex ].pszResourceName;
-                        break;
-                    }
-                    case eResourceGet_Data:
-                    {
-                        *pReturnData = (uint32_t)sRHCtrl.Resource[ ulIndex ].pResourceData;
-                        break;
-                    }
-                    default:
-                    {
-                        break;
-                    }
-                }
-
-                // return success
-                bReturn = true;
+                *pReturnData = sRHCtrl.Resource[ ulIndex ].ulResourceSize;
                 break;
             }
-            ulIndex++;
+            case eResourceGet_Type:
+            {
+                *pReturnData = sRHCtrl.Resource[ ulIndex ].ulResourceType;
+                break;
+            }
+            case eResourceGet_Name:
+            {
+                *pReturnData = (uint32_t)sRHCtrl.Resource[ ulIndex ].pszResourceName;
+                break;
+            }
+            case eResourceGet_Data:
+            {
+                *pReturnData = (uint32_t)sRHCtrl.Resource[ ulIndex ].pResourceData;
+                break;
+            }
+            default:
+            {
+                break;
+            }
         }
+        bReturn = true;
     }
 
     return bReturn;
 }
+
+
+/** ----------------------------------------------------------------------------
+    @brief 		Load the resource groups
+    @ingroup 	MainShell
+    @param      groups          - Pointer to the resource groups
+    @return 	bool            - true if successful
+ -----------------------------------------------------------------------------*/
+bool ResourceHandling_LoadGroups( psFileGroup groups )
+{
+    uint32_t    ulResourceID    = 0;
+
+    if ( groups != NULL )
+    {
+        psFileGroup psGroup = groups;
+        uint32_t    ulIndex = 0;
+        uint32_t    ulTotalSize = 0;
+        uint32_t    ulNumLoaded = 0;
+        uint32_t    ulTotalFilesRemapped = 0;   
+        uint32_t    ulGroupCount = 0;
+
+        if ( sRHCtrl.bStatusNeeded == true )
+        {
+            printf( "Loading sprite files : 0%%               \r" );
+            fflush(stdout);
+        }
+
+
+        while( psGroup->pszDirectory != NULL )
+        {
+            psFileDetails psFileDetails = psGroup->psFileDetails;
+            uint32_t ulFileIndex = 0;
+
+            ulGroupCount++;
+
+            psGroup->ulStartResourceID = ulResourceID;
+
+            while( psFileDetails->pszResourceName != NULL )
+            {
+                uint8_t* pFileBuffer = NULL;
+                uint32_t ulFileSize = 0;
+
+                strcpy( sRHCtrl.tmpFileName, psGroup->pszDirectory );
+                strcat( sRHCtrl.tmpFileName, psFileDetails->pszResourceName );
+
+                if ( sRHCtrl.bStatusNeeded == true && !(ulNumLoaded & 3) )
+                {
+                    float fPercent = (float)ulNumLoaded / (float)sRHCtrl.ulTotalFiles;
+                    uint32_t ulPercent = (uint32_t)(fPercent * 100);
+                    printf( "Loading sprite files : %d%% (%d of %d)\r", ulPercent, ulNumLoaded, sRHCtrl.ulTotalFiles );
+                    fflush(stdout);
+                }
+
+                if ( LIB_Files_Load( sRHCtrl.tmpFileName, &pFileBuffer, &ulFileSize ) == true )
+                {
+                    if ( ResourceHandling_Add( ulResourceID, ulFileSize, psFileDetails->eFileType, psFileDetails->pszResourceName, pFileBuffer ) == false )
+                    {
+                        // Exit error
+                        printf( "Resource failed to add: %s\n", sRHCtrl.tmpFileName );
+                        return false;
+                    }
+                    if ( LIB_Sprites_RegisterBank( ulResourceID, psFileDetails->eFileType, ulResourceID, pFileBuffer, ulFileSize, psFileDetails->ulNumber, psFileDetails->ulWidth, psFileDetails->ulHeight ) == false )
+                    {
+                        // Exit error
+                        printf( "Resource failed to register: %s\n", sRHCtrl.tmpFileName );
+                        return false;
+                    }
+                    else
+                    {
+                        if ( psGroup->reMapValue != 0 && psFileDetails->eFileType == eRAW )
+                        {
+                            ulTotalFilesRemapped++;
+                            if ( strcmp((int8_t*)(psFileDetails->pszResourceName),"gradient-8-900.RAW") == 0 )   
+                            {
+                                LIB_Sprites_Remap( ulResourceID, 184 );
+                            }
+                            else
+                            {
+                                LIB_Sprites_Remap( ulResourceID, psGroup->reMapValue-1 );
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    printf( "File failed to load: %s\n", sRHCtrl.tmpFileName ); 
+                }
+                ulNumLoaded++;
+                ulIndex++;
+                ulTotalSize += ulFileSize;  
+                ulResourceID++;
+                ulFileIndex++;
+                psFileDetails++;
+            }
+
+            psGroup++;
+        }
+        if ( sRHCtrl.bStatusNeeded == true )
+        {
+            float fPercent = (float)ulNumLoaded / (float)sRHCtrl.ulTotalFiles;
+            printf( "Loading sprite files : 100%% (%d of %d)\n", ulNumLoaded, sRHCtrl.ulTotalFiles );
+        }
+        printf( "Sprite Resource Loaded into fast memory\n" );
+        printf( "Total files remapped: %d\n", ulTotalFilesRemapped );
+        printf( "Total resource size: %dKB \n", (ulTotalSize >> 10) + 1 );
+    }
+
+    return true;
+}
+
+/** ----------------------------------------------------------------------------
+    @brief 		Initialize the status reporting during loading
+    @ingroup 	MainShell
+    @param      groups          - Pointer to the resource groups
+ -----------------------------------------------------------------------------*/
+void ResourceHandling_InitStatus( psFileGroup groups )
+{
+    // count the number of resources
+    uint32_t ulIndex = 0;
+    uint32_t ulTotalFiles = 0;
+
+    while( groups[ ulIndex ].pszDirectory != NULL )
+    {
+        psFileDetails psFileDetails = groups[ ulIndex ].psFileDetails;
+
+        while( psFileDetails->pszResourceName != NULL )
+        {
+            ulTotalFiles++;
+            psFileDetails++;
+        }
+
+        ulIndex++;
+    }
+    sRHCtrl.ulTotalFiles = ulTotalFiles;
+    sRHCtrl.ulCurLoadedFile = 0;
+    sRHCtrl.bStatusNeeded = true;
+}
+
+/** ----------------------------------------------------------------------------
+    @brief 		Get the start resource ID of a group
+    @ingroup 	MainShell
+    @param      nGroupIndex     - Group index
+    @return 	uint32_t        - Start resource ID
+ -----------------------------------------------------------------------------*/
+uint32_t ResourceHandling_GetGroupStartResource( uint32_t nGroupIndex )
+{
+    return theFileGroups[ nGroupIndex ].ulStartResourceID;
+}
+
+
 
 //-----------------------------------------------------------------------------
 // End of File: ResourceHandling.c

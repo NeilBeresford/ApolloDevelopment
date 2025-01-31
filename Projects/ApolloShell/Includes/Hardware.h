@@ -64,34 +64,47 @@
 #endif
 
 //-----------------------------------------------------------------------------
+// External Data
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 // External Functionality
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-extern void Hardware_Init( void );
-extern void Hardware_Close( void );
-extern void Hardware_WaitVBL( void );
-extern void Hardware_FlipScreen( void );
-extern void Hardware_ClearScreen( void );
-extern void Hardware_TestScreen( void );
-extern int 	Hardware_ReadKey( void );
-extern int 	Hardware_GetScreenPtr( void );
-extern int  Hardware_RandomNumber( void );
-extern void Hardware_SetScreenmode( _D0(uint32_t ScreenMode) );
-extern void Hardware_CopyBackScreen( _D0(uint32_t x), _D1(uint32_t y) );
-extern void Hardware_CopyBackScreenMap( void );
-extern void Hardware_CopyBack2ToBack1( void );	
-extern void Hardware_SetBackscreenBuffers( void );
-extern _REG uint32_t Hardware_SwapLong( _D0(uint32_t SwapLong) );
-extern _REG uint32_t Hardware_GetScreenWidth( void );
-extern _REG uint32_t Hardware_GetScreenHeight( void );
-extern _REG uint32_t Hardware_GetScreenmode( void );
-extern _REG uint32_t Hardware_GetDebug( _D0(uint32_t Debug) );
+void Hardware_Init( void );
+void Hardware_Close( void );
+void Hardware_WaitVBL( void );
+void Hardware_FlipScreen( void );
+void Hardware_ClearScreen( void );
+void Hardware_TestScreen( void );
+
+uint32_t	Hardware_ReadKey( void );
+uint8_t* 	Hardware_GetScreenPtr( void );
+
+int  Hardware_RandomNumber( void );
+void Hardware_SetScreenmode( _D0(uint32_t ScreenMode) );
+void Hardware_StoreLastKey( _D0(uint32_t lastKey) );
+void Hardware_CheckKeyUp( void );
+void Hardware_CopyBackToScreen( void );
+void Hardware_CopyBackScreenMap( void );
+void Hardware_CopyBack2ToBack1( void );	
+void Hardware_SetBackscreenBuffers( void );
+uint32_t Hardware_SwapLong( _D0(uint32_t SwapLong) );
+uint32_t Hardware_GetScreenWidth( void );
+uint32_t Hardware_GetScreenHeight( void );
+uint32_t Hardware_GetScreenmode( void );
+uint32_t Hardware_GetDebug( _D0(uint32_t Debug) );
+void Hardware_SetMapX( _D0(uint32_t mapX) );
+void Hardware_SetMapY( _D0(uint32_t mapX) );
+uint32_t Hardware_GetMapX( void );
+uint32_t Hardware_GetMapY( void );
+uint32_t Hardware_JoystickButtonPressed( void );
 
 //-----------------------------------------------------------------------------
 
 #endif // _HARDWARE_H_
 
 //-----------------------------------------------------------------------------
-// End of File: Hardware.h
+// End of File: Hardware.h222
 //-----------------------------------------------------------------------------
