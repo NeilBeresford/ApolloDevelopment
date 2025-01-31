@@ -10,7 +10,8 @@
 			"hwscreen.h": "c",
 			"lib_sprites.h": "c",
 			"math.h": "c",
-			"string.h": "c",
+
+		"string.h": "c",
 			"resourcefiles.h": "c"
 		},
 		"C_Cpp.intelliSenseCacheSize": 512,

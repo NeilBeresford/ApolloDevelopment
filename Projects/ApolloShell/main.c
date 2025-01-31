@@ -388,6 +388,9 @@ uint32_t main(int argc, char *argv[])
 
 	Hardware_Close();
 
+	
+	free(paletteBuffer);
+
 	printf("\n%d frames displayed\n", ulFrames);
 	printf("Time played %d seconds\n", ulFrames / 50 );
 	printf("Exiting - have a nice day!\n\n");
