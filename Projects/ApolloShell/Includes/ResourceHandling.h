@@ -40,9 +40,12 @@ typedef enum
 
 extern bool ResourceHandling_Init( void );
 extern bool ResourceHandling_Close( void );
-extern bool ResourceHandling_Add( uint32_t* pulResourceID, uint32_t ulResourceSize, uint32_t ulResourceType, uint8_t* pszResourceName, uint8_t* pResourceData );
+extern bool ResourceHandling_Add( uint32_t ulResourceID, uint32_t ulResourceSize, uint32_t ulResourceType, uint8_t* pszResourceName, uint8_t* pResourceData );
 extern bool ResourceHandling_Remove( uint32_t ulResourceID );
 extern bool ResourceHandling_Get( uint32_t ulResourceID, eResourceGet_t eType, uint32_t* pReturnData );
+bool ResourceHandling_LoadGroups( sFileGroup groups[] );
+uint32_t ResourceHandling_GetGroupStartResource( uint32_t nGroupIndex );
+void ResourceHandling_InitStatus( psFileGroup groups );
 
 //-----------------------------------------------------------------------------
 

@@ -19,6 +19,7 @@
 #include "stdio.h"
 #include "Includes/FlagStruct.h"
 #include "Includes/HWScreen.h"
+#include "Includes/ResourceFiles.h"
 #include "Includes/ResourceHandling.h"
 #include "Includes/LIB_Sprites.h"
 
@@ -26,7 +27,7 @@
 // Defines
 //-----------------------------------------------------------------------------
 
-#define MAX_SPRITE_BANKS 10
+#define MAX_SPRITE_BANKS 2000
 #define SCREENWIDTH      640
 #define SCREENHEIGHT     480
 
@@ -42,6 +43,10 @@ typedef struct
 {
     FlagStruct_t    Flags;                              //!< Flags
     SpriteBank_t    SpriteBanks[ MAX_SPRITE_BANKS ];    //!< Sprite banks 
+    int32_t        ulClipLeft;                          //!< Clip left
+    int32_t        ulClipTop;                           //!< Clip top
+    int32_t        ulClipRight;                         //!< Clip right
+    int32_t        ulClipBottom;                        //!< Clip bottom
 
 } SpriteCtrl, *pSpriteCtrl;                             //!< Sprite Control structure
 
@@ -72,7 +77,7 @@ void LIB_Sprites_Init( void )
         SprCtrl.SpriteBanks[ i ].ulSpriteType   = eSpriteType_Raw;
         SprCtrl.SpriteBanks[ i ].pSpriteData    = NULL;
     }
-
+    LIB_Sprites_SetClipArea( 0, 0, SCREENWIDTH, SCREENHEIGHT );
     SprCtrl.Flags.Initialized = true;
 }
 
@@ -84,6 +89,24 @@ void LIB_Sprites_Init( void )
 void LIB_Sprites_Close( void )
 {
     //printf("LIB_Sprites_Close\n");
+}
+
+/** ----------------------------------------------------------------------------
+    @brief 		Returns the height of the sprites in the bank
+    @ingroup 	MainShell
+    @param      eBank           - Sprite bank to draw from
+    @return     uint32_t        - Sprite height
+ -----------------------------------------------------------------------------*/
+uint32_t LIB_Sprites_GetHeight( eSpriteBank_t eBank )
+{
+    uint32_t ulRet = 0;
+
+    if ( eBank < MAX_SPRITE_BANKS && SprCtrl.Flags.Initialized == true )
+    {
+        ulRet = SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight;
+    }
+
+    return ulRet;
 }
 
 /** ----------------------------------------------------------------------------
@@ -121,6 +144,24 @@ bool LIB_Sprites_RegisterBank( eSpriteBank_t eBank, eSpriteType_t eType, uint32_
     return bRet;
 }
 
+/** ----------------------------------------------------------------------------
+    @brief      Sets the clip area
+    @ingroup    MainShell
+    @param      x               - X position
+    @param      y               - Y position
+    @param      w               - Width
+    @param      h               - Height
+ ---------------------------------------------------------------------------- */
+void LIB_Sprites_SetClipArea( uint32_t x, uint32_t y, uint32_t w, uint32_t h )
+{
+    // set the clip area
+    SprCtrl.ulClipLeft   = x;
+    SprCtrl.ulClipTop    = y;
+    SprCtrl.ulClipRight  = x + w;
+    SprCtrl.ulClipBottom = y + h;
+}
+
+
 /** -----------------------------------------------------------------------------
     @brief      Draw a sprite flipped
     @ingroup    MainShell
@@ -130,7 +171,7 @@ bool LIB_Sprites_RegisterBank( eSpriteBank_t eBank, eSpriteType_t eType, uint32_
     @param      y               - Y position
     @return     bool            - true if successful
    ---------------------------------------------------------------------------- */
-bool LIB_Sprites_DrawFlipped( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, uint32_t y )
+bool LIB_Sprites_DrawFlipped( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t y )
 {
     bool bRet = false;
 
@@ -156,7 +197,7 @@ bool LIB_Sprites_DrawFlipped( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, 
                 {
                     if ( *pSpriteData != 0 )
                     {
-                        if ( dx+x < screenWidth && dy+y < screenHeight && dy+y >= 0 && dx+x >= 0 )  
+                        if ( dx+x >= SprCtrl.ulClipLeft && dy+y < SprCtrl.ulClipBottom && dy+y >= SprCtrl.ulClipTop && dx+x < SprCtrl.ulClipRight )  
                         {
                             pScreen[ ( (dy+y) * screenWidth ) + dx + x ] = *pSpriteData;
                         }
@@ -203,7 +244,7 @@ bool LIB_Sprites_DrawFlipped( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, 
 #endif
             // pSprite now points to the start of the sprite data
             // draw the sprite
-            uint32_t xStart = x + SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth -1;
+            int32_t xStart = x + SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth -1;
             uint32_t ulIndex = 0;
 
             while(  *pSprite != 0xFF )
@@ -224,7 +265,10 @@ bool LIB_Sprites_DrawFlipped( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, 
                 while( ulIndex != 0 )
                 {
 #if DEBUG == 0
-                    if ( x < screenWidth && y < screenHeight && y >= 0 && x >= 0 )  
+                    if ( x < SprCtrl.ulClipRight && y < SprCtrl.ulClipBottom && y >= SprCtrl.ulClipTop && x >= SprCtrl.ulClipLeft )  
+                    {
+                        pScreen[ ( y * screenWidth ) + x ] = *pSprite;
+                    }
                     {
                         pScreen[ ( y * screenWidth ) + x ] = *pSprite;
                     }
@@ -263,7 +307,7 @@ bool LIB_Sprites_DrawFlipped( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, 
     @param      ySize           - Y size
     @return 	bool            - true if successful
  -----------------------------------------------------------------------------*/
-bool LIB_Sprites_DrawRawPart( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, uint32_t y, uint32_t xOff, uint32_t yOff, uint32_t xSize, uint32_t ySize )
+bool LIB_Sprites_DrawRawPart( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t y, uint32_t xOff, uint32_t yOff, uint32_t xSize, uint32_t ySize )
 {
     bool bRet = false;
 
@@ -285,13 +329,13 @@ bool LIB_Sprites_DrawRawPart( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, 
             pSpriteData += ( yOff * SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth ) + xOff;
 
             // draw the sprite
-            for( uint32_t dy = 0; dy < ySize; dy++ )
+            for( int32_t dy = 0; dy < ySize; dy++ )
             {
-                for( uint32_t dx = 0; dx < xSize; dx++ )
+                for( int32_t dx = 0; dx < xSize; dx++ )
                 {
                     if ( *pSpriteData != 0 )
                     {
-                        if ( dx+x < screenWidth && dy+y < screenHeight && dy+y >= 0 && dx+x >= 0 )  
+                        if ( dx+x >= SprCtrl.ulClipLeft && dy+y < SprCtrl.ulClipBottom && dy+y >= SprCtrl.ulClipTop && dx+x < SprCtrl.ulClipRight )  
                         {
                             pScreen[ ( (dy+y) * screenWidth ) + dx + x ] = *pSpriteData;
                         }
@@ -315,7 +359,7 @@ bool LIB_Sprites_DrawRawPart( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, 
     @param      y               - Y position
     @return 	bool            - true if successful
  -----------------------------------------------------------------------------*/
-bool LIB_Sprites_Draw( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, uint32_t y )
+bool LIB_Sprites_Draw( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t y )
 {
     bool bRet = false;
 
@@ -330,27 +374,64 @@ bool LIB_Sprites_Draw( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, uint32_
         // draw the sprite
         if ( SprCtrl.SpriteBanks[ eBank ].ulSpriteType == eSpriteType_Raw )
         {
-            // draw the raw sprite
-
-            pSpriteData += sprNum * ( SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth * SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight );
-
-            // draw the data one pixel at a time
-            for( uint32_t dy = 0; dy < SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight; dy++ )
+            // coarse clip check
+            if ( x + SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth < SprCtrl.ulClipLeft || x > SprCtrl.ulClipRight || y + SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight < SprCtrl.ulClipTop || y > SprCtrl.ulClipBottom )
             {
-                uint8_t* pScrn = pScreen + ( (dy+y) * screenWidth ) + x;
+                return bRet;
+            }
 
-                for( uint32_t dx = 0; dx < SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth; dx++ )
+            // draw the raw sprite
+            int32_t xOff = 0, yOff = 0;
+            int32_t xEnd = x + SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth, yEnd = y + SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight;
+
+            // reduce the drawing area with clipping
+            pSpriteData += sprNum * ( SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth * SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight );
+            if ( y < SprCtrl.ulClipTop )
+            {
+                yOff = SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight - (SprCtrl.ulClipTop - y);
+                pSpriteData += (SprCtrl.ulClipTop - y) * SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth;
+                y = SprCtrl.ulClipTop;
+                yEnd =  yOff + y;
+            }
+            if ( x < SprCtrl.ulClipLeft )
+            {
+                xOff = SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth - (SprCtrl.ulClipLeft - x);
+                pSpriteData += (SprCtrl.ulClipLeft - x);
+                xEnd = xOff;
+                x = SprCtrl.ulClipLeft;
+            }
+            if ( x + SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth >= SprCtrl.ulClipRight )
+            {
+                xEnd = SprCtrl.ulClipRight;
+            }
+            if ( y + SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight >= SprCtrl.ulClipBottom )
+            {
+                yEnd = SprCtrl.ulClipBottom;
+                
+            }
+    #if 0
+            printf( "Adjusted spriteData = %08X\n", pSpriteData );
+            printf( "x = %d, y = %d, xEnd = %d, yEnd = %d\n", x, y, xEnd, yEnd );
+            printf( "Spr W %d, Spr H %d\n", SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth, SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight );
+            exit( 0 );
+    #endif
+            // draw the data one pixel at a time
+            uint8_t*  pSprBack = pSpriteData;
+
+            for( int32_t dy = y; dy < yEnd; dy++ )
+            {
+                uint8_t* pScrn = pScreen + ( dy * screenWidth ) + x;
+                for( int32_t dx = x; dx < xEnd; dx++ )
                 {
                     if ( *pSpriteData != 0 )
                     {
-                        if ( dx+x < screenWidth && dy+y < screenHeight && dy+y >= 0 && dx+x >= 0 )  
-                        {
-                            *pScrn = *pSpriteData;
-                        }
+                        *pScrn = *pSpriteData;
                     }
                     pScrn++;
                     pSpriteData++;
                 }
+                pSpriteData = pSprBack + SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth;
+                pSprBack = pSpriteData;
             }
         }
         else
@@ -391,7 +472,7 @@ bool LIB_Sprites_Draw( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, uint32_
 #endif
             // pSprite now points to the start of the sprite data
             // draw the sprite
-            uint32_t xStart = x;
+            int32_t xStart = x;
             uint32_t ulIndex = 0;
 
             while(  *pSprite != 0xFF )
@@ -412,7 +493,7 @@ bool LIB_Sprites_Draw( eSpriteBank_t eBank, uint32_t sprNum, uint32_t x, uint32_
                 while( ulIndex != 0 )
                 {
 #if DEBUG == 0
-                    if ( x < screenWidth && y < screenHeight && y >= 0 && x >= 0 )  
+                    if ( x < SprCtrl.ulClipRight && y < SprCtrl.ulClipBottom && y >= SprCtrl.ulClipTop && x >= SprCtrl.ulClipLeft )  
                     {
                         pScreen[ ( y * screenWidth ) + x ] = *pSprite;
                     }
@@ -460,7 +541,7 @@ bool LIB_Sprites_Remap( eSpriteBank_t eSpriteBank, uint32_t ShiftBy )
             {
                 pSpriteData = SprCtrl.SpriteBanks[ eSpriteBank ].pSpriteData + ( num * ( SprCtrl.SpriteBanks[ eSpriteBank ].ulSpriteWidth * SprCtrl.SpriteBanks[ eSpriteBank ].ulSpriteHeight ) );
                 // remap the raw sprite colours
-                for( uint32_t i = 0; i < SprCtrl.SpriteBanks[ eSpriteBank ].ulSpriteSize; i++ )
+                for( uint32_t i = 0; i < SprCtrl.SpriteBanks[ eSpriteBank ].ulSpriteHeight*SprCtrl.SpriteBanks[ eSpriteBank ].ulSpriteWidth; i++ )
                 {
                     if ( *pSpriteData != 0 )
                     {

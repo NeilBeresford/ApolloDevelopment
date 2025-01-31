@@ -17,6 +17,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "stdio.h"
+#include "Includes/ResourceFiles.h"
 #include "Includes/ResourceHandling.h"
 #include "Includes/LIB_Files.h"
 
@@ -41,7 +42,7 @@ bool LIB_Files_Load( char* pszFileName, uint8_t** pFileBuffer, uint32_t* pFileSi
     {
         FILE* fp = fopen( pszFileName, "r" );
 
-        printf( "Loading file: %-40s", pszFileName );
+        //printf( "Loading file: %-60s", pszFileName );
 
         if ( fp != NULL )
         {
@@ -53,7 +54,7 @@ bool LIB_Files_Load( char* pszFileName, uint8_t** pFileBuffer, uint32_t* pFileSi
             {
                 *pFileSize = nFileSize;
             }
-            printf( "[ %6d bytes ]", nFileSize );
+            //printf( "[ %6d bytes ]", nFileSize );
 
             // allocate memory for the file
             *pFileBuffer = (uint8_t*)malloc( nFileSize );
@@ -64,7 +65,7 @@ bool LIB_Files_Load( char* pszFileName, uint8_t** pFileBuffer, uint32_t* pFileSi
 
                 // close the file
                 fclose( fp );
-                printf( "\n" );
+                //printf( "\n" );
 
                 // return success
                 bReturn = true;
@@ -74,7 +75,7 @@ bool LIB_Files_Load( char* pszFileName, uint8_t** pFileBuffer, uint32_t* pFileSi
         // Report error if needed.
         if ( bReturn == false )
         {
-            printf( "Error - Failed to load\n" );
+            printf( "   Error - Failed to load\n" );
         }
     }
 

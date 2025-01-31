@@ -169,7 +169,6 @@ void LIB_PerlinNoise_GenerateMap( uint32_t* pMapHeight, uint32_t width, uint32_t
         int32_t ucValue = 1550 - (n * 1000.0f);
 
         pMapHeight[ ulX ] = ucValue;
-
     }
 }
 
