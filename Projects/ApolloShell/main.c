@@ -51,6 +51,9 @@
 
 void CreateBackScreens( void );
 void DrawMap( void );
+void Main_DrawMapScreen( void );
+void Main_DrawGameScreen( void );
+bool Main_ControlGame( void );
 
 //-----------------------------------------------------------------------------
 // Variables
@@ -62,6 +65,15 @@ ApolloMouseState	sMouseState;
 
 int32_t pMapHeight[ MAP_WIDTH ];
 uint32_t ulFrames = 0;
+bool bMapMode = false;
+int32_t nScrollX = 400;
+int32_t nScrollY = 400;
+uint32_t nTimeOut = 800;
+uint32_t nMouseGfxOffset = 6;
+uint32_t nMarkerGfx = 0;
+uint32_t ulWaterSprIndex = 0;
+uint32_t ulSprHeight = 0; 
+uint32_t ulWaterSprNum = 0;
 
 //-----------------------------------------------------------------------------
 // Code
@@ -137,27 +149,15 @@ uint32_t main(int argc, char *argv[])
 	}
 
 
-	bool bMapMode = false;
-	int32_t nScrollX = 400;
-	int32_t nScrollY = 400;
-	uint32_t nTimeOut = 800;
-	uint32_t nMouseGfxOffset = 6;
-	uint32_t nMarkerGfx = 0;
-
-	// Water
-	uint32_t ulWaterSprIndex = ResourceHandling_GetGroupStartResource( eGroups_Water ) + 1;
-	uint32_t ulSprHeight = LIB_Sprites_GetHeight( ulWaterSprIndex );
-	uint32_t ulWaterSprNum = 0;
-
+	// setup the water and mouse and clipping area
+	ulWaterSprIndex = ResourceHandling_GetGroupStartResource( eGroups_Water ) + 1;
+	ulSprHeight = LIB_Sprites_GetHeight( ulWaterSprIndex );
 	sMouseState.MouseX_Pointer_Max = 640;
 	sMouseState.MouseY_Pointer_Max = 360;
-	sMouseState.MouseX_Value_Old = 320;
-	sMouseState.MouseY_Value_Old = 180;
-	sMouseState.MouseX_Value = 320;
-	sMouseState.MouseY_Value = 180;
 	LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
 
-	while ( true ) // --nTimeOut > 0
+	// main loop -
+	while ( true )
 	{
 		ulFrames++;
 		Hardware_WaitVBL();
@@ -165,238 +165,268 @@ uint32_t main(int argc, char *argv[])
 
 		if ( bMapMode == false )
 		{
-			// copy area opf map to screen
-			Hardware_SetMapX( nScrollX );	
-			Hardware_SetMapY( nScrollY );
-			Hardware_CopyBackToScreen();
-
-			#if 1
-			for( int32_t i = 0; i < 26; i++ )
-			{
-				LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Font ) + 1, i, 20+(i*7), 50 );
-				LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Font ), i, 20+(i*16), 60 );
-			}
-			#endif
+			Main_DrawGameScreen();
 		}
 		else
 		{
-			Hardware_CopyBackScreenMap();
-
-			uint8_t* pS = Hardware_GetScreenPtr();
-
-			uint32_t ulMarkStartX = nScrollX / 3;
-			uint32_t ulMarkStartY = nScrollY;
-			uint32_t ulMapYSize = (300.0f * (360.0f / 900.0f)) - 1;
-
-			ulMarkStartY = (float)ulMarkStartY * (300.0f / 900.0f);  			 
-
-			for( uint32_t gX = 0; gX < 213 && (ulMarkStartX + gX < 640); gX++ )
-			{
-				pS[  (ulMarkStartY + 70) * 640 + ulMarkStartX + gX ] = 0x0f;
-				pS[  (ulMarkStartY + 70 + ulMapYSize) * 640 + ulMarkStartX + gX ] = 0x0f;
-			}
-			for( uint32_t gY = 0; gY < ulMapYSize; gY++ )
-			{
-				pS[  (ulMarkStartY + gY + 70) * 640 + ulMarkStartX ] = 0x0f;
-				pS[  (ulMarkStartY + gY + 70) * 640 + ulMarkStartX + 213 ] = 0x0f;
-			}
-		}
-
-		if ( bMapMode == false )
-		{
-			// water...
-			uint32_t ulMapWidth = 1920;
-			uint32_t ulMapHeight = 900;
-			int32_t ulYPos = ulMapHeight;
-			uint32_t ulBak = ulWaterSprNum;
-
-			for( uint32_t num = 0; num < 3; num++ )
-			{
-				for ( int32_t gX = 0; gX < ulMapWidth; gX += 256 )
-				{
-					LIB_Sprites_Draw( ulWaterSprIndex, ulWaterSprNum, gX - nScrollX, ulYPos - nScrollY );
-				}
-
-				ulWaterSprNum += 4;
-				if ( ulWaterSprNum > 11 ) ulWaterSprNum -= 11;	
-				ulYPos += (ulSprHeight / 3) - 1;
-			}
-
-			ulWaterSprNum = ulBak;
-			if ( !(ulFrames & 3) )
-			{
-				ulWaterSprNum++;
-				if ( ulWaterSprNum > 11 ) ulWaterSprNum = 0;
-			}
+			Main_DrawMapScreen();
 		}
 
 		// check for exit
-#if 1		
-		ApolloJoypad( &sJoypadState );
-		ApolloKeyboard( &sKeyboardState );	
-		ApolloMouse( &sMouseState );
-
-		// simple joystick map position control
-		if ( sJoypadState.Joypad_X_Delta != 0 )
-		{
-			nScrollX += (int32_t)sJoypadState.Joypad_X_Delta * 4;
-			if ( nScrollX < 0 ) nScrollX = 0;
-			if ( nScrollX > 1920-640 ) nScrollX = 1920-640;
-		}
-		if ( sJoypadState.Joypad_Y_Delta != 0 )
-		{
-			nScrollY += (int32_t)sJoypadState.Joypad_Y_Delta * 4;
-			if ( nScrollY < 0 ) nScrollY = 0;
-			if ( nScrollY > 900-360 ) nScrollY = 900-360;
-		}
-
-		if (sKeyboardState.Current_Key == 0x45)
-		{
+		if ( Main_ControlGame() == true )
 			break;
-		}
-		if (sKeyboardState.Current_Key == 0x01 )
-		{
-			bMapMode = bMapMode ? false : true;
-		}
-		if (sKeyboardState.Current_Key == 0x02)
-		{
-			CreateBackScreens();
-			LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
-		}
-
-        // check for joystick button A - change map
-		if ( sJoypadState.Joypad_A == true && sJoypadState.Joypad_AActioned == false )
-		{
-			sJoypadState.Joypad_AActioned = true;
-			CreateBackScreens();
-			LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
-		}
-		else if ( sJoypadState.Joypad_A == false && sJoypadState.Joypad_AActioned == true )
-		{
-			sJoypadState.Joypad_AActioned = false;
-		}
-
-        // check for joystick button B - Quit
-		if ( sJoypadState.Joypad_B == true ) break;
-
-		// check for joystick button X - change mode
-		if ( sJoypadState.Joypad_X == true && sJoypadState.Joypad_XActioned == false )
-		{
-			sJoypadState.Joypad_XActioned = true;
-			bMapMode = bMapMode ? false : true;
-		}
-		else if ( sJoypadState.Joypad_X == false && sJoypadState.Joypad_XActioned == true )
-		{
-			sJoypadState.Joypad_XActioned = false;
-		}
-
-		// check for mouse button 1 - change map
-		if ( bMapMode == true &&sMouseState.Button_State & APOLLOMOUSE_RIGHTCLICK )
-		{
-			CreateBackScreens();
-			LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
-		}
-		if ( bMapMode == true && sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN )
-		{
-			int32_t ulMouseX = sMouseState.MouseX_Pointer;
-			int32_t ulMouseY = sMouseState.MouseY_Pointer;
-			
-			nScrollX = (int32_t)((float)ulMouseX * 1920 / 640) - 320;
-			nScrollY = (int32_t)((float)ulMouseY * 900 / 360) - 160;
-			if ( nScrollX < 0 ) nScrollX = 0;
-			if ( nScrollX > 1920-640 ) nScrollX = 1920-640;
-			if ( nScrollY < 0 ) nScrollY = 0;
-			if ( nScrollY > 900-360 ) nScrollY = 900-360;
-		}
-
-		if ( bMapMode == false && sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN )
-		{
-			uint32_t ulMouseX = sMouseState.MouseX_Pointer;
-			uint32_t ulMouseY = sMouseState.MouseY_Pointer;
-			uint8_t ulMouseMove = 0;
-			// simple joystick map position control
-			if ( ulMouseX < MOUSEMOVAREA )
-			{
-				nScrollX -= (int32_t)(MAPSCROLLSPEED * (float)(MOUSEMOVAREA - (float)ulMouseX) / (float)MOUSEMOVAREA);
-				if ( nScrollX < 0 ) nScrollX = 0;
-				ulMouseMove |= 1;	
-			}
-			if ( ulMouseX > VISABLE_WIDTH-MOUSEMOVAREA )
-			{
-				nScrollX += (int32_t)(MAPSCROLLSPEED * ((float)ulMouseX - (VISABLE_WIDTH-MOUSEMOVAREA)) / MOUSEMOVAREA);
-				if ( nScrollX > MAP_WIDTH-VISABLE_WIDTH ) nScrollX = MAP_WIDTH-VISABLE_WIDTH;
-				ulMouseMove |= 2;	
-			}
-			if ( ulMouseY < MOUSEMOVAREA )
-			{
-				nScrollY -= (int32_t)(MAPSCROLLSPEED * (MOUSEMOVAREA - (float)ulMouseY) / MOUSEMOVAREA);
-				if ( nScrollY < 0 ) nScrollY = 0;
-				ulMouseMove |= 4;	
-
-			}
-			if ( ulMouseY > VISABLE_HEIGHT-MOUSEMOVAREA )
-			{
-				nScrollY += (int32_t)(MAPSCROLLSPEED * ((float)ulMouseY - (VISABLE_HEIGHT-MOUSEMOVAREA)) / MOUSEMOVAREA);
-				if ( nScrollY > MAP_HEIGHT-VISABLE_HEIGHT ) nScrollY = MAP_HEIGHT-VISABLE_HEIGHT;
-				ulMouseMove |= 8;	
-			}
-
-			ulMouseY += 42;
-
-			switch( ulMouseMove)
-			{
-				case 1: nMouseGfxOffset = 48; break;
-				case 2: nMouseGfxOffset = 16; break;
-				case 4: nMouseGfxOffset = 32; break;
-				case 8: nMouseGfxOffset = 0; break;
-				case 5: nMouseGfxOffset = 40; break;	
-				case 9: nMouseGfxOffset = 56; break;
-				case 6: nMouseGfxOffset = 24; break;
-				case 10: nMouseGfxOffset = 8; break;
-				default: nMouseGfxOffset = 38; break;	
-			}
-
-			if ( ulMouseMove )
-			{
- 				LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Misc ) + 16, nMouseGfxOffset, (ulMouseX >= 640 ? 640 : ulMouseX) - 15, (ulMouseY > 400 ? 400 : ulMouseY)  - 15 );
-			}
-			else
-			{
-				LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Misc ) + 41, nMarkerGfx, (ulMouseX >= 640 ? 640 : ulMouseX) - 30, (ulMouseY > 400 ? 400 : ulMouseY) - 30 );
-			}
-		    if ( !(ulFrames & 3))
-			{
-				nMarkerGfx++;
-				if ( nMarkerGfx > 9 ) nMarkerGfx = 0;
-			}
-		}
-		else
-		{
-			uint32_t ulMouseX = sMouseState.MouseX_Pointer;
-			uint32_t ulMouseY = sMouseState.MouseY_Pointer + 42;
-			LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Misc ) + 42, nMarkerGfx, (ulMouseX >= 640 ? 640 : ulMouseX) - 30, (ulMouseY > 400 ? 400 : ulMouseY) - 30 );
-		    if ( !(ulFrames & 3))
-			{
-				nMarkerGfx++;
-				if ( nMarkerGfx > 9 ) nMarkerGfx = 0;
-			}
-		}
-
-
-#endif
 	}
 
+	// terminate the program
 	Hardware_Close();
-
-	
 	free(paletteBuffer);
 
 	printf("\n%d frames displayed\n", ulFrames);
 	printf("Time played %d seconds\n", ulFrames / 50 );
 	printf("Exiting - have a nice day!\n\n");
-	// return succes
+
 	return 0;
 }
+
+
+/** ---------------------------------------------------------------------------
+	@brief 		Draw the game screen
+	@ingroup 	MainShell
+ --------------------------------------------------------------------------- */
+void Main_DrawGameScreen( void )
+{
+	// copy area opf map to screen
+	Hardware_SetMapX( nScrollX );	
+	Hardware_SetMapY( nScrollY );
+	Hardware_CopyBackToScreen();
+
+	#if 1
+	for( int32_t i = 0; i < 26; i++ )
+	{
+		LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Font ) + 1, i, 20+(i*7), 50 );
+		LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Font ), i, 20+(i*16), 60 );
+	}
+	#endif
+
+	// water...
+	uint32_t ulMapWidth = 1920;
+	uint32_t ulMapHeight = 900;
+	int32_t ulYPos = ulMapHeight;
+	uint32_t ulBak = ulWaterSprNum;
+
+	for( uint32_t num = 0; num < 3; num++ )
+	{
+		for ( int32_t gX = 0; gX < ulMapWidth; gX += 256 )
+		{
+			LIB_Sprites_Draw( ulWaterSprIndex, ulWaterSprNum, gX - nScrollX, ulYPos - nScrollY );
+		}
+
+		ulWaterSprNum += 4;
+		if ( ulWaterSprNum > 11 ) ulWaterSprNum -= 11;	
+		ulYPos += (ulSprHeight / 3) - 1;
+	}
+
+	ulWaterSprNum = ulBak;
+	if ( !(ulFrames & 3) )
+	{
+		ulWaterSprNum++;
+		if ( ulWaterSprNum > 11 ) ulWaterSprNum = 0;
+	}
+
+}
+
+
+/** ---------------------------------------------------------------------------
+	@brief 		Draw the map onto the screen with the current scroll position
+	@ingroup 	MainShell
+ --------------------------------------------------------------------------- */
+void Main_DrawMapScreen( void )
+{
+	Hardware_CopyBackScreenMap();
+
+	uint8_t* pS = Hardware_GetScreenPtr();
+
+	uint32_t ulMarkStartX = nScrollX / 3;
+	uint32_t ulMarkStartY = nScrollY;
+	uint32_t ulMapYSize = (300.0f * (360.0f / 900.0f)) - 1;
+
+	ulMarkStartY = (float)ulMarkStartY * (300.0f / 900.0f);  			 
+
+	for( uint32_t gX = 0; gX < 213 && (ulMarkStartX + gX < 640); gX++ )
+	{
+		pS[  (ulMarkStartY + 70) * 640 + ulMarkStartX + gX ] = 0x0f;
+		pS[  (ulMarkStartY + 70 + ulMapYSize) * 640 + ulMarkStartX + gX ] = 0x0f;
+	}
+	for( uint32_t gY = 0; gY < ulMapYSize; gY++ )
+	{
+		pS[  (ulMarkStartY + gY + 70) * 640 + ulMarkStartX ] = 0x0f;
+		pS[  (ulMarkStartY + gY + 70) * 640 + ulMarkStartX + 213 ] = 0x0f;
+	}
+}
+
+/** ---------------------------------------------------------------------------
+	@brief 		Control both the map and game
+	@ingroup 	MainShell
+	@return		bool 		true - quit game
+ --------------------------------------------------------------------------- */
+bool Main_ControlGame( void )
+{
+	bool bDoQuit = false;
+
+	ApolloJoypad( &sJoypadState );
+	ApolloKeyboard( &sKeyboardState );	
+	ApolloMouse( &sMouseState );
+
+	// simple joystick map position control
+	if ( sJoypadState.Joypad_X_Delta != 0 )
+	{
+		nScrollX += (int32_t)sJoypadState.Joypad_X_Delta * 4;
+		if ( nScrollX < 0 ) nScrollX = 0;
+		if ( nScrollX > 1920-640 ) nScrollX = 1920-640;
+	}
+	if ( sJoypadState.Joypad_Y_Delta != 0 )
+	{
+		nScrollY += (int32_t)sJoypadState.Joypad_Y_Delta * 4;
+		if ( nScrollY < 0 ) nScrollY = 0;
+		if ( nScrollY > 900-360 ) nScrollY = 900-360;
+	}
+
+	if (sKeyboardState.Current_Key == 0x45)
+	{
+		bDoQuit = true;
+	}
+	if (sKeyboardState.Current_Key == 0x01 )
+	{
+		bMapMode = bMapMode ? false : true;
+	}
+	if (sKeyboardState.Current_Key == 0x02)
+	{
+		CreateBackScreens();
+		LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
+	}
+
+	// check for joystick button A - change map
+	if ( sJoypadState.Joypad_A == true && sJoypadState.Joypad_AActioned == false )
+	{
+		sJoypadState.Joypad_AActioned = true;
+		CreateBackScreens();
+		LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
+	}
+	else if ( sJoypadState.Joypad_A == false && sJoypadState.Joypad_AActioned == true )
+	{
+		sJoypadState.Joypad_AActioned = false;
+	}
+
+	// check for joystick button B - Quit
+	if ( sJoypadState.Joypad_B == true )
+		bDoQuit = true;
+
+	// check for joystick button X - change mode
+	if ( sJoypadState.Joypad_X == true && sJoypadState.Joypad_XActioned == false )
+	{
+		sJoypadState.Joypad_XActioned = true;
+		bMapMode = bMapMode ? false : true;
+	}
+	else if ( sJoypadState.Joypad_X == false && sJoypadState.Joypad_XActioned == true )
+	{
+		sJoypadState.Joypad_XActioned = false;
+	}
+
+	// check for mouse button 1 - change map
+	if ( bMapMode == true &&sMouseState.Button_State & APOLLOMOUSE_RIGHTCLICK )
+	{
+		CreateBackScreens();
+		LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
+	}
+	if ( bMapMode == true && sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN )
+	{
+		int32_t ulMouseX = sMouseState.MouseX_Pointer;
+		int32_t ulMouseY = sMouseState.MouseY_Pointer;
+		
+		nScrollX = (int32_t)((float)ulMouseX * 1920 / 640) - 320;
+		nScrollY = (int32_t)((float)ulMouseY * 900 / 360) - 160;
+		if ( nScrollX < 0 ) nScrollX = 0;
+		if ( nScrollX > 1920-640 ) nScrollX = 1920-640;
+		if ( nScrollY < 0 ) nScrollY = 0;
+		if ( nScrollY > 900-360 ) nScrollY = 900-360;
+	}
+
+	if ( bMapMode == false && sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN )
+	{
+		uint32_t ulMouseX = sMouseState.MouseX_Pointer;
+		uint32_t ulMouseY = sMouseState.MouseY_Pointer;
+		uint8_t ulMouseMove = 0;
+		// simple joystick map position control
+		if ( ulMouseX < MOUSEMOVAREA )
+		{
+			nScrollX -= (int32_t)(MAPSCROLLSPEED * (float)(MOUSEMOVAREA - (float)ulMouseX) / (float)MOUSEMOVAREA);
+			if ( nScrollX < 0 ) nScrollX = 0;
+			ulMouseMove |= 1;	
+		}
+		if ( ulMouseX > VISABLE_WIDTH-MOUSEMOVAREA )
+		{
+			nScrollX += (int32_t)(MAPSCROLLSPEED * ((float)ulMouseX - (VISABLE_WIDTH-MOUSEMOVAREA)) / MOUSEMOVAREA);
+			if ( nScrollX > MAP_WIDTH-VISABLE_WIDTH ) nScrollX = MAP_WIDTH-VISABLE_WIDTH;
+			ulMouseMove |= 2;	
+		}
+		if ( ulMouseY < MOUSEMOVAREA )
+		{
+			nScrollY -= (int32_t)(MAPSCROLLSPEED * (MOUSEMOVAREA - (float)ulMouseY) / MOUSEMOVAREA);
+			if ( nScrollY < 0 ) nScrollY = 0;
+			ulMouseMove |= 4;	
+
+		}
+		if ( ulMouseY > VISABLE_HEIGHT-MOUSEMOVAREA )
+		{
+			nScrollY += (int32_t)(MAPSCROLLSPEED * ((float)ulMouseY - (VISABLE_HEIGHT-MOUSEMOVAREA)) / MOUSEMOVAREA);
+			if ( nScrollY > MAP_HEIGHT-VISABLE_HEIGHT ) nScrollY = MAP_HEIGHT-VISABLE_HEIGHT;
+			ulMouseMove |= 8;	
+		}
+
+		ulMouseY += 42;
+
+		switch( ulMouseMove)
+		{
+			case 1: nMouseGfxOffset = 48; break;
+			case 2: nMouseGfxOffset = 16; break;
+			case 4: nMouseGfxOffset = 32; break;
+			case 8: nMouseGfxOffset = 0; break;
+			case 5: nMouseGfxOffset = 40; break;	
+			case 9: nMouseGfxOffset = 56; break;
+			case 6: nMouseGfxOffset = 24; break;
+			case 10: nMouseGfxOffset = 8; break;
+			default: nMouseGfxOffset = 38; break;	
+		}
+
+		if ( ulMouseMove )
+		{
+			LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Misc ) + 16, nMouseGfxOffset, (ulMouseX >= 640 ? 640 : ulMouseX) - 15, (ulMouseY > 400 ? 400 : ulMouseY)  - 15 );
+		}
+		else
+		{
+			LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Misc ) + 41, nMarkerGfx, (ulMouseX >= 640 ? 640 : ulMouseX) - 30, (ulMouseY > 400 ? 400 : ulMouseY) - 30 );
+		}
+		if ( !(ulFrames & 3))
+		{
+			nMarkerGfx++;
+			if ( nMarkerGfx > 9 ) nMarkerGfx = 0;
+		}
+	}
+	else
+	{
+		uint32_t ulMouseX = sMouseState.MouseX_Pointer;
+		uint32_t ulMouseY = sMouseState.MouseY_Pointer + 42;
+		LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Misc ) + 42, nMarkerGfx, (ulMouseX >= 640 ? 640 : ulMouseX) - 30, (ulMouseY > 400 ? 400 : ulMouseY) - 30 );
+		if ( !(ulFrames & 3))
+		{
+			nMarkerGfx++;
+			if ( nMarkerGfx > 9 ) nMarkerGfx = 0;
+		}
+	}
+
+	return( bDoQuit );
+}
+
 
 
 /** ---------------------------------------------------------------------------

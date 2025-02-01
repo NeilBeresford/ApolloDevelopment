@@ -659,17 +659,7 @@ _Hardware_CheckKeyUp
 	rts
 
 	CNOP 0,4
-;** ---------------------------------------------------------------------------
-;	@brief 		swaps byte order
-;	@ingroup 	MainShell
-;	@param 		d0 - long to swap
-;	@return 	d0 - swapped result
-; --------------------------------------------------------------------------- */
-_Hardware_SwapLong
 
-	perm #@3210,d0,d0									* swap LONG
-	rts
-	CNOP 0,4
 ;** ---------------------------------------------------------------------------
 ;	@brief 		swaps byte order
 ;	@ingroup 	MainShell

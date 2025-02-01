@@ -382,8 +382,9 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
             printf( "Loading sprite files : 100%% (%d of %d)\n", ulNumLoaded, sRHCtrl.ulTotalFiles );
         }
         printf( "Sprite Resource Loaded into fast memory\n" );
-        printf( "Total files remapped: %d\n", ulTotalFilesRemapped );
-        printf( "Total resource size: %dKB \n", (ulTotalSize >> 10) + 1 );
+        printf( "Total files loaded   : %d\n", ulNumLoaded );
+        printf( "Total files remapped : %d\n", ulTotalFilesRemapped );
+        printf( "Total resource size  : %dKB \n", (ulTotalSize >> 10) + 1 );
     }
 
     return true;
