@@ -351,7 +351,7 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
                         if ( psGroup->reMapValue != 0 && psFileDetails->eFileType == eRAW )
                         {
                             ulTotalFilesRemapped++;
-                            if ( strcmp((int8_t*)(psFileDetails->pszResourceName),"gradient-8-900.RAW") == 0 )   
+                            if ( strncmp((int8_t*)(psFileDetails->pszResourceName),"gradient-8-", 11 ) == 0 )   
                             {
                                 LIB_Sprites_Remap( ulResourceID, 184 );
                             }
@@ -427,6 +427,17 @@ void ResourceHandling_InitStatus( psFileGroup groups )
 uint32_t ResourceHandling_GetGroupStartResource( uint32_t nGroupIndex )
 {
     return theFileGroups[ nGroupIndex ].ulStartResourceID;
+}
+
+/** ----------------------------------------------------------------------------
+    @brief 		Get the resource name
+    @ingroup 	MainShell
+    @param      ulResourceID    - Resource ID
+    @return 	uint8_t*        - Pointer to the resource name
+ -----------------------------------------------------------------------------*/
+uint8_t* ResourceHandling_GetGroupName( uint32_t nGroupIndex )
+{
+    return theFileGroups[ nGroupIndex ].pszDirectory;
 }
 
 

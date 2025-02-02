@@ -46,6 +46,7 @@ extern bool ResourceHandling_Get( uint32_t ulResourceID, eResourceGet_t eType, u
 bool ResourceHandling_LoadGroups( sFileGroup groups[] );
 uint32_t ResourceHandling_GetGroupStartResource( uint32_t nGroupIndex );
 void ResourceHandling_InitStatus( psFileGroup groups );
+uint8_t* ResourceHandling_GetGroupName( uint32_t nGroupIndex );
 
 //-----------------------------------------------------------------------------
 

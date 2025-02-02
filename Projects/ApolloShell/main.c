@@ -21,6 +21,7 @@
 #include "math.h"
 #include "string.h"
 #include "time.h"
+#include "Includes/Defines.h"
 #include "Includes/Hardware.h"
 #include "Includes/HWScreen.h"
 #include "Includes/ResourceFiles.h"
@@ -30,20 +31,20 @@
 #include "Includes/LIB_Files.h"
 #include "Includes/LIB_Sprites.h"
 #include "Includes/LIB_PerlinNoise.h"
+#include "Includes/LIB_SpriteFont.h"
 
 //-----------------------------------------------------------------------------
 // Defines
 //-----------------------------------------------------------------------------
 
-#define MAP_WIDTH 		( 1920 )
-#define MAP_HEIGHT 		( 900 )
-#define NUM_MAPS 		( 2 )
+#define BACKSCREENWIDTH 		( 1920 )
+#define BACKSCREENHEIGHT 		( 900 )
+#define NUM_MAPS 				( 2 )
 
-#define MOUSEMOVAREA 	( 100.0f )
-#define VISABLE_HEIGHT 	( 360 )
-#define VISABLE_WIDTH 	( 640 )
-#define MAPSCROLLSPEED 	( 12.0f )
-
+#define MOUSEMOVAREA 			( 50.0f )
+#define VISABLE_HEIGHT 			( 360 )
+#define VISABLE_WIDTH 			( 640 )
+#define MAPSCROLLSPEED 			( 12.0f )
 
 //-----------------------------------------------------------------------------
 // Forward declarations
@@ -63,17 +64,61 @@ ApolloKeyBoardState sKeyboardState;
 ApolloJoypadState   sJoypadState;
 ApolloMouseState	sMouseState;
 
-int32_t pMapHeight[ MAP_WIDTH ];
+int32_t pMapHeight[ BACKSCREENWIDTH ];
 uint32_t ulFrames = 0;
 bool bMapMode = false;
 int32_t nScrollX = 400;
 int32_t nScrollY = 400;
 uint32_t nTimeOut = 800;
 uint32_t nMouseGfxOffset = 6;
-uint32_t nMarkerGfx = 0;
+int32_t nMarkerGfx = 0;
 uint32_t ulWaterSprIndex = 0;
 uint32_t ulSprHeight = 0; 
 uint32_t ulWaterSprNum = 0;
+uint32_t ulWaterType = 1;
+int32_t  nMarkerDir = 1;
+
+
+uint32_t nMapType 		= 0;	
+uint32_t nMapGroup 		= 5;
+uint32_t nMapGradient 	= 0;
+uint32_t nMapSoil 		= 1;
+uint32_t nMapBack 		= 2;
+
+uint32_t* 	palettes[ 30 ];
+uint8_t* paletteFiles[ 30 ] = 
+{
+	"Data/Palettes/paletteArt.bin",
+	"Data/Palettes/palette-Beach.bin",
+	"Data/Palettes/paletteCheese.bin",
+	"Data/Palettes/paletteConstruction.bin",
+	"Data/Palettes/palette-Desert.bin",
+	"Data/Palettes/paletteDesert.bin",
+	"Data/Palettes/paletteDungeon.bin",
+	"Data/Palettes/paletteEaster.bin",
+	"Data/Palettes/palette-Farm.bin",
+	"Data/Palettes/paletteFarm.bin",
+	"Data/Palettes/palette-Forest.bin",
+	"Data/Palettes/paletteForest.bin",
+	"Data/Palettes/paletteFruit.bin",
+	"Data/Palettes/paletteGulf.bin",
+	"Data/Palettes/palette-Hell.bin",
+	"Data/Palettes/paletteHell.bin",	
+	"Data/Palettes/paletteHospital.bin",
+	"Data/Palettes/paletteJungle.bin",
+	"Data/Palettes/paletteManhattan.bin",
+	"Data/Palettes/paletteMedieval.bin",
+	"Data/Palettes/paletteMusic.bin",
+	"Data/Palettes/palettePirate.bin",
+	"Data/Palettes/paletteSnow.bin",
+	"Data/Palettes/paletteSpace.bin",
+	"Data/Palettes/paletteSports.bin",
+	"Data/Palettes/paletteTentacle.bin",
+	"Data/Palettes/paletteTime.bin",
+	"Data/Palettes/paletteTools.bin",
+	"Data/Palettes/paletteTribal.bin",
+	"Data/Palettes/paletteUrban.bin",
+};
 
 //-----------------------------------------------------------------------------
 // Code
@@ -87,7 +132,6 @@ uint32_t ulWaterSprNum = 0;
 uint32_t main(int argc, char *argv[])
 {
 	uint32_t 	keyReturn 				= 0;
-	uint32_t* 	paletteBuffer 			= NULL;
 	uint8_t Banner[] = 
 		"\n" \
 		"Apollo v4 Demo - by Neil Beresford\n"  \
@@ -110,7 +154,13 @@ uint32_t main(int argc, char *argv[])
 	// load in the files...
 	printf("Loading misc files...\n");
 
-	if ( LIB_Files_Load("Data/Palettes/paletteSnow.bin",&paletteBuffer, NULL)	== false ) { printf("Failed to load palette\n"); return 1; }
+	for ( uint32_t nFile = 0; nFile < 30; nFile++ )
+	{
+		if ( LIB_Files_Load( paletteFiles[ nFile ],&palettes[ nFile ] , NULL ) == false ) 
+		{ 
+			printf("Failed to load palette %s\n", paletteFiles[ nFile ]); 
+		}
+	}
 
 	// load all the sprite groups
 	printf("Loading sprite files and remapping...\n");
@@ -119,42 +169,43 @@ uint32_t main(int argc, char *argv[])
 	printf("Files loaded\n");	
 	printf("Create the back screens\n");
 	Hardware_SetBackscreenBuffers();
-	
-	#if 0
-	LIB_Sprites_SetClipArea( 20, 40, 640, 480 );
-	LIB_Sprites_Draw( 			ResourceHandling_GetGroupStartResource( 4 ) + 4, 0, -100,-20 );
-	#endif
 
 	CreateBackScreens();
-
+	
 	printf( "Initializing screen mode and other hardware\n" );
 
 	Hardware_Init();
 
-	HWSCREEN_SetImagePalette( paletteBuffer );
+	HWSCREEN_SetImagePalette( palettes[ nMapType ] );
 
 	// Draw panel to all three screens
 	Hardware_SetScreenmode( 0 );
 	LIB_Sprites_SetClipArea( 0, 0, 640, 480 );
 	for( int32_t count = 0; count < 3; count++)
 	{
-		LIB_Sprites_Draw( 			ResourceHandling_GetGroupStartResource( 4 ) + 4, 0, 0,400 );
-		LIB_Sprites_Draw( 			ResourceHandling_GetGroupStartResource( 4 ), 0,     320-20,		10 );
-		LIB_Sprites_Draw( 			ResourceHandling_GetGroupStartResource( 4 ) + 2, 0, 320-24-268, 0 );
-		LIB_Sprites_Draw( 			ResourceHandling_GetGroupStartResource( 4 ) + 2, 0, 320-24-268, 19 );
-		LIB_Sprites_DrawFlipped( 	ResourceHandling_GetGroupStartResource( 4 ) + 2, 0, 320+22, 	0 );
-		LIB_Sprites_DrawFlipped( 	ResourceHandling_GetGroupStartResource( 4 ) + 2, 0, 320+22, 	19 );
+		LIB_Sprites_Draw( 			ResourceHandling_GetGroupStartResource( eGroups_Panels ) + 4, 0, 0,400 );
+		LIB_Sprites_Draw( 			ResourceHandling_GetGroupStartResource( eGroups_Panels ), 0,     320-20,		10 );
+		LIB_Sprites_Draw( 			ResourceHandling_GetGroupStartResource( eGroups_Panels ) + 2, 0, 320-24-268, 0 );
+		LIB_Sprites_Draw( 			ResourceHandling_GetGroupStartResource( eGroups_Panels ) + 2, 0, 320-24-268, 19 );
+		LIB_Sprites_DrawFlipped( 	ResourceHandling_GetGroupStartResource( eGroups_Panels ) + 2, 0, 320+22, 	0 );
+		LIB_Sprites_DrawFlipped( 	ResourceHandling_GetGroupStartResource( eGroups_Panels ) + 2, 0, 320+22, 	19 );
+
+		LIB_SpriteFont_Draw( eFont_WhiteSmall, 34, 4, "THE BOYS" );
+		LIB_SpriteFont_Draw( eFont_WhiteSmall, 34, 24, "MYSTERY" );
+		LIB_SpriteFont_Draw( eFont_WhiteSmall, 601-56, 4, "ROYALITY" );
+		LIB_SpriteFont_Draw( eFont_WhiteSmall, 601-35, 24, "OH NO" );
+
 		Hardware_WaitVBL();
 		Hardware_FlipScreen();
 	}
+	LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
 
 
 	// setup the water and mouse and clipping area
-	ulWaterSprIndex = ResourceHandling_GetGroupStartResource( eGroups_Water ) + 1;
+	ulWaterSprIndex = ResourceHandling_GetGroupStartResource( eGroups_Water ) + ulWaterType;
 	ulSprHeight = LIB_Sprites_GetHeight( ulWaterSprIndex );
 	sMouseState.MouseX_Pointer_Max = 640;
 	sMouseState.MouseY_Pointer_Max = 360;
-	LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
 
 	// main loop -
 	while ( true )
@@ -179,7 +230,6 @@ uint32_t main(int argc, char *argv[])
 
 	// terminate the program
 	Hardware_Close();
-	free(paletteBuffer);
 
 	printf("\n%d frames displayed\n", ulFrames);
 	printf("Time played %d seconds\n", ulFrames / 50 );
@@ -195,18 +245,23 @@ uint32_t main(int argc, char *argv[])
  --------------------------------------------------------------------------- */
 void Main_DrawGameScreen( void )
 {
+	uint8_t strBuffer[ 256 ];
+
 	// copy area opf map to screen
 	Hardware_SetMapX( nScrollX );	
 	Hardware_SetMapY( nScrollY );
 	Hardware_CopyBackToScreen();
 
 	#if 1
-	for( int32_t i = 0; i < 26; i++ )
-	{
-		LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Font ) + 1, i, 20+(i*7), 50 );
-		LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Font ), i, 20+(i*16), 60 );
-	}
-	#endif
+
+	sprintf( strBuffer, "Mouse postion   x - %04d y - %03d", (uint32_t)sMouseState.MouseX_Pointer, (uint32_t)sMouseState.MouseY_Pointer );	
+	LIB_SpriteFont_Draw( eFont_CyanSmall, 5, 50, strBuffer );
+	sprintf( strBuffer, "Scroll position x - %04d y - %03d", nScrollX, nScrollY );	
+	LIB_SpriteFont_Draw( eFont_GreenSmall, 5, 59, strBuffer );
+	sprintf( strBuffer, "%02d %s", nMapType, ResourceHandling_GetGroupName( eGroups_Terrain01 + nMapType ) );
+	LIB_SpriteFont_Draw( eFont_RedSmall, 5, 68, strBuffer );
+
+	#endif	
 
 	// water...
 	uint32_t ulMapWidth = 1920;
@@ -333,9 +388,25 @@ bool Main_ControlGame( void )
 	}
 
 	// check for mouse button 1 - change map
-	if ( bMapMode == true &&sMouseState.Button_State & APOLLOMOUSE_RIGHTCLICK )
+	if ( sMouseState.Button_State & APOLLOMOUSE_RIGHTCLICK )
 	{
+		// control the type of map
+		nMapType++;
+		if ( nMapType > 29 ) nMapType = 0;
+		nMapGroup = nMapType + 5;
+		Hardware_ClearScreen();
+		Hardware_WaitVBL();
+		Hardware_FlipScreen();
+		Hardware_ClearScreen();
+		Hardware_WaitVBL();
+		Hardware_FlipScreen();
+		Hardware_ClearScreen();
+		Hardware_WaitVBL();
+		Hardware_FlipScreen();
 		CreateBackScreens();
+		Hardware_WaitVBL();
+		HWSCREEN_SetImagePalette( palettes[ nMapType ] );
+
 		LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
 	}
 	if ( bMapMode == true && sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN )
@@ -351,7 +422,8 @@ bool Main_ControlGame( void )
 		if ( nScrollY > 900-360 ) nScrollY = 900-360;
 	}
 
-	if ( bMapMode == false && sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN )
+
+	if ( bMapMode == false && !(sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN) )
 	{
 		uint32_t ulMouseX = sMouseState.MouseX_Pointer;
 		uint32_t ulMouseY = sMouseState.MouseY_Pointer;
@@ -366,7 +438,7 @@ bool Main_ControlGame( void )
 		if ( ulMouseX > VISABLE_WIDTH-MOUSEMOVAREA )
 		{
 			nScrollX += (int32_t)(MAPSCROLLSPEED * ((float)ulMouseX - (VISABLE_WIDTH-MOUSEMOVAREA)) / MOUSEMOVAREA);
-			if ( nScrollX > MAP_WIDTH-VISABLE_WIDTH ) nScrollX = MAP_WIDTH-VISABLE_WIDTH;
+			if ( nScrollX > BACKSCREENWIDTH-VISABLE_WIDTH ) nScrollX = BACKSCREENWIDTH-VISABLE_WIDTH;
 			ulMouseMove |= 2;	
 		}
 		if ( ulMouseY < MOUSEMOVAREA )
@@ -379,7 +451,7 @@ bool Main_ControlGame( void )
 		if ( ulMouseY > VISABLE_HEIGHT-MOUSEMOVAREA )
 		{
 			nScrollY += (int32_t)(MAPSCROLLSPEED * ((float)ulMouseY - (VISABLE_HEIGHT-MOUSEMOVAREA)) / MOUSEMOVAREA);
-			if ( nScrollY > MAP_HEIGHT-VISABLE_HEIGHT ) nScrollY = MAP_HEIGHT-VISABLE_HEIGHT;
+			if ( nScrollY > BACKSCREENHEIGHT-VISABLE_HEIGHT ) nScrollY = BACKSCREENHEIGHT-VISABLE_HEIGHT;
 			ulMouseMove |= 8;	
 		}
 
@@ -408,8 +480,8 @@ bool Main_ControlGame( void )
 		}
 		if ( !(ulFrames & 3))
 		{
-			nMarkerGfx++;
-			if ( nMarkerGfx > 9 ) nMarkerGfx = 0;
+			nMarkerGfx += nMarkerDir;
+			if ( nMarkerGfx == 9 || nMarkerGfx == 0 ) nMarkerDir = -nMarkerDir;
 		}
 	}
 	else
@@ -419,8 +491,8 @@ bool Main_ControlGame( void )
 		LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Misc ) + 42, nMarkerGfx, (ulMouseX >= 640 ? 640 : ulMouseX) - 30, (ulMouseY > 400 ? 400 : ulMouseY) - 30 );
 		if ( !(ulFrames & 3))
 		{
-			nMarkerGfx++;
-			if ( nMarkerGfx > 9 ) nMarkerGfx = 0;
+			nMarkerGfx += nMarkerDir;
+			if ( nMarkerGfx == 9 || nMarkerGfx == 0 ) nMarkerDir = -nMarkerDir;
 		}
 	}
 
@@ -435,7 +507,6 @@ bool Main_ControlGame( void )
  --------------------------------------------------------------------------- */
 void CreateBackScreens( void )
 {
-
 	// Generate the map
 	CreateMap();
 
@@ -443,25 +514,32 @@ void CreateBackScreens( void )
 	Hardware_SetScreenmode( 2 );	
 	uint32_t screenWidth = Hardware_GetScreenWidth();
 	uint32_t screenHeight = Hardware_GetScreenHeight();
-	uint32_t ulGradientSprIndex = ResourceHandling_GetGroupStartResource( 27 ) + 6;
+	uint32_t ulGradientSprIndex = ResourceHandling_GetGroupStartResource( nMapGroup ) + nMapGradient;
+	uint32_t nBackSprIndex = ResourceHandling_GetGroupStartResource( nMapGroup ) + nMapBack;
+	uint32_t nBackWidth = LIB_Sprites_GetWidth( nBackSprIndex );
+	uint32_t nBackHeight = LIB_Sprites_GetHeight( nBackSprIndex );
 
 	LIB_Sprites_SetClipArea( 0, 0, screenWidth, screenHeight);
 
-	// Gradient ..
+	// Gradient then back ..
 	for( uint32_t gX = 0; gX < screenWidth; gX += 8)
 	{
 		LIB_Sprites_Draw( ulGradientSprIndex, 0, gX, 0 );
+	}
+	for( uint32_t gX = 0; gX < BACKSCREENWIDTH; gX += nBackWidth)
+	{
+		LIB_Sprites_Draw( nBackSprIndex, 0, gX, 900-32-nBackHeight );
 	}
 
 	// Ground
 	uint8_t* pScreen = Hardware_GetScreenPtr();
 	uint32_t screenX = 0;
-	uint32_t ulSoilIndex = ResourceHandling_GetGroupStartResource( 27 ) + 21;
+	uint32_t ulSoilIndex = ResourceHandling_GetGroupStartResource( nMapGroup ) + nMapSoil;
 	uint8_t* pSoil = NULL;
 
 	ResourceHandling_Get( ulSoilIndex, eResourceGet_Data, &pSoil );
 
-	for ( uint32_t gx = 0; gx < MAP_WIDTH; gx++ )
+	for ( uint32_t gx = 0; gx < BACKSCREENWIDTH; gx++ )
 	{
 		uint32_t refY = pMapHeight[ gx ] - 350;
 		for( uint32_t drY = refY; drY < screenHeight; drY ++ )
@@ -504,7 +582,7 @@ void CreateMap( void )
 		float fRef = 0.00075f + ( 0.003f / rand()  );
 
 		LIB_PerlinNoise_Init( 1234 );
-		LIB_PerlinNoise_GenerateMap( pMapHeight, MAP_WIDTH, 0, fRef );
+		LIB_PerlinNoise_GenerateMap( pMapHeight, BACKSCREENWIDTH, 0, fRef );
 		//ulIndex++;
 	}
 }

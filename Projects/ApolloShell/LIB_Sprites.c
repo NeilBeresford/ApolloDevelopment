@@ -92,6 +92,24 @@ void LIB_Sprites_Close( void )
 }
 
 /** ----------------------------------------------------------------------------
+    @brief 		Returns the width of the sprites in the bank
+    @ingroup 	MainShell
+    @param      eBank           - Sprite bank to draw from
+    @return     uint32_t        - Sprite width
+ -----------------------------------------------------------------------------*/
+uint32_t LIB_Sprites_GetWidth( eSpriteBank_t eBank )
+{
+    uint32_t ulRet = 0;
+
+    if ( eBank < MAX_SPRITE_BANKS && SprCtrl.Flags.Initialized == true )
+    {
+        ulRet = SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth;
+    }
+
+    return ulRet;
+}
+
+/** ----------------------------------------------------------------------------
     @brief 		Returns the height of the sprites in the bank
     @ingroup 	MainShell
     @param      eBank           - Sprite bank to draw from
@@ -461,7 +479,7 @@ bool LIB_Sprites_Draw( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t 
             uint8_t* pSpriteStart = pSprite;
             for( uint32_t i = 0; i < 0x100; i++ )
             {
-                if ( i != 0 && i % 16 == 0 )
+                if ( i != 0 && i % 12 == 0 )
                 {
                     printf( "\n" );
                 }

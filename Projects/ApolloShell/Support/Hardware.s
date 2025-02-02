@@ -374,11 +374,13 @@ _Hardware_ClearScreen
 	movem.l d1-d2/a0,-(sp)
 
 	move.l 	screenPtr,a0
+	adda.l 	#42*SCREENWIDTH,a0
 	moveq 	#0,d1
-	move.l	#SCREENSIZE/4,d2
+	move.l	#(360*SCREENWIDTH)/4,d2
 .clear	
 	move.l 	d1,(a0)+
-	dbra 	d2,.clear
+	SUBQ.L 	#1,d2,
+	BNE.S   .clear
 
 	movem.l (sp)+,d1-d2/a0
 	rts

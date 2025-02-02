@@ -79,6 +79,7 @@ bool LIB_Sprites_DrawRawPart( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, i
 bool LIB_Sprites_DrawFlipped( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t y );
 bool LIB_Sprites_Remap( eSpriteBank_t eSpriteBank, uint32_t ShiftBy );
 void LIB_Sprites_SetClipArea( uint32_t x, uint32_t y, uint32_t w, uint32_t h );
+uint32_t LIB_Sprites_GetWidth( eSpriteBank_t eBank );
 uint32_t LIB_Sprites_GetHeight( eSpriteBank_t eBank );
 
 //-----------------------------------------------------------------------------
