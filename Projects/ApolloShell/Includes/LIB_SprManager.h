@@ -1,5 +1,5 @@
 /** ---------------------------------------------------------------------------
-	@file		LIB_Files.h
+	@file		LIB_SprManager.h
 	@defgroup 	MainShell Apollo V4 Shell
 	@brief		Apollo V4 development - Shell
 	@copyright	Neil Beresford 2024
@@ -8,20 +8,19 @@
 
 --------------------------------------------------------------------------- */
 
-#ifndef _LIB_FILES_H_
-#define _LIB_FILES_H_
+#ifndef _LIB_SPRMANAGER_H_
+#define _LIB_SPRMANAGER_H_
 
 //-----------------------------------------------------------------------------
 // External Functionality
 //-----------------------------------------------------------------------------
 
-bool LIB_Files_Load( char* pszFileName, uint8_t** pFileBuffer, uint32_t* pFileSize );
 
 //-----------------------------------------------------------------------------
 
-#endif // _LIB_FILES_H_
+#endif // _LIB_SPRMANAGER_H_
 
 //-----------------------------------------------------------------------------
-// End of file: LIB_Files.h
+// End of file: LIB_SprManager.h
 //-----------------------------------------------------------------------------
 
