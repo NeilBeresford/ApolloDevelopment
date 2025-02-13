@@ -89,9 +89,9 @@
             ]
         },
         {
-            "label": "Build ApolloShell",
+            "label": "Build AmiWorms",
             "type": "shell",
-            "command": "make -f Projects/ApolloShell/make-gcc650",
+            "command": "make -f Projects/AmiWorms/make-gcc650",
             "group": {
                 "kind": "build",
                 "isDefault": false
