@@ -20,6 +20,26 @@
 // typedefs and enums
 //-----------------------------------------------------------------------------
 
+
+/** ----------------------------------------------------------------------------
+    @brief 	    Enums for the Resource types
+    @ingroup 	MainShell
+----------------------------------------------------------------------------- */
+typedef enum
+{
+    eResourceType_NotSet    = -1,   //<! -1 Resource type not set
+    eResourceType_Text      = 0,    //<!  0 Resource is text
+    eResourceType_Binary,           //<!  1 Resource is binary
+    eResourceType_Image,            //<!  2 Resource is image
+    eResourceType_Sound,            //<!  3 Resource is sound
+    eResourceType_Font,             //<!  4 Resource is font
+    eResourceType_Palette,          //<!  5 Resource is palette
+    eResourceType_Sprite,           //<!  6 Resource is sprite
+    eResourceType_Total             //<!  7 Total number of resource types
+
+} ResourceType_t;
+
+
 /**-----------------------------------------------------------------------------
     @brierf 	Enums for the Resource types using the GET method
     @ingroup 	MainShell
@@ -46,7 +66,8 @@ extern bool ResourceHandling_Get( uint32_t ulResourceID, eResourceGet_t eType, u
 bool ResourceHandling_LoadGroups( sFileGroup groups[] );
 uint32_t ResourceHandling_GetGroupStartResource( uint32_t nGroupIndex );
 void ResourceHandling_InitStatus( psFileGroup groups );
-
+uint8_t* ResourceHandling_GetGroupName( uint32_t nGroupIndex );
+bool ResourceHandling_ScanAndSetSpriteDimentions( void );
 //-----------------------------------------------------------------------------
 
 #endif // _RESOURCEHANDLING_H_

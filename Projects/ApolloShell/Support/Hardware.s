@@ -45,11 +45,13 @@
 	XDEF _Hardware_GetMapX
 	XDEF _Hardware_GetMapY
 	XDEF _Hardware_JoystickButtonPressed
-
+	XDEF _Hardware_GetSpriteDims
+	XDEF _Hardware_DrawBlock
+	XDEF _Hardware_DrawBackScreenBlock
 	XDEF screenPtr
 	XDEF backScreen1
 	XDEF backScreen2
-
+	XDEF SpriteDims
 
 ;-----------------------------------------------------------------------------
 ; Defines
@@ -62,6 +64,11 @@ OPENSCREENTAGLIST 	EQU -$264
 BESTCMODEIDTAGLIST 	EQU -60
 VPOSR				EQU $dff004
 VPOSRCHIPIDMASK		EQU	$0f		
+DIMS_TOTAL_SIZE		EQU	250000
+
+;-----------------------------------------------------------------------------
+; Functions
+;-----------------------------------------------------------------------------
 
 _ApolloTakeOver:
 
@@ -374,11 +381,13 @@ _Hardware_ClearScreen
 	movem.l d1-d2/a0,-(sp)
 
 	move.l 	screenPtr,a0
+	adda.l 	#42*SCREENWIDTH,a0
 	moveq 	#0,d1
-	move.l	#SCREENSIZE/4,d2
+	move.l	#(360*SCREENWIDTH)/4,d2
 .clear	
 	move.l 	d1,(a0)+
-	dbra 	d2,.clear
+	SUBQ.L 	#1,d2,
+	BNE.S   .clear
 
 	movem.l (sp)+,d1-d2/a0
 	rts
@@ -525,7 +534,7 @@ _Hardware_CopyBackScreenMap
 	move.l 	#BACKSCREENWIDTH,d2
 	move.l 	#BACKSCREENHEIGHT,d3
 	move.l 	#SCREENWIDTH,d4
-	move.l 	#300,d5
+	move.l 	#320,d5
 	move.l 	d0,d6
 	move.l 	d1,d7
 
@@ -669,17 +678,82 @@ _Hardware_SwapLong
 
 	perm #@3210,d0,d0									* swap LONG
 	rts
-	CNOP 0,4
-;** ---------------------------------------------------------------------------
-;	@brief 		swaps byte order
-;	@ingroup 	MainShell
-;	@param 		d0 - long to swap
-;	@return 	d0 - swapped result
-; --------------------------------------------------------------------------- */
-_Hardware_SwapLong
 
-	perm #@3210,d0,d0									* swap LONG
+
+;** ---------------------------------------------------------------------------
+;	@brief 		Get the sprite dimensions
+;	@ingroup 	MainShell
+;	@return 	d0 - sprite dimensions
+; --------------------------------------------------------------------------- */
+_Hardware_GetSpriteDims
+
+	move.l	#SpriteDims,d0
 	rts
+
+;** ---------------------------------------------------------------------------
+;  @brief 	Draws a block of pixels to the screen
+;  @ingroup  MainShell
+;  @param  d0 - x position
+;  @param  d1 - y position
+;  @param  d2 - width
+;  @param  d3 - height
+;  @param  d4 - colour
+;  @return none
+; --------------------------------------------------------------------------- */
+_Hardware_DrawBlock
+
+	movem.l	d0-d7/a0-a6,-(sp)
+
+	move.l  screenPtr,a1
+	add.l   d0,a1
+	mulu    #SCREENWIDTH,d1
+	add.l   d1,a1
+	move.l  d2,d1
+.yloop:
+	move.l  d2,d1
+	move.l  a1,a0
+.xloop:
+	move.b  d4,(a0)+
+	subq.l  #1,d1
+	bne.s   .xloop
+	add.l   #SCREENWIDTH,a1
+	dbra    d3,.yloop
+
+	movem.l	(sp)+,d0-d7/a0-a6
+	rts
+
+;** ---------------------------------------------------------------------------
+;  @brief 	Draws a block of pixels to the back screen
+;  @ingroup  MainShell
+;  @param  d0 - x position
+;  @param  d1 - y position
+;  @param  d2 - width
+;  @param  d3 - height
+;  @param  d4 - colour
+;  @return none
+; --------------------------------------------------------------------------- */
+_Hardware_DrawBackScreenBlock
+
+	movem.l	d0-d7/a0-a6,-(sp)
+
+	move.l  backScreen2,a1
+	add.l   d0,a1
+	mulu    #BACKSCREENWIDTH,d1
+	add.l   d1,a1
+	asr.l   #2,d2
+.yloop:
+	move.l  d2,d1
+	move.l  a1,a0
+.xloop:
+	move.l  d4,(a0)+
+	subq.l  #1,d1
+	bne.s   .xloop
+	add.l   #BACKSCREENWIDTH,a1
+	dbra    d3,.yloop
+
+	movem.l	(sp)+,d0-d7/a0-a6
+	rts
+
 
 ;-----------------------------------------------------------------------------
 
@@ -746,6 +820,12 @@ bs2				ds.b	BACKSCREENWIDTH*BACKSCREENHEIGHT	; back screen 2
 bs3				ds.b	BACKSCREENWIDTH*BACKSCREENHEIGHT	; back screen 3
 
 				even
+
+	SECTION SpriteDims,BSS_F
+
+SpriteDims		ds.b	DIMS_TOTAL_SIZE
+
+		even	
 
 	SECTION	TEXT, CODE_C
 

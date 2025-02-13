@@ -78,13 +78,34 @@ typedef enum eGroups
     eGroups_Terrain25,      // 29 Terrain25
     eGroups_Terrain26,      // 30 Terrain26
     eGroups_Terrain27,      // 31 Terrain27
-    eGroups_Terrain29,      // 32 Terrain29
-    eGroups_Terrain30,      // 33 Terrain30
-    eGroups_Water,          // 34 Water
-    eGroups_Font,           // 35 Fonts
-    eGroups_Total           // 36 Total number of groups
+    eGroups_Terrain28,      // 32 Terrain28
+    eGroups_Terrain29,      // 33 Terrain29
+    eGroups_Terrain30,      // 34 Terrain30
+    eGroups_Water,          // 35 Water
+    eGroups_Font,           // 36 Fonts
+    eGroups_Total           // 37 Total number of groups
    
 };
+
+typedef enum
+{
+    eFont_WhiteBig = 0,    // 0
+    eFont_WhiteSmall,      // 1
+    eFont_BlueBig,         // 2
+    eFont_BlueSmall,       // 3
+    eFont_CyanBig,         // 4
+    eFont_CyanSmall,       // 5
+    eFont_GreenBig,        // 6
+    eFont_GreenSmall,      // 7
+    eFont_PurpleBig,       // 8
+    eFont_PurpleSmall,     // 9
+    eFont_RedBig,          // 10
+    eFont_RedSmall,        // 11
+    eFont_YellowBig,       // 12
+    eFont_YellowSmall,     // 13
+    eFont_TotalFonts       // 14    
+};
+
 
 
 //-----------------------------------------------------------------------------

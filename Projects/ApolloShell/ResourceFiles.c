@@ -24,13 +24,25 @@
 // Variables
 //-----------------------------------------------------------------------------
 
-// Fonts
 sFileDetails Fonts[] = 
 {
     { "medwht1-160-24-24.SPR", eSPR,160,24,24 },
     { "smlwht1-160-12-12.SPR", eSPR,160,12,12 },
+    { "medblu1-160-24-24.SPR", eSPR,160,24,24 },
+    { "smlblu1-160-12-12.SPR", eSPR,160,12,12 },
+    { "medcyn1-160-24-24.SPR", eSPR,160,24,24 },
+    { "smlcyn1-160-12-12.SPR", eSPR,160,12,12 },
+    { "medgrn1-160-24-24.SPR", eSPR,160,24,24 },
+    { "smlgrn1-160-12-12.SPR", eSPR,160,12,12 },
+    { "medppl1-160-24-24.SPR", eSPR,160,24,24 },
+    { "smlppl1-160-12-12.SPR", eSPR,160,12,12 },
+    { "medred1-160-24-24.SPR", eSPR,160,24,24 },
+    { "smlred1-160-12-12.SPR", eSPR,160,12,12 },
+    { "medyel1-160-24-24.SPR", eSPR,160,24,24 },
+    { "smlyel1-160-12-12.SPR", eSPR,160,12,12 },
     { NULL,0,0,0,0 }
 };    
+
 // Water layers
 sFileDetails Water[] = 
 {
@@ -195,7 +207,11 @@ sFileDetails Panels[] =
 // ./Terrain/Art:
 sFileDetails Terrain01[] = 
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-155.RAW",eRAW,1,640,155 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
+    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "bigbrush-1-192-267.SPR",eSPR,1,192,267 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
@@ -205,8 +221,6 @@ sFileDetails Terrain01[] =
     { "debris-1-26-3072.SPR",eSPR,1,26,3072 },
     { "dividers-1-192-280.SPR",eSPR,1,192,280 },
     { "eraser-1-128-126.SPR",eSPR,1,128,126 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "inkwell-1-132-160.SPR",eSPR,1,132,160 },
     { "litlbrsh-1-172-105.SPR",eSPR,1,172,105 },
     { "litltube-1-124-78.SPR",eSPR,1,124,78 },
@@ -220,18 +234,20 @@ sFileDetails Terrain01[] =
     { "roller-1-248-285.SPR",eSPR,1,248,285 },
     { "scissors-1-196-155.SPR",eSPR,1,196,155 },
     { "sharpner-1-136-125.SPR",eSPR,1,136,125 },
-    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "spraycan-1-284-233.SPR",eSPR,1,284,233 },
     { "tape-1-172-180.SPR",eSPR,1,172,180 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "thumtack-1-60-103.SPR",eSPR,1,60,103 },
     { NULL,0,0,0,0 }
 };
 
-//./Terrain/-Beach:
+//./Terrain/-Beach
 sFileDetails Terrain02[] = 
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-157.RAW",eRAW,1,640,157 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
+    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "beer-1-92-177.SPR",eSPR,1,92,177 },
     { "board-1-68-90.SPR",eSPR,1,68,90 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
@@ -240,21 +256,22 @@ sFileDetails Terrain02[] =
     { "coke-1-96-139.SPR",eSPR,1,96,139 },
     { "debris-1-17-2048.SPR",eSPR,1,17,2048 },
     { "goggles-1-152-83.SPR",eSPR,1,152,83 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "icecream-1-88-130.SPR",eSPR,1,88,130 },
     { "rock1-1-56-29.SPR",eSPR,1,56,29 },
     { "rock2-1-60-44.SPR",eSPR,1,60,44 },
     { "shell-1-84-92.SPR",eSPR,1,84,92 },
     { "snorkle-1-136-158.SPR",eSPR,1,136,158 },
-    { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 //./Terrain/Cheese:
 sFileDetails Terrain03[] = 
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-152.RAW",eRAW,1,640,152 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
+    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -265,8 +282,6 @@ sFileDetails Terrain03[] =
     { "debris-1-17-2048.SPR",eSPR,1,17,2048 },
     { "drill-1-172-134.SPR",eSPR,1,172,134 },
     { "eyestalk-1-168-157.SPR",eSPR,1,168,157 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "launcher-1-140-139.SPR",eSPR,1,140,139 },
     { "nurobo-1-232-157.SPR",eSPR,1,232,157 },
     { "plant1-1-96-122.SPR",eSPR,1,96,122 },
@@ -281,8 +296,6 @@ sFileDetails Terrain03[] =
     { "satdish-1-136-161.SPR",eSPR,1,136,161 },
     { "satelite-1-152-209.SPR",eSPR,1,152,209 },
     { "scope-1-124-159.SPR",eSPR,1,124,159 },
-    { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "thingy-1-124-130.SPR",eSPR,1,124,130 },
     { "tower-1-148-248.SPR",eSPR,1,148,248 },
     { "ufo-1-212-158.SPR",eSPR,1,212,158 },
@@ -292,7 +305,11 @@ sFileDetails Terrain03[] =
 //./Terrain/Construction:
 sFileDetails Terrain04[] = 
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-159.RAW",eRAW,1,640,159 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
+    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "bensin-1-80-113.SPR",eSPR,1,80,113 },
     { "brick1-1-52-73.SPR",eSPR,1,52,73 },
     { "brick2-1-76-66.SPR",eSPR,1,76,66 },
@@ -309,8 +326,6 @@ sFileDetails Terrain04[] =
     { "digger-1-244-214.SPR",eSPR,1,244,214 },
     { "drum-1-108-116.SPR",eSPR,1,108,116 },
     { "dumper-1-284-197.SPR",eSPR,1,284,197 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "pipe-1-76-100.SPR",eSPR,1,76,100 },
     { "roof1-1-64-88.SPR",eSPR,1,64,88 },
     { "roof2-1-76-213.SPR",eSPR,1,76,213 },
@@ -319,8 +334,6 @@ sFileDetails Terrain04[] =
     { "side1-1-120-65.SPR",eSPR,1,120,65 },
     { "side2-1-168-128.SPR",eSPR,1,168,128 },
     { "side3-1-204-63.SPR",eSPR,1,204,63 },
-    { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "tonka-1-252-280.SPR",eSPR,1,252,280 },
     { NULL,0,0,0,0 }
 };
@@ -328,7 +341,12 @@ sFileDetails Terrain04[] =
 //./Terrain/-Desert:
 sFileDetails Terrain05[] = 
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-156.RAW",eRAW,1,640,156 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
+    { "soil-256-256.RAW",eRAW,1,256,256 },
+    { "debris-1-17-2048.SPR",eSPR,1,17,2048 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -337,9 +355,6 @@ sFileDetails Terrain05[] =
     { "cactus3-1-64-70.SPR",eSPR,1,64,70 },
     { "cactus4-1-80-118.SPR",eSPR,1,80,118 },
     { "cactus5-1-56-101.SPR",eSPR,1,56,101 },
-    { "debris-1-17-2048.SPR",eSPR,1,17,2048 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "rock1-1-72-41.SPR",eSPR,1,72,41 },
     { "rock2-1-92-51.SPR",eSPR,1,92,51 },
     { "rock3-1-76-43.SPR",eSPR,1,76,43 },
@@ -347,9 +362,7 @@ sFileDetails Terrain05[] =
     { "rock5-1-132-116.SPR",eSPR,1,132,116 },
     { "rock6-1-184-115.SPR",eSPR,1,184,115 },
     { "skull-1-80-55.SPR",eSPR,1,80,55 },
-    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "tent-1-180-198.SPR",eSPR,1,180,198 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "wagon-1-176-140.SPR",eSPR,1,176,140 },
     { NULL,0,0,0,0 }
 };
@@ -357,7 +370,11 @@ sFileDetails Terrain05[] =
 // ./Tarrain/Desert
 sFileDetails Terrain06[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-160.RAW",eRAW,1,640,160 },
+    { "grass-136-64.RAW",eRAW,1,136,64 },
+    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -375,20 +392,20 @@ sFileDetails Terrain06[] =
     { "floor7-1-76-141.SPR",eSPR,1,76,141 },
     { "floor8-1-104-113.SPR",eSPR,1,104,113 },
     { "floor9-1-92-82.SPR",eSPR,1,92,82 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-64.RAW",eRAW,1,136,64 },
     { "left1-1-228-197.SPR",eSPR,1,228,197 },
     { "right1-1-476-200.SPR",eSPR,1,476,200 },
     { "right2-1-328-198.SPR",eSPR,1,328,198 },
-    { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Tarrain/Dungeon
 sFileDetails Terrain07[] = 
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-632-159.RAW",eRAW,1,632,159 },
+    { "grass-136-29.RAW",eRAW,1,136,29 },
+    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -400,8 +417,6 @@ sFileDetails Terrain07[] =
     { "dragon-1-148-176.SPR",eSPR,1,148,176 },
     { "gems1-1-96-88.SPR",eSPR,1,96,88 },
     { "gems2-1-100-118.SPR",eSPR,1,100,118 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-29.RAW",eRAW,1,136,29 },
     { "monster-1-136-143.SPR",eSPR,1,136,143 },
     { "pelare-1-120-140.SPR",eSPR,1,120,140 },
     { "sidehead-1-132-66.SPR",eSPR,1,132,66 },
@@ -410,13 +425,11 @@ sFileDetails Terrain07[] =
     { "skull2-1-100-75.SPR",eSPR,1,100,75 },
     { "skulpole-1-92-151.SPR",eSPR,1,92,151 },
     { "skulspik-1-72-168.SPR",eSPR,1,72,168 },
-    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "spear-1-100-147.SPR",eSPR,1,100,147 },
     { "stonroof-1-140-131.SPR",eSPR,1,140,131 },
     { "stonrubl-1-132-142.SPR",eSPR,1,132,142 },
     { "sword1-1-108-145.SPR",eSPR,1,108,145 },
     { "sword2-1-128-29.SPR",eSPR,1,128,29 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "tresure1-1-140-142.SPR",eSPR,1,140,142 },
     { "tresure2-1-148-120.SPR",eSPR,1,148,120 },
     { "wine1-1-124-120.SPR",eSPR,1,124,120 },
@@ -428,7 +441,11 @@ sFileDetails Terrain07[] =
 // ./Tarrain/Easter
 sFileDetails Terrain08[] =
 {
+    { "gradient-8-900.RAW",eRAW,1,8,900 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-632-154.RAW",eRAW,1,632,154 },
+    { "grass-136-32.RAW",eRAW,1,136,32 },
+    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -441,28 +458,27 @@ sFileDetails Terrain08[] =
     { "debris-1-37-2688.SPR",eSPR,1,37,2688 },
     { "egg1-1-80-123.SPR",eSPR,1,80,123 },
     { "eggcup1-1-52-113.SPR",eSPR,1,52,113 },
-    { "gradient-8-900.RAW",eRAW,1,8,900 },
-    { "grass-136-32.RAW",eRAW,1,136,32 },
     { "leftgras-1-100-77.SPR",eSPR,1,100,77 },
     { "leftrock-1-124-53.SPR",eSPR,1,124,53 },
     { "rghtgras-1-100-73.SPR",eSPR,1,100,73 },
     { "rghtrock-1-128-43.SPR",eSPR,1,128,43 },
     { "roofbuny-1-108-154.SPR",eSPR,1,108,154 },
-    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "spoon-1-80-187.SPR",eSPR,1,80,187 },
     { "statue1-1-180-247.SPR",eSPR,1,180,247 },
     { "statue2-1-136-213.SPR",eSPR,1,136,213 },
     { "statue3-1-140-153.SPR",eSPR,1,140,153 },
     { "stone1-1-112-116.SPR",eSPR,1,112,116 },
     { "stone2-1-56-54.SPR",eSPR,1,56,54 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Tarrain/-Farm
 sFileDetails Terrain09[] = 
 {
+    { "gradient-8-900.RAW",eRAW,1,8,900 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-153.RAW",eRAW,1,640,153 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -470,8 +486,6 @@ sFileDetails Terrain09[] =
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
     { "flower-1-56-60.SPR",eSPR,1,56,60 },
     { "gate-1-128-96.SPR",eSPR,1,128,96 },
-    { "gradient-8-900.RAW",eRAW,1,8,900 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "rock1-1-100-65.SPR",eSPR,1,100,65 },
     { "rock2-1-92-98.SPR",eSPR,1,92,98 },
     { "rock3-1-100-84.SPR",eSPR,1,100,84 },
@@ -480,14 +494,16 @@ sFileDetails Terrain09[] =
     { "sheep2-1-152-248.SPR",eSPR,1,152,248 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "spade-1-88-182.SPR",eSPR,1,88,182 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Tarrain/Farm
 sFileDetails Terrain10[] =
 {
+    { "gradient-8-900.RAW",eRAW,1,8,900 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-153.RAW",eRAW,1,640,153 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -495,8 +511,6 @@ sFileDetails Terrain10[] =
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
     { "flower-1-56-60.SPR",eSPR,1,56,60 },
     { "gate-1-128-96.SPR",eSPR,1,128,96 },
-    { "gradient-8-900.RAW",eRAW,1,8,900 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "rock1-1-100-65.SPR",eSPR,1,100,65 },
     { "rock2-1-92-98.SPR",eSPR,1,92,98 },
     { "rock3-1-100-84.SPR",eSPR,1,100,84 },
@@ -505,25 +519,24 @@ sFileDetails Terrain10[] =
     { "sheep2-1-152-248.SPR",eSPR,1,152,248 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "spade-1-88-182.SPR",eSPR,1,88,182 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Tarrain/-Forest
 sFileDetails Terrain11[] = 
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-159.RAW",eRAW,1,640,159 },
+    { "grass-144-16.RAW",eRAW,1,144,16 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
     { "bush-1-84-40.SPR",eSPR,1,84,40 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-144-16.RAW",eRAW,1,144,16 },
     { "rock1-1-60-44.SPR",eSPR,1,60,44 },
     { "rock2-1-60-44.SPR",eSPR,1,60,44 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "tree1-1-116-203.SPR",eSPR,1,116,203 },
     { "tree2-1-112-118.SPR",eSPR,1,112,118 },
     { "tree3-1-68-128.SPR",eSPR,1,68,128 },
@@ -535,17 +548,18 @@ sFileDetails Terrain11[] =
 // ./Tarrain/Forest
 sFileDetails Terrain12[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
+    { "back-640-159.RAW",eRAW,1,640,159 },
+    { "grass-144-16.RAW",eRAW,1,144,16 },
     { "2flowers-1-40-42.SPR",eSPR,1,40,42 },
     { "2rocks-1-56-47.SPR",eSPR,1,56,47 },
-    { "back-640-159.RAW",eRAW,1,640,159 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
     { "bshbloom-1-44-34.SPR",eSPR,1,44,34 },
     { "craigtre-1-76-67.SPR",eSPR,1,76,67 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-144-16.RAW",eRAW,1,144,16 },
     { "ivynest-1-96-59.SPR",eSPR,1,96,59 },
     { "rock1-1-56-38.SPR",eSPR,1,56,38 },
     { "root1-1-20-49.SPR",eSPR,1,20,49 },
@@ -556,7 +570,6 @@ sFileDetails Terrain12[] =
     { "sqwtbush-1-36-43.SPR",eSPR,1,36,43 },
     { "tallbush-1-64-93.SPR",eSPR,1,64,93 },
     { "test1-1-152-180.SPR",eSPR,1,152,180 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "tree1-1-100-191.SPR",eSPR,1,100,191 },
     { "tree2-1-152-180.SPR",eSPR,1,152,180 },
     { "tuft-1-40-79.SPR",eSPR,1,40,79 },
@@ -567,8 +580,11 @@ sFileDetails Terrain12[] =
 // ./Tarrain//Fruit
 sFileDetails Terrain13[] =
 {
-    { "apple1-1-92-115.SPR",eSPR,1,92,115 },
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-160.RAW",eRAW,1,640,160 },
+    { "grass-136-32.RAW",eRAW,1,136,32 },
+    { "apple1-1-92-115.SPR",eSPR,1,92,115 },
     { "banana1-1-136-143.SPR",eSPR,1,136,143 },
     { "banana2-1-104-137.SPR",eSPR,1,104,137 },
     { "berry-1-112-161.SPR",eSPR,1,112,161 },
@@ -581,10 +597,8 @@ sFileDetails Terrain13[] =
     { "cherry-1-52-48.SPR",eSPR,1,52,48 },
     { "cherry2-1-140-171.SPR",eSPR,1,140,171 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
     { "grapes1-1-148-143.SPR",eSPR,1,148,143 },
     { "grapes2-1-96-193.SPR",eSPR,1,96,193 },
-    { "grass-136-32.RAW",eRAW,1,136,32 },
     { "leaf1-1-92-118.SPR",eSPR,1,92,118 },
     { "leaf2-1-144-84.SPR",eSPR,1,144,84 },
     { "leafhng1-1-72-132.SPR",eSPR,1,72,132 },
@@ -595,14 +609,16 @@ sFileDetails Terrain13[] =
     { "side1-1-128-72.SPR",eSPR,1,128,72 },
     { "side2-1-152-72.SPR",eSPR,1,152,72 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Gulf
 sFileDetails Terrain14[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-156.RAW",eRAW,1,640,156 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -613,8 +629,6 @@ sFileDetails Terrain14[] =
     { "chopper-1-220-185.SPR",eSPR,1,220,185 },
     { "debris-1-17-2048.SPR",eSPR,1,17,2048 },
     { "drums-1-116-125.SPR",eSPR,1,116,125 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "jet-1-264-176.SPR",eSPR,1,264,176 },
     { "launcher-1-224-202.SPR",eSPR,1,224,202 },
     { "minesign-1-136-169.SPR",eSPR,1,136,169 },
@@ -626,7 +640,6 @@ sFileDetails Terrain14[] =
     { "sirens-1-140-106.SPR",eSPR,1,140,106 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "tank-1-184-170.SPR",eSPR,1,184,170 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "whytflag-1-96-109.SPR",eSPR,1,96,109 },
     { NULL,0,0,0,0 }
 };
@@ -634,7 +647,10 @@ sFileDetails Terrain14[] =
 // ./Tarrain/-Hell
 sFileDetails Terrain15[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-156.RAW",eRAW,1,640,156 },
+    { "grass-140-32.RAW",eRAW,1,140,32 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -643,19 +659,19 @@ sFileDetails Terrain15[] =
     { "demon-1-240-292.SPR",eSPR,1,240,292 },
     { "fork-1-92-215.SPR",eSPR,1,92,215 },
     { "gallows-1-104-224.SPR",eSPR,1,104,224 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-140-32.RAW",eRAW,1,140,32 },
     { "scyth-1-164-195.SPR",eSPR,1,164,195 },
     { "skull-1-64-130.SPR",eSPR,1,64,130 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Hell
 sFileDetails Terrain16[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-156.RAW",eRAW,1,640,156 },
+    { "grass-140-32.RAW",eRAW,1,140,32 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -663,8 +679,6 @@ sFileDetails Terrain16[] =
     { "door-1-164-183.SPR",eSPR,1,164,183 },
     { "druid1-1-88-124.SPR",eSPR,1,88,124 },
     { "druid2-1-64-163.SPR",eSPR,1,64,163 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-140-32.RAW",eRAW,1,140,32 },
     { "rock1-1-108-111.SPR",eSPR,1,108,111 },
     { "rock2-1-128-174.SPR",eSPR,1,128,174 },
     { "rock3-1-76-84.SPR",eSPR,1,76,84 },
@@ -684,7 +698,6 @@ sFileDetails Terrain16[] =
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "surprise-1-132-205.SPR",eSPR,1,132,205 },
     { "taildn-1-160-213.SPR",eSPR,1,160,213 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "tooth1-1-76-155.SPR",eSPR,1,76,155 },
     { "tooth2-1-44-92.SPR",eSPR,1,44,92 },
     { "tooth3-1-32-58.SPR",eSPR,1,32,58 },
@@ -694,15 +707,16 @@ sFileDetails Terrain16[] =
 // ./Terrain/Hospital
 sFileDetails Terrain17[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-620-153.RAW",eRAW,1,620,153 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "bed-1-200-137.SPR",eSPR,1,200,137 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
     { "firstaid-1-192-173.SPR",eSPR,1,192,173 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "klamp-1-180-155.SPR",eSPR,1,180,155 },
     { "left-1-120-27.SPR",eSPR,1,120,27 },
     { "light-1-108-190.SPR",eSPR,1,108,190 },
@@ -717,14 +731,16 @@ sFileDetails Terrain17[] =
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "stetho-1-200-200.SPR",eSPR,1,200,200 },
     { "testtube-1-72-180.SPR",eSPR,1,72,180 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Jungle
 sFileDetails Terrain18[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-156.RAW",eRAW,1,640,156 },
+    { "grass-136-64.RAW",eRAW,1,136,64 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -739,8 +755,6 @@ sFileDetails Terrain18[] =
     { "floor7-1-48-39.SPR",eSPR,1,48,39 },
     { "floor8-1-92-112.SPR",eSPR,1,92,112 },
     { "floor9-1-84-76.SPR",eSPR,1,84,76 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-64.RAW",eRAW,1,136,64 },
     { "left1-1-128-141.SPR",eSPR,1,128,141 },
     { "right1-1-116-86.SPR",eSPR,1,116,86 },
     { "right2-1-184-141.SPR",eSPR,1,184,141 },
@@ -752,22 +766,22 @@ sFileDetails Terrain18[] =
     { "roof6-1-144-120.SPR",eSPR,1,144,120 },
     { "roof7-1-88-191.SPR",eSPR,1,88,191 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Manhattan
 sFileDetails Terrain19[] =
 {
-    { "autonews-1-148-157.SPR",eSPR,1,148,157 },
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-158.RAW",eRAW,1,640,158 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
+    { "autonews-1-148-157.SPR",eSPR,1,148,157 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
     { "debris-1-17-2048.SPR",eSPR,1,17,2048 },
     { "dogstand-1-284-334.SPR",eSPR,1,284,334 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "hydrant-1-96-125.SPR",eSPR,1,96,125 },
     { "phone-1-96-191.SPR",eSPR,1,96,191 },
     { "pipes1-1-120-86.SPR",eSPR,1,120,86 },
@@ -780,14 +794,16 @@ sFileDetails Terrain19[] =
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "stoplite-1-92-220.SPR",eSPR,1,92,220 },
     { "taxicab-1-244-219.SPR",eSPR,1,244,219 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Medieval
 sFileDetails Terrain20[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-156.RAW",eRAW,1,640,156 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "barn-1-156-146.SPR",eSPR,1,156,146 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
@@ -796,8 +812,6 @@ sFileDetails Terrain20[] =
     { "castle1-1-200-226.SPR",eSPR,1,200,226 },
     { "cataplt-1-172-170.SPR",eSPR,1,172,170 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "ivy1-1-64-130.SPR",eSPR,1,64,130 },
     { "ivy2-1-144-133.SPR",eSPR,1,144,133 },
     { "ivy3-1-144-156.SPR",eSPR,1,144,156 },
@@ -809,7 +823,6 @@ sFileDetails Terrain20[] =
     { "root3-1-84-69.SPR",eSPR,1,84,69 },
     { "root4-1-92-83.SPR",eSPR,1,92,83 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "tower1-1-136-181.SPR",eSPR,1,136,181 },
     { "tower2-1-136-233.SPR",eSPR,1,136,233 },
     { "tree1-1-136-159.SPR",eSPR,1,136,159 },
@@ -821,21 +834,22 @@ sFileDetails Terrain20[] =
 // ./Terrain/Music
 sFileDetails Terrain21[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
+    { "back-640-159.RAW",eRAW,1,640,159 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "amp1-1-184-194.SPR",eSPR,1,184,194 },
     { "amp2-1-204-181.SPR",eSPR,1,204,181 },
     { "amp3-1-140-167.SPR",eSPR,1,140,167 },
     { "amp4-1-156-302.SPR",eSPR,1,156,302 },
     { "amp5-1-196-323.SPR",eSPR,1,196,323 },
     { "amp6-1-196-319.SPR",eSPR,1,196,319 },
-    { "back-640-159.RAW",eRAW,1,640,159 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
     { "cables-1-120-121.SPR",eSPR,1,120,121 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
     { "drums-1-320-280.SPR",eSPR,1,320,280 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "guitar-1-296-315.SPR",eSPR,1,296,315 },
     { "keyboard-1-280-276.SPR",eSPR,1,280,276 },
     { "light1-1-136-185.SPR",eSPR,1,136,185 },
@@ -845,14 +859,17 @@ sFileDetails Terrain21[] =
     { "pedal-1-100-72.SPR",eSPR,1,100,72 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "stand-1-132-224.SPR",eSPR,1,132,224 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Pirate
 sFileDetails Terrain22[] =
 {
+    { "gradient-8-900.RAW",eRAW,1,8,900 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-157.RAW",eRAW,1,640,157 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
+    { "soil-256-256.RAW",eRAW,1,256,256 },
     { "bottle-1-68-104.SPR",eSPR,1,68,104 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
@@ -861,8 +878,6 @@ sFileDetails Terrain22[] =
     { "cannon-1-204-162.SPR",eSPR,1,204,162 },
     { "debris-1-22-2560.SPR",eSPR,1,22,2560 },
     { "flag-1-220-301.SPR",eSPR,1,220,301 },
-    { "gradient-8-900.RAW",eRAW,1,8,900 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "hook-1-44-72.SPR",eSPR,1,44,72 },
     { "jewel1-1-56-70.SPR",eSPR,1,56,70 },
     { "palm1-1-212-241.SPR",eSPR,1,212,241 },
@@ -875,7 +890,6 @@ sFileDetails Terrain22[] =
     { "sidplnt2-1-128-174.SPR",eSPR,1,128,174 },
     { "sidplnt3-1-156-219.SPR",eSPR,1,156,219 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "treasure-1-212-243.SPR",eSPR,1,212,243 },
     { NULL,0,0,0,0 }
 };
@@ -883,14 +897,15 @@ sFileDetails Terrain22[] =
 // ./Terrain/Snow
 sFileDetails Terrain23[] =
 {
+    { "gradient-8-900.RAW",eRAW,1,8,900 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-157.RAW",eRAW,1,640,157 },
+    { "grass-140-32.RAW",eRAW,1,140,32 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
     { "debris-1-18-2048.SPR",eSPR,1,18,2048 },
     { "fridge-1-216-201.SPR",eSPR,1,216,201 },
-    { "gradient-8-900.RAW",eRAW,1,8,900 },
-    { "grass-140-32.RAW",eRAW,1,140,32 },
     { "icetree-1-124-250.SPR",eSPR,1,124,250 },
     { "present-1-144-138.SPR",eSPR,1,144,138 },
     { "present2-1-152-252.SPR",eSPR,1,152,252 },
@@ -904,7 +919,6 @@ sFileDetails Terrain23[] =
     { "snowbod-1-112-88.SPR",eSPR,1,112,88 },
     { "snowman-1-216-174.SPR",eSPR,1,216,174 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "xmastree-1-156-215.SPR",eSPR,1,156,215 },
     { NULL,0,0,0,0 }
 };
@@ -912,7 +926,10 @@ sFileDetails Terrain23[] =
 // ./Terrain/Space
 sFileDetails Terrain24[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-624-139.RAW",eRAW,1,624,139 },
+    { "grass-136-29.RAW",eRAW,1,136,29 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -924,8 +941,6 @@ sFileDetails Terrain24[] =
     { "cannon-1-180-195.SPR",eSPR,1,180,195 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
     { "dish-1-76-198.SPR",eSPR,1,76,198 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-29.RAW",eRAW,1,136,29 },
     { "mcdons-1-192-193.SPR",eSPR,1,192,193 },
     { "roof1-1-192-129.SPR",eSPR,1,192,129 },
     { "roof2-1-168-175.SPR",eSPR,1,168,175 },
@@ -933,23 +948,23 @@ sFileDetails Terrain24[] =
     { "side2-1-136-120.SPR",eSPR,1,136,120 },
     { "side3-1-132-103.SPR",eSPR,1,132,103 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Sports
 sFileDetails Terrain25[] =
 {
-    { "arrow-1-144-71.SPR",eSPR,1,144,71 },
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-157.RAW",eRAW,1,640,157 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
+    { "arrow-1-144-71.SPR",eSPR,1,144,71 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
     { "debris-1-26-3072.SPR",eSPR,1,26,3072 },
     { "dunknet-1-152-334.SPR",eSPR,1,152,334 },
     { "ftblhelm-1-152-191.SPR",eSPR,1,152,191 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "hijump-1-192-239.SPR",eSPR,1,192,239 },
     { "hoops-1-204-260.SPR",eSPR,1,204,260 },
     { "hurdle-1-160-190.SPR",eSPR,1,160,190 },
@@ -958,7 +973,6 @@ sFileDetails Terrain25[] =
     { "roofbars-1-216-196.SPR",eSPR,1,216,196 },
     { "rugby-1-104-107.SPR",eSPR,1,104,107 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "trainer-1-156-157.SPR",eSPR,1,156,157 },
     { "trophy-1-132-161.SPR",eSPR,1,132,161 },
     { "vault-1-160-175.SPR",eSPR,1,160,175 },
@@ -970,12 +984,15 @@ sFileDetails Terrain25[] =
 // ./Terrain/Tentacle
 sFileDetails Terrain26[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
+    { "back-632-153.RAW",eRAW,1,632,153 },
+    { "grass-136-32.RAW",eRAW,1,136,32 },
     { "alien1-1-136-168.SPR",eSPR,1,136,168 },
     { "alien2-1-176-190.SPR",eSPR,1,176,190 },
     { "alien3-1-124-124.SPR",eSPR,1,124,124 },
     { "alien4-1-104-178.SPR",eSPR,1,104,178 },
     { "alien5-1-124-162.SPR",eSPR,1,124,162 },
-    { "back-632-153.RAW",eRAW,1,632,153 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -985,21 +1002,21 @@ sFileDetails Terrain26[] =
     { "floor2-1-196-165.SPR",eSPR,1,196,165 },
     { "floor3-1-128-181.SPR",eSPR,1,128,181 },
     { "freak-1-84-144.SPR",eSPR,1,84,144 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-32.RAW",eRAW,1,136,32 },
     { "moon-1-104-128.SPR",eSPR,1,104,128 },
     { "roof1-1-120-182.SPR",eSPR,1,120,182 },
     { "roof2-1-132-148.SPR",eSPR,1,132,148 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "star-1-96-108.SPR",eSPR,1,96,108 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Time
 sFileDetails Terrain27[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-158.RAW",eRAW,1,640,158 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
@@ -1008,9 +1025,7 @@ sFileDetails Terrain27[] =
     { "cuckoo-1-284-250.SPR",eSPR,1,284,250 },
     { "debris-1-17-1792.SPR",eSPR,1,17,1792 },
     { "dot-1-40-50.SPR",eSPR,1,40,50 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
     { "grandpa-1-168-324.SPR",eSPR,1,168,324 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "hand01-1-168-217.SPR",eSPR,1,168,217 },
     { "hand02-1-188-182.SPR",eSPR,1,188,182 },
     { "hourglaz-1-100-183.SPR",eSPR,1,100,183 },
@@ -1024,15 +1039,17 @@ sFileDetails Terrain27[] =
     { "pocket-1-172-222.SPR",eSPR,1,172,222 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "sundial-1-136-123.SPR",eSPR,1,136,123 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Tools
 sFileDetails Terrain28[] =
 {
-    { "angle-1-172-252.SPR",eSPR,1,172,252 },
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-160.RAW",eRAW,1,640,160 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
+    { "angle-1-172-252.SPR",eSPR,1,172,252 },
     { "bolt-1-120-115.SPR",eSPR,1,120,115 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
@@ -1040,8 +1057,6 @@ sFileDetails Terrain28[] =
     { "cutters-1-240-231.SPR",eSPR,1,240,231 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
     { "drill-1-284-272.SPR",eSPR,1,284,272 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "hammer-1-168-288.SPR",eSPR,1,168,288 },
     { "hook-1-136-78.SPR",eSPR,1,136,78 },
     { "measure-1-308-222.SPR",eSPR,1,308,222 },
@@ -1055,22 +1070,22 @@ sFileDetails Terrain28[] =
     { "screw-1-100-71.SPR",eSPR,1,100,71 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
     { "spanner-1-188-197.SPR",eSPR,1,188,197 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { NULL,0,0,0,0 }
 };
 
 // ./Terrain/Tribal
 sFileDetails Terrain29[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-616-159.RAW",eRAW,1,616,159 },
+    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "bonecage-1-292-279.SPR",eSPR,1,292,279 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
     { "bush1-1-120-103.SPR",eSPR,1,120,103 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-136-16.RAW",eRAW,1,136,16 },
     { "hut1-1-148-320.SPR",eSPR,1,148,320 },
     { "skull-1-52-135.SPR",eSPR,1,52,135 },
     { "skull2-1-64-193.SPR",eSPR,1,64,193 },
@@ -1081,7 +1096,6 @@ sFileDetails Terrain29[] =
     { "stones1-1-204-345.SPR",eSPR,1,204,345 },
     { "stones2-1-124-124.SPR",eSPR,1,124,124 },
     { "stones3-1-84-96.SPR",eSPR,1,84,96 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "washline-1-184-213.SPR",eSPR,1,184,213 },
     { NULL,0,0,0,0 }
 };
@@ -1089,14 +1103,15 @@ sFileDetails Terrain29[] =
 // ./Terrain/Urban
 sFileDetails Terrain30[] =
 {
+    { "gradient-8-916.RAW",eRAW,1,8,916 },
+    { "text-256-256.RAW",eRAW,1,256,256 },
     { "back-640-127.RAW",eRAW,1,640,127 },
+    { "grass-144-16.RAW",eRAW,1,144,16 },
     { "bomb-1-184-199.SPR",eSPR,1,184,199 },
     { "bridge-1-64-19.SPR",eSPR,1,64,19 },
     { "bridge-l-1-64-50.SPR",eSPR,1,64,50 },
     { "bridge-r-1-64-49.SPR",eSPR,1,64,49 },
     { "debris-1-22-2688.SPR",eSPR,1,22,2688 },
-    { "gradient-8-916.RAW",eRAW,1,8,916 },
-    { "grass-144-16.RAW",eRAW,1,144,16 },
     { "left1-1-184-80.SPR",eSPR,1,184,80 },
     { "left2-1-136-91.SPR",eSPR,1,136,91 },
     { "light-1-208-346.SPR",eSPR,1,208,346 },
@@ -1108,7 +1123,6 @@ sFileDetails Terrain30[] =
     { "rubble3-1-176-166.SPR",eSPR,1,176,166 },
     { "rubble4-1-192-175.SPR",eSPR,1,192,175 },
     { "soil-256-256.RAW",eRAW,1,256,256 },
-    { "text-256-256.RAW",eRAW,1,256,256 },
     { "trash-1-68-94.SPR",eSPR,1,68,94 },
     { NULL,0,0,0,0 }
 };
@@ -1235,18 +1249,18 @@ sFileDetails Worms[] =
     { "wairtlk-10-60-60.SPR",eSPR,10,60,60 },
     { "wairtlkd-10-60-60.SPR",eSPR,10,60,60 },
     { "wairtlku-10-60-60.SPR",eSPR,10,60,60 },
-    { "waxebak-1-104-1872.SPR",eSPR,1,104,1872 },
-    { "waxebakd-1-104-1872.SPR",eSPR,1,104,1872 },
-    { "waxebaku-1-104-1872.SPR",eSPR,1,104,1872 },
-    { "waxelk2-1-104-2392.SPR",eSPR,1,104,2392 },
-    { "waxelk2d-1-104-2392.SPR",eSPR,1,104,2392 },
-    { "waxelk2u-1-104-2392.SPR",eSPR,1,104,2392 },
-    { "waxelnk-1-104-1560.SPR",eSPR,1,104,1560 },
-    { "waxelnkd-1-104-1560.SPR",eSPR,1,104,1560 },
-    { "waxelnku-1-104-1560.SPR",eSPR,1,104,1560 },
-    { "waxeswn-1-104-416.SPR",eSPR,1,104,416 },
-    { "waxeswnd-1-104-416.SPR",eSPR,1,104,416 },
-    { "waxeswnu-1-104-416.SPR",eSPR,1,104,416 },
+    { "waxebak-18-104-104.SPR",eSPR,18,104,104 },
+    { "waxebakd-18-104-104.SPR",eSPR,18,104,104 },
+    { "waxebaku-18-104-104.SPR",eSPR,18,104,104 },
+    { "waxelk2-23-104-104.SPR",eSPR,23,104,104 },
+    { "waxelk2d-23-104-104.SPR",eSPR,23,104,104 },
+    { "waxelk2u-23-104-104.SPR",eSPR,23,104,104 },
+    { "waxelnk-15-104-104.SPR",eSPR,15,104,104 },
+    { "waxelnkd-15-104-104.SPR",eSPR,15,104,104 },
+    { "waxelnku-15-104-104.SPR",eSPR,15,104,104 },
+    { "waxeswn-4-104-104.SPR",eSPR,4,104,104 },
+    { "waxeswnd-4-104-104.SPR",eSPR,4,104,104 },
+    { "waxeswnu-4-104-104.SPR",eSPR,4,104,104 },
     { "wbackflp-22-60-60.SPR",eSPR,22,60,60 },
     { "wbanlnk-10-60-60.SPR",eSPR,10,60,60 },
     { "wbanlnkd-10-60-60.SPR",eSPR,10,60,60 },
@@ -1297,9 +1311,9 @@ sFileDetails Worms[] =
     { "wblowlk-15-60-60.SPR",eSPR,15,60,60 },
     { "wblowlkd-15-60-60.SPR",eSPR,15,60,60 },
     { "wblowlku-15-60-60.SPR",eSPR,15,60,60 },
-    { "wbloww-1-80-1200.SPR",eSPR,1,80,1200 },
-    { "wblowwd-1-80-1200.SPR",eSPR,1,80,1200 },
-    { "wblowwu-1-80-1200.SPR",eSPR,1,80,1200 },
+    { "wbloww-15-80-80.SPR",eSPR,15,80,80 },
+    { "wblowwd-15-80-80.SPR",eSPR,15,80,80 },
+    { "wblowwu-15-80-80.SPR",eSPR,15,80,80 },
     { "wbndlnk-26-60-60.SPR",eSPR,26,60,60 },
     { "wbndlnkd-26-60-60.SPR",eSPR,26,60,60 },
     { "wbndlnku-26-60-60.SPR",eSPR,26,60,60 },
@@ -1360,7 +1374,7 @@ sFileDetails Worms[] =
     { "wcowlnku-10-60-60.SPR",eSPR,10,60,60 },
     { "wcrate0-61-60-60.SPR",eSPR,61,60,60 },
     { "wcrate1-15-60-60.SPR",eSPR,15,60,60 },
-    { "wcrate2-1-74-1480.SPR",eSPR,1,74,1480 },
+    { "wcrate2-20-74-74.SPR",eSPR,20,74,74 },
     { "wcratev-15-60-60.SPR",eSPR,15,60,60 },
     { "wdie-60-60-60.SPR",eSPR,60,60,60 },
     { "wdrill-4-60-60.SPR",eSPR,4,60,60 },
@@ -1371,8 +1385,8 @@ sFileDetails Worms[] =
     { "wdynlnkd-10-60-60.SPR",eSPR,10,60,60 },
     { "wdynlnku-10-60-60.SPR",eSPR,10,60,60 },
     { "wexhaust-20-60-60.SPR",eSPR,20,60,60 },
-    { "wfall-1-60-120.SPR",eSPR,1,60,120 },
-    { "wfalldn-1-60-120.SPR",eSPR,1,60,120 },
+    { "wfall-2-60-60.SPR",eSPR,2,60,60 },
+    { "wfalldn-2-60-60.SPR",eSPR,2,60,60 },
     { "wfirair-11-60-60.SPR",eSPR,11,60,60 },
     { "wfirbl1-24-60-60.SPR",eSPR,24,60,60 },
     { "wfirbl1d-24-60-60.SPR",eSPR,24,60,60 },
@@ -1392,9 +1406,9 @@ sFileDetails Worms[] =
     { "wfly1-32-60-60.SPR",eSPR,32,60,60 },
     { "wfly2-32-60-60.SPR",eSPR,32,60,60 },
     { "wfly3-32-60-60.SPR",eSPR,32,60,60 },
-    { "wflydn-1-60-120.SPR",eSPR,1,60,120 },
+    { "wflydn-2-60-60.SPR",eSPR,2,60,60 },
     { "wflylnk-7-60-60.SPR",eSPR,7,60,60 },
-    { "wflyup-1-60-120.SPR",eSPR,1,60,120 },
+    { "wflyup-2-60-60.SPR",eSPR,2,60,60 },
     { "wglnce1-15-60-60.SPR",eSPR,15,60,60 },
     { "wglnce1d-15-60-60.SPR",eSPR,15,60,60 },
     { "wglnce1u-15-60-60.SPR",eSPR,15,60,60 },
@@ -1475,9 +1489,9 @@ sFileDetails Worms[] =
     { "wmgnlnku-10-60-60.SPR",eSPR,10,60,60 },
     { "wmini-32-60-60.SPR",eSPR,32,60,60 },
     { "wminid-32-60-60.SPR",eSPR,32,60,60 },
-    { "wminif-1-90-2880.SPR",eSPR,1,90,2880 },
-    { "wminifd-1-90-2880.SPR",eSPR,1,90,2880 },
-    { "wminifu-1-90-2880.SPR",eSPR,1,90,2880 },
+    { "wminif-32-90-90.SPR",eSPR,32,90,90 },
+    { "wminifd-32-90-90.SPR",eSPR,32,90,90 },
+    { "wminifu-32-90-90.SPR",eSPR,32,90,90 },
     { "wminiu-32-60-60.SPR",eSPR,32,60,60 },
     { "wminlnk-10-60-60.SPR",eSPR,10,60,60 },
     { "wminlnkd-10-60-60.SPR",eSPR,10,60,60 },
@@ -1496,11 +1510,11 @@ sFileDetails Worms[] =
     { "wolooku-15-60-60.SPR",eSPR,15,60,60 },
     { "wormhit1-10-60-60.SPR",eSPR,10,60,60 },
     { "wormhit2-10-60-60.SPR",eSPR,10,60,60 },
-    { "wparacht-1-90-1530.SPR",eSPR,1,90,1530 },
-    { "wparalnk-1-90-1530.SPR",eSPR,1,90,1530 },
-    { "wparbak-1-90-540.SPR",eSPR,1,90,540 },
-    { "wparbakd-1-90-540.SPR",eSPR,1,90,540 },
-    { "wparbaku-1-90-540.SPR",eSPR,1,90,540 },
+    { "wparacht-17-90-90.SPR",eSPR,17,90,90 },
+    { "wparalnk-17-90-90.SPR",eSPR,17,90,90 },
+    { "wparbak-6-90-90.SPR",eSPR,6,90,90 },
+    { "wparbakd-6-90-90.SPR",eSPR,6,90,90 },
+    { "wparbaku-6-90-90.SPR",eSPR,6,90,90 },
     { "wpbmlnk-10-60-60.SPR",eSPR,10,60,60 },
     { "wpbmlnkd-10-60-60.SPR",eSPR,10,60,60 },
     { "wpbmlnku-10-60-60.SPR",eSPR,10,60,60 },
@@ -1709,7 +1723,7 @@ sFileGroup theFileGroups[] =
     { "Data/Terrain/Gulf/",         Terrain14,  90,0 },  //< 18    
     { "Data/Terrain/-Hell/",        Terrain15,  90,0 },  //< 19    
     { "Data/Terrain/Hell/",         Terrain16,  90,0 },  //< 20    
-    { "Data/Terrain/Hospital/",     Terrain17,  90,0 },  //< 21    
+    { "Data/Terrain/Hospital/",     Terrain17,  90,0 },  //< 21     
     { "Data/Terrain/Jungle/",       Terrain18,  90,0 },  //< 22    
     { "Data/Terrain/Manhattan/",    Terrain19,  90,0 },  //< 23    
     { "Data/Terrain/Medieval/",     Terrain20,  90,0 },  //< 24    
@@ -1720,10 +1734,11 @@ sFileGroup theFileGroups[] =
     { "Data/Terrain/Sports/",       Terrain25,  90,0 },  //< 29    
     { "Data/Terrain/Tentacle/",     Terrain26,  90,0 },  //< 30    
     { "Data/Terrain/Time/",         Terrain27,  90,0 },  //< 31    
-    { "Data/Terrain/Tribal/",       Terrain29,  90,0 },  //< 32    
-    { "Data/Terrain/Urban/",        Terrain30,  90,0 },  //< 33    
-    { "Data/Water/",                Water,     201,0 },  //< 34    
-    { "Data/Font/",                 Fonts,       0,0 },  //< 35    
+    { "Data/Terrain/Tools/",        Terrain28,  90,0 },  //< 32    
+    { "Data/Terrain/Tribal/",       Terrain29,  90,0 },  //< 33    
+    { "Data/Terrain/Urban/",        Terrain30,  90,0 },  //< 34    
+    { "Data/Water/",                Water,     201,0 },  //< 35    
+    { "Data/Font/",                 Fonts,       0,0 },  //< 36    
     { NULL,0 }
 };
 

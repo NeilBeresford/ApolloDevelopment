@@ -67,6 +67,21 @@ typedef struct
 
 } SpriteBank_t, *pSpriteBank_t;     //!< Sprite structure
 
+/**-----------------------------------------------------------------------------
+    @brief      Sprite Dimentions structure
+    @ingroup 	MainShell
+ ---------------------------------------------------------------------------- */
+typedef struct 
+{
+    uint16_t nWidth;            //!< Width
+    uint16_t nHeight;           //!< Height
+    uint16_t nXOffsetLeft;      //!< X Offset Left
+    uint16_t nXOffsetRight;     //!< X Offset Right
+    uint16_t nYOffsetTop;       //!< Y Offset Top
+    uint16_t nYOffsetBottom;    //!< Y Offset Bottom
+
+} SprDimention_t, *pSprDimention_t; //!< Sprite Dimentions structure
+
 //-----------------------------------------------------------------------------
 // External Functionality
 //-----------------------------------------------------------------------------
@@ -75,11 +90,17 @@ void LIB_Sprites_Init( void );
 void LIB_Sprites_Close( void );
 bool LIB_Sprites_RegisterBank( eSpriteBank_t eBank, eSpriteType_t eType, uint32_t ulResourceID, uint8_t* pSpriteData, uint32_t ulSpriteSize, uint32_t ulNumSprs, uint16_t sprW, uint16_t sprH );
 bool LIB_Sprites_Draw( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t y );
+bool LIB_Sprites_DrawMap( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t y );
 bool LIB_Sprites_DrawRawPart( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t y, uint32_t xOff, uint32_t yOff, uint32_t xSize, uint32_t ySize );
 bool LIB_Sprites_DrawFlipped( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t y );
 bool LIB_Sprites_Remap( eSpriteBank_t eSpriteBank, uint32_t ShiftBy );
 void LIB_Sprites_SetClipArea( uint32_t x, uint32_t y, uint32_t w, uint32_t h );
+uint32_t LIB_Sprites_GetWidth( eSpriteBank_t eBank );
 uint32_t LIB_Sprites_GetHeight( eSpriteBank_t eBank );
+void LIB_Sprites_SetOverwriteColour( uint8_t nColour );
+bool LIB_Sprites_GetSpriteDimentions( eSpriteBank_t eBank, uint16_t SprNum, pSprDimention_t pSD );
+uint32_t LIB_Sprites_GetFrames( uint32_t nSprResource );
+uint32_t LIB_Sprites_GetTotalNumSprites( eSpriteBank_t eBank );
 
 //-----------------------------------------------------------------------------
 

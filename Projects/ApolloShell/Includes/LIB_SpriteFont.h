@@ -1,32 +1,32 @@
 /** ---------------------------------------------------------------------------
-	@file		FontModule.h
+	@file		LIB_SpriteFont.h
 	@defgroup 	MainShell Apollo V4 Shell
-	@brief		Hardware Support for the Apollo system
-    @date		2024-10-31
+	@brief		Display of sprite based fonts
+	@date		2020-06-01
 	@version	0.1
-	@copyright	Neil Beresford 2024	
+	@copyright	Neil Beresford 2024
  -----------------------------------------------------------------------------
 	Notes
 
 --------------------------------------------------------------------------- */
 
-#ifndef _FONTMODULE_H_
-#define _FONTMODULE_H_
-
-//-----------------------------------------------------------------------------
+#ifndef _LIB_SPRITEFONT_H_
+#define _LIB_SPRITEFONT_H_
 
 //-----------------------------------------------------------------------------
 // External Functionality
 //-----------------------------------------------------------------------------
 
-extern void FontModule_DisplayString( void );
-extern void FontModule_DisplayChar( void );
-extern void FontModule_DisplayHex( void );
+void LIB_SpriteFont_Draw( uint32_t ulSpriteIndex,  int32_t ulX, int32_t ulY, uint8_t* pszText );
+void LIB_SpriteFont_CalcFontWidthOffsets( void );
+uint8_t LIB_SpriteFont_ConverAscii( uint8_t cChar );
+uint32_t LIB_SpriteFont_GetStringLength( uint32_t ulSpriteIndex, uint8_t* pszText );
 
 //-----------------------------------------------------------------------------
 
-#endif // _FONTMODULE_H_
+#endif // _LIB_SPRITEFONT_H_
 
 //-----------------------------------------------------------------------------
-// End of File: FontModule.h
+// End of file: LIB_SpriteFont.h
 //-----------------------------------------------------------------------------
+
