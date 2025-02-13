@@ -446,6 +446,140 @@ bool LIB_Sprites_DrawFlipped( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, i
     return bRet;
 }
 
+/** -----------------------------------------------------------------------------
+    @brief      Draw a sprite flipped, scaled for the map
+    @ingroup    AmiWorms
+    @param      eBank           - Sprite bank to draw from
+    @param      sprNum          - Sprite number
+    @param      x               - X position
+    @param      y               - Y position
+    @return     bool            - true if successful
+   ---------------------------------------------------------------------------- */
+bool LIB_Sprites_DrawMapFlipped( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32_t y )
+{
+    bool bRet = false;
+
+    // long list of protective checks
+    if ( (eBank < MAX_SPRITE_BANKS) && SprCtrl.Flags.Initialized == true && SprCtrl.SpriteBanks[ eBank ].pSpriteData != NULL )
+    {
+        uint8_t* pSpriteData = SprCtrl.SpriteBanks[ eBank ].pSpriteData;
+        uint8_t* pScreen = Hardware_GetScreenPtr();
+        uint32_t screenWidth = Hardware_GetScreenWidth();
+        uint32_t screenHeight = Hardware_GetScreenHeight();
+
+        // draw the sprite
+        if ( SprCtrl.SpriteBanks[ eBank ].ulSpriteType == eSpriteType_Raw )
+        {
+            // draw the raw sprite
+
+            pSpriteData += sprNum * ( SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth * SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight );
+
+            // draw the sprite
+            for( int32_t dy = 0; dy < SprCtrl.SpriteBanks[ eBank ].ulSpriteHeight; dy++ )
+            {
+                for( int32_t dx = SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth -1; dx >= 0; dx-- )
+                {
+                    if ( *pSpriteData != 0 )
+                    {
+                        if ( dx+x >= SprCtrl.ulClipLeft && dy+y < SprCtrl.ulClipBottom && dy+y >= SprCtrl.ulClipTop && dx+x < SprCtrl.ulClipRight )  
+                        {
+                            pScreen[ ( (dy+y) * screenWidth ) + dx + x ] = *pSpriteData;
+                        }
+                    }
+                    *pSpriteData++;
+                }
+            }
+        }
+        else
+        {
+            // draw the compressed sprite
+            //get to start of index for sprites..
+            uint8_t* pSprite = pSpriteData;
+            uint32_t ulSpriteIndex = 0;
+            uint8_t uCmd = 0;
+
+            pSprite += 12;   
+            while( *pSprite != ':' )
+            {
+                pSprite++;
+            }
+            pSprite++;
+            ulSpriteIndex = pSprite - pSpriteData;
+            uint32_t ulOffset = *(((uint32_t*)pSprite) + sprNum);
+            ulOffset = Hardware_SwapLong( ulOffset );
+            pSprite += (SprCtrl.SpriteBanks[ eBank ].ulNumSprites * 4) + ulOffset;
+
+            // pSprite now points to the start of the sprite data
+            // draw the sprite
+            int32_t xStart = x + SprCtrl.SpriteBanks[ eBank ].ulSpriteWidth -1;
+            uint32_t ulIndex = 0;
+
+
+            // Single colour or normal sprite?
+            if ( SprCtrl.nOverWriteColour == 0 )
+            {
+                while(  *pSprite != 0xFF )
+                {
+                    uint8_t uCmd = *pSprite++;
+                    if ( uCmd == 0xC9 )
+                    {
+                        y++;
+                        x = xStart;
+                        continue;
+                    }
+                    x -= uCmd;
+                    ulIndex = *pSprite++;
+
+                    while( ulIndex != 0 )
+                    {
+                        if ( x < SprCtrl.ulClipRight && y < SprCtrl.ulClipBottom && y >= SprCtrl.ulClipTop && x >= SprCtrl.ulClipLeft )  
+                        {
+                            pScreen[ ( y * screenWidth ) + x ] = *pSprite;
+                        }
+                        x--;
+                        pSprite++;
+                        ulIndex--;
+                    }
+                }
+            }
+            else
+            {
+                while(  *pSprite != 0xFF )
+                {
+                    uint8_t uCmd = *pSprite++;
+                    if ( uCmd == 0xC9 )
+                    {
+                        y++;
+                        x = xStart;
+                        continue;
+                    }
+                    x -= uCmd;
+                    ulIndex = *pSprite++;
+
+                    while( ulIndex != 0 )
+                    {
+                        if ( x < SprCtrl.ulClipRight && y < SprCtrl.ulClipBottom && y >= SprCtrl.ulClipTop && x >= SprCtrl.ulClipLeft )  
+                        {
+                            pScreen[ ( y * screenWidth ) + x ] = SprCtrl.nOverWriteColour;
+                        }
+                        x--;
+                        pSprite++;
+                        ulIndex--;
+
+                    }
+                }
+            }
+        }
+
+        bRet = true;
+    }
+
+    // return the result
+    return bRet;
+}
+
+
+
 
 /** ----------------------------------------------------------------------------
     @brief 		Draw a raw sprite part
@@ -788,6 +922,7 @@ bool LIB_Sprites_DrawMap( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32
             // draw the sprite
             int32_t xStart = x;
             uint32_t ulIndex = 0;
+            uint32_t nDrawSkip;
 
             // Single colour or normal sprite?
             if ( SprCtrl.nOverWriteColour != 0 )
@@ -800,21 +935,38 @@ bool LIB_Sprites_DrawMap( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32
                     {
                         y++;
                         x = xStart;
+                    #if 1
+                        // skip another two lines...
+                        uint32_t nCount = 2;
+
+                        while( nCount )
+                        {
+                            if ( *pSprite == 0xFF ) { break; };
+                            if ( *pSprite == 0xC9 ) { nCount--; pSprite++; continue; }
+
+                            pSprite++;              // skip space
+                            pSprite += *pSprite++;
+                        }
+                    #endif
                         continue;
                     }
+                    uCmd /= 3;
+            
                     x += uCmd;
-                    ulIndex = *pSprite++;
+                    uCmd = *pSprite / 3;
+                    nDrawSkip = *pSprite++;
 
-                    while( ulIndex != 0 )
+                    while( uCmd != 0 )
                     {
                         if ( x < SprCtrl.ulClipRight && y < SprCtrl.ulClipBottom && y >= SprCtrl.ulClipTop && x >= SprCtrl.ulClipLeft )  
                         {
                             pScreen[ ( y * screenWidth ) + x ] = nCol;
                         }
                         x++;
-                        pSprite++;
-                        ulIndex--;
+                        pSprite+=3;
+                        uCmd--;
                     }
+                    pSprite += nDrawSkip % 3;
                 }
             }
             else
@@ -826,21 +978,37 @@ bool LIB_Sprites_DrawMap( eSpriteBank_t eBank, uint32_t sprNum, int32_t x, int32
                     {
                         y++;
                         x = xStart;
+                        // skip another two lines...
+                        uint32_t nCount = 2;
+                    #if 1
+                        while( nCount )
+                        {
+                            if ( *pSprite == 0xFF ) { break; };
+                            if ( *pSprite == 0xC9 ) { nCount--; pSprite++; continue; }
+
+                            pSprite++;              // skip space
+                            pSprite += *pSprite++;
+                        }
+                    #endif
                         continue;
                     }
+                    uCmd /= 3;
+            
                     x += uCmd;
-                    ulIndex = *pSprite++;
+                    uCmd = *pSprite / 3;
+                    nDrawSkip = *pSprite++;
 
-                    while( ulIndex != 0 )
+                    while( uCmd != 0 )
                     {
                         if ( x < SprCtrl.ulClipRight && y < SprCtrl.ulClipBottom && y >= SprCtrl.ulClipTop && x >= SprCtrl.ulClipLeft )  
                         {
                             pScreen[ ( y * screenWidth ) + x ] = *pSprite;
                         }
                         x++;
-                        pSprite++;
-                        ulIndex--;
+                        pSprite+=3;
+                        uCmd--;
                     }
+                    pSprite += nDrawSkip % 3;
                 }
             }
 

@@ -144,7 +144,7 @@ uint32_t main(int argc, char *argv[])
 		"  / _ \\ | '_ ` _ \\| |____\\ \\ /\\ / / _ \\| '__| '_ ` _ \\/ __|\n"  \
 		" / ___ \\| | | | | | |_____\\ V  V / (_) | |  | | | | | \\__ \\ \n"  \
 		"/_/   \\_\\_| |_| |_|_|      \\_/\\_/ \\___/|_|  |_| |_| |_|___/\n\n\n"  \
-		"writen using ApolloCrossDev and Visual Studio Code\n\n";
+		"Written using ApolloCrossDev and Visual Studio Code\n\n";
 
 	printf(Banner);
 	printf("Press 'ESC' to exit\n");
@@ -168,7 +168,7 @@ uint32_t main(int argc, char *argv[])
 	}
 
 	// load all the sprite groups
-	printf("Loading sprite files and remapping...\n");
+	printf("Sprite files and remapping scene data...\n");
 	ResourceHandling_LoadGroups( theFileGroups );
 	LIB_SpriteFont_CalcFontWidthOffsets();
 
@@ -182,6 +182,28 @@ uint32_t main(int argc, char *argv[])
 
 	printf("Create the back screens\n");
 	Hardware_SetBackscreenBuffers();
+
+	#if 1
+
+	{
+		PSPRHANDLE handles[ 256 ];
+		int32_t x = 32, y = 90;
+		uint32_t nGroup = eGroups_Worms;
+
+		for( int32_t i = 0; i < 30; i++ )
+		{
+			handles[ i ] = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( nGroup ) + 426 + i, x, y, 0, 0, NULL );
+			LIB_SprManager_FlipSprite( handles[ i ], i & 1 );
+			LIB_SprManager_AddAnim( handles[ i ], i+1, SPR_ANIM_LOOP,LIB_SprManager_GetTotalFrames( handles[ i ] ), NULL );
+			LIB_SprManager_SetFlags( handles[ i ], SPR_FLAGS_WORLDSPRITE );
+			x += 50;
+			y += 5;
+		}
+
+	}
+
+	#endif
+
 
 	CreateBackScreens();
 	
@@ -220,37 +242,6 @@ uint32_t main(int argc, char *argv[])
 	}
 	LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
 
-	#if 0
-
-	{
-		PSPRHANDLE handles[ 256 ];
-		uint32_t x = 32, y = 90;
-		uint32_t nTotal = 0;
-		uint32_t nGroup = eGroups_Worms;
-
-		ResourceHandling_Get( nGroup, eResourceGet_Size, &nTotal );
-		//if ( nTotal > 256 ) nTotal = 256;
-
-		for( int32_t i = 380; i < 380+(18*4); i++ )
-		{
-
-			if ( i >= nTotal) break;
-
-			handles[ i ] = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( nGroup ) + i, x, y, 0, 0, NULL );
-			LIB_SprManager_FlipSprite( handles[ i ], i & 1 );
-			LIB_SprManager_AddAnim( handles[ i ], 1, SPR_ANIM_LOOP,LIB_SprManager_GetTotalFrames( handles[ i ] ), NULL );
-			x += 32;
-			if ( x > 600 )
-			{
-				x = 32;
-				y += 32;
-				if ( y > 330 ) break;
-			}
-		}
-
-	}
-
-	#endif
 
 
 	// setup the water and mouse and clipping area
@@ -289,7 +280,6 @@ uint32_t main(int argc, char *argv[])
 	// terminate the program
 	Hardware_Close();
 
-	printf("\n%d frames displayed\n", ulFrames);
 	printf("Time played %d minutes %d seconds\n", ulFrames / (60*60), (ulFrames / 60) % 60 );
 	printf("Exiting - have a nice day!\n\n");
 
@@ -309,16 +299,9 @@ void Main_DrawMapWater( void )
 
 	LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
 
-	//for( uint32_t num = 0; num < 3; num++ )
+	for ( int32_t gX = 0; gX < BACKSCREENWIDTH; gX += 256 )
 	{
-		for ( int32_t gX = 0; gX < BACKSCREENWIDTH; gX += 256 )
-		{
-			LIB_Sprites_Draw( ulWaterSprIndex, ulWaterSprNum, gX - nScrollX, ulYPos - nScrollY );
-		}
-
-		ulWaterSprNum += 4;
-		if ( ulWaterSprNum > 11 ) ulWaterSprNum -= 11;	
-		ulYPos += (ulSprHeight / 3) - 1;
+		LIB_Sprites_Draw( ulWaterSprIndex, ulWaterSprNum, gX - nScrollX, ulYPos - nScrollY );
 	}
 
 	ulWaterSprNum = ulBak;
@@ -345,7 +328,7 @@ void Main_DrawGameScreen( void )
 	Hardware_SetMapY( nScrollY );
 
 	Hardware_CopyBackToScreen();
-	LIB_SprManager_Draw();
+	LIB_SprManager_Draw( nScrollX, nScrollY );
 	Main_DrawMapWater();
 
 	Hardware_DrawBlock( 328, 452, 298, 12, 19 );
@@ -379,7 +362,7 @@ void Main_DrawMapScreen( void )
 	// water for the map ...
 	Hardware_CopyBackScreenMap();
 	LIB_Sprites_SetClipArea( 0, 42, 640, 348 );
-	LIB_SprManager_Draw();
+	LIB_SprManager_Draw( nScrollX, nScrollY );
 	Main_DrawMapModeWater();
 
 	uint8_t* pS = Hardware_GetScreenPtr();
@@ -495,15 +478,12 @@ bool Main_ControlGame( void )
 		nMapType++;
 		if ( nMapType > 29 ) nMapType = 0;
 		nMapGroup = nMapType + 5;
-		Hardware_ClearScreen();
-		Hardware_WaitVBL();
-		Hardware_FlipScreen();
-		Hardware_ClearScreen();
-		Hardware_WaitVBL();
-		Hardware_FlipScreen();
-		Hardware_ClearScreen();
-		Hardware_WaitVBL();
-		Hardware_FlipScreen();
+		for ( int32_t clearCnt = 0; clearCnt < 3; clearCnt++ )
+		{
+			Hardware_ClearScreen();
+			Hardware_WaitVBL();
+			Hardware_FlipScreen();
+		}
 		CreateBackScreens();
 		Hardware_WaitVBL();
 		HWSCREEN_SetImagePalette( palettes[ nMapType ] );
@@ -699,17 +679,10 @@ void Main_DrawMapModeWater(  void )
 
 	ulBak = ulWaterSprNum;
 	
-	//for( uint32_t num = 0; num < 3; num++ )
+	for ( int32_t gX = 0; gX < 640; gX += nWidth )
 	{
-		for ( int32_t gX = 0; gX < 640; gX += nWidth )
-		{
-			LIB_Sprites_SetClipArea( 0, ulYPos, 640, 12 );
-			LIB_Sprites_DrawMap( ulWaterSprIndex, ulWaterSprNum, gX, ulYPos );
-		}
-
-		ulWaterSprNum += 4;
-		if ( ulWaterSprNum > 11 ) ulWaterSprNum -= 11;	
-		ulYPos += (ulSprHeight / 7) - 1;
+		LIB_Sprites_SetClipArea( 0, ulYPos, 640, 12 );
+		LIB_Sprites_DrawMap( ulWaterSprIndex, ulWaterSprNum, gX, ulYPos );
 	}
 
 	ulWaterSprNum = ulBak;
@@ -733,15 +706,10 @@ void CreateMap( void )
 
 	// generate maps
 	ulIndex = 0;
-	//while( ulIndex < NUM_MAPS )
-	{
-		//float fRef = 0.00075f + ( 0.003f / rand()  );
-		float fRef = 0.00175f * ( (0.800f / rand()) + 0.5f );
+	float fRef = 0.00075f + ( 0.003f / rand()  );
 
-		LIB_PerlinNoise_Init( 123456 );
-		LIB_PerlinNoise_GenerateMap( pMapHeight, BACKSCREENWIDTH, 0, fRef );
-		//ulIndex++;
-	}
+	LIB_PerlinNoise_Init( 123456 );
+	LIB_PerlinNoise_GenerateMap( pMapHeight, BACKSCREENWIDTH, 0, fRef );
 }
 
 //-----------------------------------------------------------------------------

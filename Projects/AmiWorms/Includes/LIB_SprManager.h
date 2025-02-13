@@ -63,6 +63,19 @@ typedef enum
 
 } eSPRANIMTYPE;
 
+typedef enum
+{                                           //Bit  Description
+	SPR_FLAGS_ACTIVE 		= 0x80000000,		// 0 - Active
+	SPR_FLAGS_ONSCREEN		= 0x40000000,		// 1 - On Screen
+	SPR_FLAGS_PAUSED 		= 0x20000000,		// 2 - Paused
+	SPR_FLAGS_DELETEME 		= 0x10000000,		// 3 - Delete Me
+	SPR_FLAGS_COLLIDABLE 	= 0x08000000,		// 4 - Collidable
+	SPR_FLAGS_VISIBLE 		= 0x04000000,		// 5 - Visible
+	SPR_FLAGS_ANIMATED 		= 0x02000000,		// 6 - Animated
+	SPR_FLAGS_FLIPPED 		= 0x01000000,		// 7 - Flipped
+	SPR_FLAGS_WORLDSPRITE 	= 0x00800000,		// 8 - World Sprite
+
+} eSPRFLAGMASK;
 
 typedef struct
 {
@@ -92,7 +105,8 @@ typedef union
 		uint32_t    Visible		: 1;
 		uint32_t    Animated	: 1;
 		uint32_t    Flipped 	: 1;
-		uint32_t    Reserved	: 24;
+		uint32_t    WorldSprite	: 1;
+		uint32_t    Reserved	: 23;
 	};
 
 	uint32_t	Flags;
@@ -165,7 +179,7 @@ typedef struct _SPRITE
 	uint8_t			SprZ;	
 
 	// Animation Information
-	PSPRANIM		pAnimData;
+	SPRANIM			AnimData;
 	uint16_t		CurAnimIndex;
 
 	// Collision Information
@@ -189,11 +203,13 @@ typedef struct _SPRITE
 //-----------------------------------------------------------------------------
 
 void		LIB_SprManager_Init(void);
-void		LIB_SprManager_Draw(void);
+void		LIB_SprManager_Draw( int32_t nXScroll, int32_t nYScroll);
 PSPRHANDLE 	LIB_SprManager_Add(uint32_t nSprIndex, uint16_t nX, uint16_t nY, uint16_t nGroup, uint16_t nZ, fnSprControl fnControl);
 bool 		LIB_SprManager_AddAnim( PSPRHANDLE pSprHandle, uint16_t nAnimID, uint16_t nAnimType, uint16_t nAnimFrames, uint16_t* pFrameData);
 void		LIB_SprManager_Update(void);
 uint32_t 	LIB_SprManager_GetTotalFrames( PSPRHANDLE pSprHandle );
+void 		LIB_SprManager_SetFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags );
+void        LIB_SprManager_ClearFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags );
 
 //-----------------------------------------------------------------------------
 

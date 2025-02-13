@@ -109,25 +109,29 @@ PSPRHANDLE LIB_SprManager_Add(uint32_t nResourceID, uint16_t nX, uint16_t nY, ui
 			// Find a free sprite
 			for (uint16_t i = 0; i < TOTAL_SPRITES; i++)
 			{
-				if (sSprMgr.Sprites[i].SprFlags.Active == OFF)
+				PSPRITE pSprite = &sSprMgr.Sprites[i];
+
+				if (pSprite->SprFlags.Active == OFF)
 				{
 					
 					
 					// Set the sprite data
-					sSprMgr.Sprites[i].SprID = i;
-					sSprMgr.Sprites[i].SprGroup = nGroup;
-					sSprMgr.Sprites[i].SprResourceID = nResourceID;
-					sSprMgr.Sprites[i].ScreenX = nX;
-					sSprMgr.Sprites[i].ScreenY = nY;
-					sSprMgr.Sprites[i].SprZ = nZ;
-					sSprMgr.Sprites[i].SprWidth = LIB_Sprites_GetWidth(nResourceID);
-					sSprMgr.Sprites[i].SprHeight = LIB_Sprites_GetHeight(nResourceID);
-					sSprMgr.Sprites[i].fnControl = fnControl;
+					pSprite->SprID = i;
+					pSprite->SprGroup = nGroup;
+					pSprite->SprResourceID = nResourceID;
+					pSprite->ScreenX = nX;
+					pSprite->ScreenY = nY;
+					pSprite->fWorldX = nX;
+					pSprite->fWorldY = nY;
+					pSprite->SprZ = nZ;
+					pSprite->SprWidth = LIB_Sprites_GetWidth(nResourceID);
+					pSprite->SprHeight = LIB_Sprites_GetHeight(nResourceID);
+					pSprite->fnControl = fnControl;
 
 					// Set the sprite flags
-					sSprMgr.Sprites[i].SprFlags.Active = ON;
-					sSprMgr.Sprites[i].SprFlags.OnScreen = ON;
-					sSprMgr.Sprites[i].SprFlags.Visible = ON;
+					pSprite->SprFlags.Active = ON;
+					pSprite->SprFlags.OnScreen = ON;
+					pSprite->SprFlags.Visible = ON;
 
 					// Incremprent the sprite count
 					sSprMgr.SprCount++;
@@ -166,31 +170,22 @@ bool LIB_SprManager_AddAnim( PSPRHANDLE pSprHandle, uint16_t nAnimID, uint16_t n
 	{
 		if ( pSprHandle && pSprHandle->SprIndex < TOTAL_SPRITES)
 		{
-			uint16_t	nSpriteID = pSprHandle->SprIndex;
-			PSPRITE		pSprite = &sSprMgr.Sprites[nSpriteID];
+			PSPRITE		pSprite = &sSprMgr.Sprites[ pSprHandle->SprIndex];
 
 			if (pSprite->SprFlags.Active == ON)
 			{
 				// Allocate memory for the animation data
-				if (pSprite->pAnimData == NULL)
-					pSprite->pAnimData = (PSPRANIM)malloc(sizeof(SPRANIM));
-
 				// Set the animation data
-				pSprite->pAnimData->AnimID = nAnimID;
-				pSprite->pAnimData->AnimType = nAnimType;
-				pSprite->pAnimData->AnimFrames = nAnimFrames;
-				pSprite->pAnimData->AnimCurFrame = 0;
+				pSprite->AnimData.AnimID = nAnimID;
+				pSprite->AnimData.AnimType = nAnimType;
+				pSprite->AnimData.AnimFrames = nAnimFrames;
+				pSprite->AnimData.AnimCurFrame = 0;
 				pSprite->SprFlags.Animated = ON;
 
-				if (pSprite->pAnimData->pFrames != NULL)
+				if (pSprite->AnimData.pFrames != NULL)
 				{
 					// Allocate memory for the frame data
-					pSprite->pAnimData->pFrames = (PSPRFRAME)malloc(sizeof(SPRFRAME) * nAnimFrames);
-					// Set the frame data
-					for (uint16_t i = 0; i < nAnimFrames; i++)
-					{
-						pSprite->pAnimData->pFrames[i].FrameID = pFrameData[i];
-					}
+					pSprite->AnimData.pFrames = pFrameData;
 
 					// Set the result
 					bResult = true;
@@ -215,36 +210,33 @@ void LIB_SprManager_Update(void)
 		PSPRITE		pSprite = sSprMgr.Sprites;
 		for (uint16_t i = 0, cnt = 0; i < TOTAL_SPRITES && cnt != sSprMgr.SprCount; i++)
 		{
-			if (sSprMgr.Sprites[i].SprFlags.Active == ON)
+			if (pSprite->SprFlags.Active == ON)
 			{
-				
-				if ( sSprMgr.Sprites[i].SprFlags.Animated == ON )
+				if ( pSprite->SprFlags.Animated == ON )
 				{
 					// Update the animation
-					if (sSprMgr.Sprites[i].pAnimData != NULL)
+					if (pSprite->AnimData.AnimType == SPR_ANIM_LOOP)
 					{
-						if (sSprMgr.Sprites[i].pAnimData->AnimType == SPR_ANIM_LOOP)
+						pSprite->AnimData.AnimCurFrame++;
+						if (pSprite->AnimData.AnimCurFrame >= pSprite->AnimData.AnimFrames)
 						{
-							sSprMgr.Sprites[i].pAnimData->AnimCurFrame++;
-							if (sSprMgr.Sprites[i].pAnimData->AnimCurFrame >= sSprMgr.Sprites[i].pAnimData->AnimFrames)
-							{
-								sSprMgr.Sprites[i].pAnimData->AnimCurFrame = 0;
-							}
-
-							// Set the frame
-							sSprMgr.Sprites[i].SprNum = sSprMgr.Sprites[i].pAnimData->AnimCurFrame;
+							pSprite->AnimData.AnimCurFrame = 0;
 						}
+
+						// Set the frame
+						pSprite->SprNum = pSprite->AnimData.AnimCurFrame;
 					}
 				}
 				
-				if (sSprMgr.Sprites[i].fnControl != NULL)
+				if (pSprite->fnControl != NULL)
 				{
-					sSprMgr.Sprites[i].fnControl(&sSprMgr.Sprites[i]);
+					pSprite->fnControl(&sSprMgr.Sprites[i]);
 				}
 
 
 				cnt++;
 			}
+			pSprite++;
 		}
 	}
 }
@@ -255,20 +247,35 @@ void LIB_SprManager_Update(void)
 	@param		None
 	@return		None
  --------------------------------------------------------------------------- */
-void LIB_SprManager_Draw(void)
+void LIB_SprManager_Draw( int32_t nXScroll, int32_t nYScroll)
 {
 	if (sSprMgr.sFlags.Initialized == ON)
 	{
 		for (uint16_t i = 0, cnt = 0; i < TOTAL_SPRITES && cnt != sSprMgr.SprCount ; i++ )
 		{
-			if (sSprMgr.Sprites[i].SprFlags.Active == ON)
+			PSPRITE pSprite = &sSprMgr.Sprites[i];
+
+			if (pSprite->SprFlags.Active == ON)
 			{
-				if (sSprMgr.Sprites[i].SprFlags.Visible == ON)
+
+				if (pSprite->SprFlags.Visible == ON)
 				{
-					if ( sSprMgr.Sprites[i].SprFlags.Flipped == ON )
-						LIB_Sprites_DrawFlipped(sSprMgr.Sprites[i].SprResourceID, sSprMgr.Sprites[i].SprNum, sSprMgr.Sprites[i].ScreenX - (sSprMgr.Sprites[i].SprWidth/2) , sSprMgr.Sprites[i].ScreenY - (sSprMgr.Sprites[i].SprHeight/2));
+					int32_t nX = pSprite->ScreenX;
+					int32_t nY = pSprite->ScreenY;
+					int32_t nHalfW = pSprite->SprWidth / 2;
+					int32_t nHalfH = pSprite->SprHeight / 2;
+
+					if ( pSprite->SprFlags.WorldSprite == YES )
+					{
+						nX = pSprite->fWorldX - nXScroll;
+						nY = pSprite->fWorldY - nYScroll;
+					}
+
+
+					if ( pSprite->SprFlags.Flipped == ON )
+						LIB_Sprites_DrawFlipped(pSprite->SprResourceID, pSprite->SprNum, nX - nHalfW , nY - nHalfH);
 					else
-						LIB_Sprites_Draw(sSprMgr.Sprites[i].SprResourceID, sSprMgr.Sprites[i].SprNum, sSprMgr.Sprites[i].ScreenX - (sSprMgr.Sprites[i].SprWidth/2) , sSprMgr.Sprites[i].ScreenY - (sSprMgr.Sprites[i].SprHeight/2));
+						LIB_Sprites_DrawMap(pSprite->SprResourceID, pSprite->SprNum, nX - nHalfW , nY - nHalfH);
 				}
 				cnt++;
 			}
@@ -403,6 +410,42 @@ void LIB_SprManager_FlipSprite( PSPRHANDLE pSprHandle, bool Flipped )
 		if (pSprHandle && pSprHandle->SprIndex < TOTAL_SPRITES)
 		{
 			sSprMgr.Sprites[ pSprHandle->SprIndex ].SprFlags.Flipped = Flipped;
+		}
+	}
+}
+
+/** ---------------------------------------------------------------------------
+	@brief		Sets the sprite flags
+	@ingroup	AmiWorms
+	@param		pSprHandle 	- Pointer to the sprite handle
+	@param		ulFlags 	- Flags to set
+	@return		void
+ --------------------------------------------------------------------------- */
+void LIB_SprManager_SetFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags )
+{
+	if (sSprMgr.sFlags.Initialized == ON)
+	{
+		if (pSprHandle && pSprHandle->SprIndex < TOTAL_SPRITES)
+		{
+			sSprMgr.Sprites[ pSprHandle->SprIndex ].SprFlags.Flags |= ulFlags;
+		}
+	}
+}
+
+/** ---------------------------------------------------------------------------
+	@brief		Clears the sprite flags
+	@ingroup	AmiWorms
+	@param		pSprHandle 	- Pointer to the sprite handle
+	@param		ulFlags 	- Flags to clear
+	@return		void
+ --------------------------------------------------------------------------- */
+void LIB_SprManager_ClearFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags )
+{
+	if (sSprMgr.sFlags.Initialized == ON)
+	{
+		if (pSprHandle && pSprHandle->SprIndex < TOTAL_SPRITES)
+		{
+			sSprMgr.Sprites[ pSprHandle->SprIndex ].SprFlags.Flags &= ~ulFlags;
 		}
 	}
 }

@@ -159,14 +159,14 @@ void LIB_PerlinNoise_GenerateMap( uint32_t* pMapHeight, uint32_t width, uint32_t
         float a = 1.0f;
         float f = fRef;
 
-        for (uint32_t ulOctave = 0; ulOctave < 5; ulOctave++)
+        for (uint32_t ulOctave = 0; ulOctave < 8; ulOctave++)
         {
             n += a * LIB_PerlinNoise_Noise2D( (float)(ulX + xAdd) * f, (float)(refY + yAdd) * f);
             a *= 0.5f;
-            f *= 2.2F;
+            f *= 2.0F;
         }
-        n = (n + 1) * 2.5f;
-        int32_t ucValue = 1650 - (n * 200.0f);
+        n = (n + 1) * 0.5f;
+        int32_t ucValue = 1550 - (n * 1000.0f);
 
         pMapHeight[ ulX ] = ucValue;
     }
