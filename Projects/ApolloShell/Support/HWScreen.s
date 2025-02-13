@@ -21,6 +21,7 @@
 	XDEF _HWSCREEN_ClearScreen
 	XDEF _HWSCREEN_SetImagePalette
 	XDEF _HWSCREEN_DisplayImage
+	XDEF _HWSCREEN_SetSingleCol
 	XREF screenPtr
 
 ;-----------------------------------------------------------------------------
@@ -80,6 +81,18 @@ _HWSCREEN_SetImagePalette:
 	rts
 
 ;** ---------------------------------------------------------------------------
+;	@brief 		Sets the single colour. Format 0xIIRRGGBB
+;	@ingroup 	MainShell
+;	@param [IN]	D0 - Colour with Index/Red/Green/Blue
+;	@return 	none
+; --------------------------------------------------------------------------- */
+_HWSCREEN_SetSingleCol:
+
+	move.l  d0,$dff388
+
+	rts
+
+;** ---------------------------------------------------------------------------
 ;	@brief 		Displays the image stored.
 ;	@ingroup 	MainShell
 ;	@param [IN]	A0 - ScreenBuffer - The image to display
@@ -106,15 +119,7 @@ _HWSCREEN_DisplayImage:
 
 	SECTION hwscreenD,DATA_F
 
-ScreenPalette:
-
-	INCBIN "/home/neil/Development/ApolloCrossDev/Projects/ApolloShell/Graphics/NeilImage.png.RAW.pal"
-
-ScreenPaletteEnd:
-
 ScreenBuffer:	dc.l 0
-
-
 
 ;------------------------------------------------------------------------------
 ; End of File: HWScreen.s

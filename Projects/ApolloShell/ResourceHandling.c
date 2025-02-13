@@ -29,6 +29,8 @@
 #include "stdlib.h"
 #include "Includes/FlagStruct.h"
 #include "Includes/ResourceFiles.h"
+#include "Includes/Hardware.h"
+#include "Includes/LIB_Sprites.h"
 #include "Includes/ResourceHandling.h"
 
 //-----------------------------------------------------------------------------
@@ -42,23 +44,6 @@
 // Typedefs and enums
 //-----------------------------------------------------------------------------
 
-/** ----------------------------------------------------------------------------
-    @brief 	    Enums for the Resource types
-    @ingroup 	MainShell
------------------------------------------------------------------------------ */
-typedef enum
-{
-    eResourceType_NotSet    = -1,   //<! -1 Resource type not set
-    eResourceType_Text      = 0,    //<!  0 Resource is text
-    eResourceType_Binary,           //<!  1 Resource is binary
-    eResourceType_Image,            //<!  2 Resource is image
-    eResourceType_Sound,            //<!  3 Resource is sound
-    eResourceType_Font,             //<!  4 Resource is font
-    eResourceType_Palette,          //<!  5 Resource is palette
-    eResourceType_Sprite,           //<!  6 Resource is sprite
-    eResourceType_Total             //<!  7 Total number of resource types
-
-} ResourceType_t;
 
 /** ----------------------------------------------------------------------------
     @brief   	Resource handling structure
@@ -82,11 +67,15 @@ typedef struct
 {
     FlagStruct_t 	    Flags;
     ResourceHeader_t 	Resource[ TOTAL_RESOURCES ];
+    pSprDimention_t     pSpriteDim;
+    psFileGroup         Groups;
     uint32_t 		    ulResourceCount;
+    uint32_t 		    nTotalGroups;
     uint32_t 		    ulCurrentResourceID;
     uint8_t             tmpFileName[ 256 ];
     uint32_t            ulTotalFiles;
     uint32_t            ulCurLoadedFile;
+    uint32_t            nTotalSprites;
     bool                bStatusNeeded;
 
 } RHCtrl_t, *pRHCtrl_t;
@@ -128,6 +117,10 @@ bool ResourceHandling_Init( void )
         sRHCtrl.Flags.InUse         = 0;
         sRHCtrl.ulResourceCount     = 0;
         sRHCtrl.ulCurrentResourceID = START_RESOURCE_ID;
+        sRHCtrl.Groups              = NULL;
+        sRHCtrl.pSpriteDim          = NULL;
+        sRHCtrl.nTotalGroups        = 0;
+        sRHCtrl.nTotalSprites       = 0;
 
         // return success
         bReturn = true;
@@ -306,6 +299,7 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
             fflush(stdout);
         }
 
+        sRHCtrl.Groups = groups;    
 
         while( psGroup->pszDirectory != NULL )
         {
@@ -351,7 +345,7 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
                         if ( psGroup->reMapValue != 0 && psFileDetails->eFileType == eRAW )
                         {
                             ulTotalFilesRemapped++;
-                            if ( strcmp((int8_t*)(psFileDetails->pszResourceName),"gradient-8-900.RAW") == 0 )   
+                            if ( strncmp((int8_t*)(psFileDetails->pszResourceName),"gradient-8-", 11 ) == 0 )   
                             {
                                 LIB_Sprites_Remap( ulResourceID, 184 );
                             }
@@ -382,8 +376,9 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
             printf( "Loading sprite files : 100%% (%d of %d)\n", ulNumLoaded, sRHCtrl.ulTotalFiles );
         }
         printf( "Sprite Resource Loaded into fast memory\n" );
-        printf( "Total files remapped: %d\n", ulTotalFilesRemapped );
-        printf( "Total resource size: %dKB \n", (ulTotalSize >> 10) + 1 );
+        printf( "Total files loaded   : %d\n", ulNumLoaded );
+        printf( "Total files remapped : %d\n", ulTotalFilesRemapped );
+        printf( "Total resource size  : %dKB \n", (ulTotalSize >> 10) + 1 );
     }
 
     return true;
@@ -412,6 +407,8 @@ void ResourceHandling_InitStatus( psFileGroup groups )
 
         ulIndex++;
     }
+ 
+    sRHCtrl.nTotalGroups = ulIndex;
     sRHCtrl.ulTotalFiles = ulTotalFiles;
     sRHCtrl.ulCurLoadedFile = 0;
     sRHCtrl.bStatusNeeded = true;
@@ -427,6 +424,110 @@ uint32_t ResourceHandling_GetGroupStartResource( uint32_t nGroupIndex )
 {
     return theFileGroups[ nGroupIndex ].ulStartResourceID;
 }
+
+/** ----------------------------------------------------------------------------
+    @brief 		Get the resource name
+    @ingroup 	MainShell
+    @param      ulResourceID    - Resource ID
+    @return 	uint8_t*        - Pointer to the resource name
+ -----------------------------------------------------------------------------*/
+uint8_t* ResourceHandling_GetGroupName( uint32_t nGroupIndex )
+{
+    return theFileGroups[ nGroupIndex ].pszDirectory;
+}
+
+
+/** ----------------------------------------------------------------------------
+    @brief 		Get the total number of sprites
+    @ingroup 	MainShell
+    @return 	uint32_t        - Total number of sprites
+ -----------------------------------------------------------------------------*/
+uint32_t ResourceHandling_GetTotalNumSprites( void )
+{
+    uint32_t nRefIndex = 0;
+    uint32_t nTotal = 0;
+
+    if ( sRHCtrl.Groups != NULL )
+    {
+        for ( int32_t nGroup = 0; nGroup < sRHCtrl.nTotalGroups; nGroup++ )
+        {
+            psFileDetails psFD = sRHCtrl.Groups[ nGroup ].psFileDetails;
+            uint32_t nFile = 0;
+            while( psFD->pszResourceName != NULL )
+            {
+                nTotal += LIB_Sprites_GetTotalNumSprites( nFile + nRefIndex );
+
+                nFile++;
+                psFD++;
+            }
+
+            nRefIndex += nFile;
+        }
+
+        sRHCtrl.nTotalSprites = nTotal;
+    }
+
+    return nTotal;
+}
+
+/** ----------------------------------------------------------------------------
+    @brief 		Scan and set the sprite dimentions
+    @ingroup 	MainShell
+    @return 	bool            - true if successful
+ -----------------------------------------------------------------------------*/
+bool ResourceHandling_ScanAndSetSpriteDimentions( void )
+{
+    bool        bRet = false;
+    uint32_t    nRefIndex = 0;
+    uint32_t    nCurScanned = 0;
+    
+    if ( sRHCtrl.Groups != NULL && sRHCtrl.nTotalSprites != 0 )
+    {
+        sRHCtrl.pSpriteDim = (pSprDimention_t)Hardware_GetSpriteDims();  // (pSprDimention_t)malloc( sRHCtrl.nTotalSprites * sizeof( SprDimention_t ) );
+        pSprDimention_t pSpriteDim = sRHCtrl.pSpriteDim;
+
+        for ( int32_t nGroup = 0; nGroup < sRHCtrl.nTotalGroups; nGroup++ )
+        {
+            psFileDetails psFD = sRHCtrl.Groups[ nGroup ].psFileDetails;
+            uint32_t nFile = 0;
+            while( psFD->pszResourceName != NULL )
+            {
+                uint32_t nSprs = LIB_Sprites_GetTotalNumSprites( nFile + nRefIndex );
+                for( int32_t nSpr = 0; nSpr < nSprs; nSpr++ )
+                {
+                    LIB_Sprites_GetSpriteDimentions( nRefIndex + nFile, nSpr, pSpriteDim );
+                    pSpriteDim++;
+                }
+                nCurScanned += nSprs;
+
+                pSpriteDim++;
+                nFile++;
+                psFD++;
+
+                if ( sRHCtrl.bStatusNeeded == true )
+                {
+                    printf( "Setting sprite dimentions : %d of %d sprites       \r", nCurScanned, sRHCtrl.nTotalSprites );
+                    fflush(stdout);
+                }
+            }
+            nRefIndex += nFile;
+
+        }
+
+        bRet = true;
+
+        if ( sRHCtrl.bStatusNeeded == true )
+        {
+            printf( "\n" );
+            fflush(stdout);
+        }
+    }
+
+
+    return bRet;
+}
+
+
 
 
 
