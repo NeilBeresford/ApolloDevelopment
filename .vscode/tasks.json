@@ -1,9 +1,23 @@
 {
     "version": "2.0.0",
     "options": {
-    "env": { "APOLLO_V4_HOST": "192.168.0.149:Development/Games/Worms/" }
+        "env": {
+            "APOLLO_V4_HOST": "192.168.0.125:Development/Games/Worms/"
+        }
     },
     "tasks": [
+        {
+            "label": "Build Shell2",
+            "type": "shell",
+            "command": "make -f Projects/ApolloShell2/make-gcc650",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
         {
             "label": "Build Shell",
             "type": "shell",

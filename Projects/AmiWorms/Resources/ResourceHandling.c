@@ -1,13 +1,13 @@
 /** ---------------------------------------------------------------------------
-	@file		ResourceHandling.c
-	@defgroup 	AmiWorms Apollo V4 Shell
-	@brief		Resource management for the Apollo V4 Shell
-	@date		2024-11-01
-	@version	0.1
-	@copyright	Neil Beresford 2024	
+    @file		ResourceHandling.c
+    @defgroup 	AmiWorms Apollo V4 Shell
+    @brief		Resource management for the Apollo V4 Shell
+    @date		2024-11-01
+    @version	0.1
+    @copyright	Neil Beresford 2024
  -----------------------------------------------------------------------------
-	Notes
-    
+    Notes
+
     Quick summary of functionality -
     - ResourceHandling_Init()                   Initialize the resource handling
     - ResourceHandling_Close()                  Tidy and close the resource handling
@@ -37,13 +37,12 @@
 // Defines
 //-----------------------------------------------------------------------------
 
-#define TOTAL_RESOURCES 	( 2000 )
-#define START_RESOURCE_ID 	( 0x1000 )
+#define TOTAL_RESOURCES   ( 2000 )
+#define START_RESOURCE_ID ( 0x1000 )
 
 //-----------------------------------------------------------------------------
 // Typedefs and enums
 //-----------------------------------------------------------------------------
-
 
 /** ----------------------------------------------------------------------------
     @brief   	Resource handling structure
@@ -51,11 +50,11 @@
 ----------------------------------------------------------------------------- */
 typedef struct
 {
-    uint32_t 	ulResourceID;
-    uint32_t 	ulResourceSize;
-    uint32_t 	ulResourceType;
-    uint8_t* 	pszResourceName;
-    uint8_t* 	pResourceData;
+    uint32_t ulResourceID;
+    uint32_t ulResourceSize;
+    uint32_t ulResourceType;
+    uint8_t* pszResourceName;
+    uint8_t* pResourceData;
 
 } ResourceHeader_t, *pResourceHeader_t;
 
@@ -63,20 +62,20 @@ typedef struct
     @brief   	Resource handling control structure
     @ingroup 	AmiWorms
 ----------------------------------------------------------------------------- */
-typedef struct 
+typedef struct
 {
-    FlagStruct_t 	    Flags;
-    ResourceHeader_t 	Resource[ TOTAL_RESOURCES ];
-    pSprDimention_t     pSpriteDim;
-    psFileGroup         Groups;
-    uint32_t 		    ulResourceCount;
-    uint32_t 		    nTotalGroups;
-    uint32_t 		    ulCurrentResourceID;
-    uint8_t             tmpFileName[ 256 ];
-    uint32_t            ulTotalFiles;
-    uint32_t            ulCurLoadedFile;
-    uint32_t            nTotalSprites;
-    bool                bStatusNeeded;
+    FlagStruct_t     Flags;
+    ResourceHeader_t Resource[ TOTAL_RESOURCES ];
+    pSprDimention_t  pSpriteDim;
+    psFileGroup      Groups;
+    uint32_t         ulResourceCount;
+    uint32_t         nTotalGroups;
+    uint32_t         ulCurrentResourceID;
+    uint8_t          tmpFileName[ 256 ];
+    uint32_t         ulTotalFiles;
+    uint32_t         ulCurLoadedFile;
+    uint32_t         nTotalSprites;
+    bool             bStatusNeeded;
 
 } RHCtrl_t, *pRHCtrl_t;
 
@@ -161,14 +160,15 @@ bool ResourceHandling_Close( void )
     @param      pResourceData   - Resource data
     @return 	bool            - true if successful
  -----------------------------------------------------------------------------*/
-bool ResourceHandling_Add( uint32_t ulResourceID, uint32_t ulResourceSize, uint32_t ulResourceType, uint8_t* pszResourceName, uint8_t* pResourceData )
+bool ResourceHandling_Add( uint32_t ulResourceID, uint32_t ulResourceSize, uint32_t ulResourceType, uint8_t* pszResourceName,
+                           uint8_t* pResourceData )
 {
     bool bReturn = false;
 
     if ( ulResourceID < TOTAL_RESOURCES && sRHCtrl.Flags.Initialized == 1 )
     {
         // validate the remaining parameters
-        if (ulResourceSize > 0 && ulResourceType < eResourceType_Total && pszResourceName != NULL && pResourceData != NULL)
+        if ( ulResourceSize > 0 && ulResourceType < eResourceType_Total && pszResourceName != NULL && pResourceData != NULL )
         {
             if ( sRHCtrl.Resource[ ulResourceID ].ulResourceType == eResourceType_NotSet )
             {
@@ -218,7 +218,6 @@ bool ResourceHandling_Remove( uint32_t ulResourceID )
 
         // return success
         bReturn = true;
-
     }
 
     return bReturn;
@@ -240,7 +239,7 @@ bool ResourceHandling_Get( uint32_t ulResourceID, eResourceGet_t eType, uint32_t
     {
         uint32_t ulIndex = ulResourceID;
         // get the resource data
-        switch( eType )
+        switch ( eType )
         {
             case eResourceGet_Size:
             {
@@ -273,7 +272,6 @@ bool ResourceHandling_Get( uint32_t ulResourceID, eResourceGet_t eType, uint32_t
     return bReturn;
 }
 
-
 /** ----------------------------------------------------------------------------
     @brief 		Load the resource groups
     @ingroup 	AmiWorms
@@ -282,59 +280,63 @@ bool ResourceHandling_Get( uint32_t ulResourceID, eResourceGet_t eType, uint32_t
  -----------------------------------------------------------------------------*/
 bool ResourceHandling_LoadGroups( psFileGroup groups )
 {
-    uint32_t    ulResourceID    = 0;
+    uint32_t ulResourceID = 0;
 
     if ( groups != NULL )
     {
-        psFileGroup psGroup = groups;
-        uint32_t    ulIndex = 0;
-        uint32_t    ulTotalSize = 0;
-        uint32_t    ulNumLoaded = 0;
-        uint32_t    ulTotalFilesRemapped = 0;   
-        uint32_t    ulGroupCount = 0;
+        psFileGroup psGroup              = groups;
+        uint32_t    ulIndex              = 0;
+        uint32_t    ulTotalSize          = 0;
+        uint32_t    ulNumLoaded          = 0;
+        uint32_t    ulTotalFilesRemapped = 0;
+        uint32_t    ulGroupCount         = 0;
 
         if ( sRHCtrl.bStatusNeeded == true )
         {
             printf( "Loading sprite files : 0%%               \r" );
-            fflush(stdout);
+            fflush( stdout );
         }
 
-        sRHCtrl.Groups = groups;    
+        sRHCtrl.Groups = groups;
 
-        while( psGroup->pszDirectory != NULL )
+        while ( psGroup->pszDirectory != NULL )
         {
             psFileDetails psFileDetails = psGroup->psFileDetails;
-            uint32_t ulFileIndex = 0;
+            uint32_t      ulFileIndex   = 0;
 
             ulGroupCount++;
 
             psGroup->ulStartResourceID = ulResourceID;
 
-            while( psFileDetails->pszResourceName != NULL )
+            while ( psFileDetails->pszResourceName != NULL )
             {
                 uint8_t* pFileBuffer = NULL;
-                uint32_t ulFileSize = 0;
+                uint32_t ulFileSize  = 0;
 
                 strcpy( sRHCtrl.tmpFileName, psGroup->pszDirectory );
                 strcat( sRHCtrl.tmpFileName, psFileDetails->pszResourceName );
 
-                if ( sRHCtrl.bStatusNeeded == true && !(ulNumLoaded & 3) )
+                if ( sRHCtrl.bStatusNeeded == true && !( ulNumLoaded & 3 ) )
                 {
-                    float fPercent = (float)ulNumLoaded / (float)sRHCtrl.ulTotalFiles;
-                    uint32_t ulPercent = (uint32_t)(fPercent * 100);
+                    float    fPercent  = (float)ulNumLoaded / (float)sRHCtrl.ulTotalFiles;
+                    uint32_t ulPercent = (uint32_t)( fPercent * 100 );
                     printf( "Loading sprite files : %d%% (%d of %d)\r", ulPercent, ulNumLoaded, sRHCtrl.ulTotalFiles );
-                    fflush(stdout);
+                    fflush( stdout );
                 }
 
                 if ( LIB_Files_Load( sRHCtrl.tmpFileName, &pFileBuffer, &ulFileSize ) == true )
                 {
-                    if ( ResourceHandling_Add( ulResourceID, ulFileSize, psFileDetails->eFileType, psFileDetails->pszResourceName, pFileBuffer ) == false )
+                    if ( ResourceHandling_Add( ulResourceID, ulFileSize, psFileDetails->eFileType, psFileDetails->pszResourceName,
+                                               pFileBuffer )
+                         == false )
                     {
                         // Exit error
                         printf( "Resource failed to add: %s\n", sRHCtrl.tmpFileName );
                         return false;
                     }
-                    if ( LIB_Sprites_RegisterBank( ulResourceID, psFileDetails->eFileType, ulResourceID, pFileBuffer, ulFileSize, psFileDetails->ulNumber, psFileDetails->ulWidth, psFileDetails->ulHeight ) == false )
+                    if ( LIB_Sprites_RegisterBank( ulResourceID, psFileDetails->eFileType, ulResourceID, pFileBuffer, ulFileSize,
+                                                   psFileDetails->ulNumber, psFileDetails->ulWidth, psFileDetails->ulHeight )
+                         == false )
                     {
                         // Exit error
                         printf( "Resource failed to register: %s\n", sRHCtrl.tmpFileName );
@@ -345,24 +347,24 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
                         if ( psGroup->reMapValue != 0 && psFileDetails->eFileType == eRAW )
                         {
                             ulTotalFilesRemapped++;
-                            if ( strncmp((int8_t*)(psFileDetails->pszResourceName),"gradient-8-", 11 ) == 0 )   
+                            if ( strncmp( (int8_t*)( psFileDetails->pszResourceName ), "gradient-8-", 11 ) == 0 )
                             {
                                 LIB_Sprites_Remap( ulResourceID, 184 );
                             }
                             else
                             {
-                                LIB_Sprites_Remap( ulResourceID, psGroup->reMapValue-1 );
+                                LIB_Sprites_Remap( ulResourceID, psGroup->reMapValue - 1 );
                             }
                         }
                     }
                 }
                 else
                 {
-                    printf( "File failed to load: %s\n", sRHCtrl.tmpFileName ); 
+                    printf( "File failed to load: %s\n", sRHCtrl.tmpFileName );
                 }
                 ulNumLoaded++;
                 ulIndex++;
-                ulTotalSize += ulFileSize;  
+                ulTotalSize += ulFileSize;
                 ulResourceID++;
                 ulFileIndex++;
                 psFileDetails++;
@@ -374,11 +376,11 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
         {
             float fPercent = (float)ulNumLoaded / (float)sRHCtrl.ulTotalFiles;
             printf( "Loading sprite files : 100%% (%d of %d)\n", ulNumLoaded, sRHCtrl.ulTotalFiles );
+            printf( "Sprite Resource Loaded into fast memory\n" );
+            printf( "Total files loaded   : %d\n", ulNumLoaded );
+            printf( "Total files remapped : %d\n", ulTotalFilesRemapped );
+            printf( "Total resource size  : %dKB \n", ( ulTotalSize >> 10 ) + 1 );
         }
-        printf( "Sprite Resource Loaded into fast memory\n" );
-        printf( "Total files loaded   : %d\n", ulNumLoaded );
-        printf( "Total files remapped : %d\n", ulTotalFilesRemapped );
-        printf( "Total resource size  : %dKB \n", (ulTotalSize >> 10) + 1 );
     }
 
     return true;
@@ -392,14 +394,14 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
 void ResourceHandling_InitStatus( psFileGroup groups )
 {
     // count the number of resources
-    uint32_t ulIndex = 0;
+    uint32_t ulIndex      = 0;
     uint32_t ulTotalFiles = 0;
 
-    while( groups[ ulIndex ].pszDirectory != NULL )
+    while ( groups[ ulIndex ].pszDirectory != NULL )
     {
         psFileDetails psFileDetails = groups[ ulIndex ].psFileDetails;
 
-        while( psFileDetails->pszResourceName != NULL )
+        while ( psFileDetails->pszResourceName != NULL )
         {
             ulTotalFiles++;
             psFileDetails++;
@@ -407,11 +409,11 @@ void ResourceHandling_InitStatus( psFileGroup groups )
 
         ulIndex++;
     }
- 
-    sRHCtrl.nTotalGroups = ulIndex;
-    sRHCtrl.ulTotalFiles = ulTotalFiles;
+
+    sRHCtrl.nTotalGroups    = ulIndex;
+    sRHCtrl.ulTotalFiles    = ulTotalFiles;
     sRHCtrl.ulCurLoadedFile = 0;
-    sRHCtrl.bStatusNeeded = true;
+    sRHCtrl.bStatusNeeded   = true;
 }
 
 /** ----------------------------------------------------------------------------
@@ -436,7 +438,6 @@ uint8_t* ResourceHandling_GetGroupName( uint32_t nGroupIndex )
     return theFileGroups[ nGroupIndex ].pszDirectory;
 }
 
-
 /** ----------------------------------------------------------------------------
     @brief 		Get the total number of sprites
     @ingroup 	AmiWorms
@@ -445,15 +446,15 @@ uint8_t* ResourceHandling_GetGroupName( uint32_t nGroupIndex )
 uint32_t ResourceHandling_GetTotalNumSprites( void )
 {
     uint32_t nRefIndex = 0;
-    uint32_t nTotal = 0;
+    uint32_t nTotal    = 0;
 
     if ( sRHCtrl.Groups != NULL )
     {
         for ( int32_t nGroup = 0; nGroup < sRHCtrl.nTotalGroups; nGroup++ )
         {
-            psFileDetails psFD = sRHCtrl.Groups[ nGroup ].psFileDetails;
-            uint32_t nFile = 0;
-            while( psFD->pszResourceName != NULL )
+            psFileDetails psFD  = sRHCtrl.Groups[ nGroup ].psFileDetails;
+            uint32_t      nFile = 0;
+            while ( psFD->pszResourceName != NULL )
             {
                 nTotal += LIB_Sprites_GetTotalNumSprites( nFile + nRefIndex );
 
@@ -477,23 +478,24 @@ uint32_t ResourceHandling_GetTotalNumSprites( void )
  -----------------------------------------------------------------------------*/
 bool ResourceHandling_ScanAndSetSpriteDimentions( void )
 {
-    bool        bRet = false;
-    uint32_t    nRefIndex = 0;
-    uint32_t    nCurScanned = 0;
-    
+    bool     bRet        = false;
+    uint32_t nRefIndex   = 0;
+    uint32_t nCurScanned = 0;
+
     if ( sRHCtrl.Groups != NULL && sRHCtrl.nTotalSprites != 0 )
     {
-        sRHCtrl.pSpriteDim = (pSprDimention_t)Hardware_GetSpriteDims();  // (pSprDimention_t)malloc( sRHCtrl.nTotalSprites * sizeof( SprDimention_t ) );
+        sRHCtrl.pSpriteDim =
+            (pSprDimention_t)Hardware_GetSpriteDims(); // (pSprDimention_t)malloc( sRHCtrl.nTotalSprites * sizeof( SprDimention_t ) );
         pSprDimention_t pSpriteDim = sRHCtrl.pSpriteDim;
 
         for ( int32_t nGroup = 0; nGroup < sRHCtrl.nTotalGroups; nGroup++ )
         {
-            psFileDetails psFD = sRHCtrl.Groups[ nGroup ].psFileDetails;
-            uint32_t nFile = 0;
-            while( psFD->pszResourceName != NULL )
+            psFileDetails psFD  = sRHCtrl.Groups[ nGroup ].psFileDetails;
+            uint32_t      nFile = 0;
+            while ( psFD->pszResourceName != NULL )
             {
                 uint32_t nSprs = LIB_Sprites_GetTotalNumSprites( nFile + nRefIndex );
-                for( int32_t nSpr = 0; nSpr < nSprs; nSpr++ )
+                for ( int32_t nSpr = 0; nSpr < nSprs; nSpr++ )
                 {
                     LIB_Sprites_GetSpriteDimentions( nRefIndex + nFile, nSpr, pSpriteDim );
                     pSpriteDim++;
@@ -507,11 +509,10 @@ bool ResourceHandling_ScanAndSetSpriteDimentions( void )
                 if ( sRHCtrl.bStatusNeeded == true )
                 {
                     printf( "Setting sprite dimentions : %d of %d sprites       \r", nCurScanned, sRHCtrl.nTotalSprites );
-                    fflush(stdout);
+                    fflush( stdout );
                 }
             }
             nRefIndex += nFile;
-
         }
 
         bRet = true;
@@ -519,17 +520,12 @@ bool ResourceHandling_ScanAndSetSpriteDimentions( void )
         if ( sRHCtrl.bStatusNeeded == true )
         {
             printf( "\n" );
-            fflush(stdout);
+            fflush( stdout );
         }
     }
 
-
     return bRet;
 }
-
-
-
-
 
 //-----------------------------------------------------------------------------
 // End of File: ResourceHandling.c

@@ -134,7 +134,7 @@ PSPRHANDLE LIB_SprManager_Add( uint32_t nResourceID, uint16_t nX, uint16_t nY, u
                     pSprite->SprFlags.OnScreen = ON;
                     pSprite->SprFlags.Visible  = ON;
 
-                    // Incremprent the sprite count
+                    // Increment the sprite count
                     sSprMgr.SprCount++;
 
                     // Set the result
@@ -258,7 +258,7 @@ void LIB_SprManager_Draw( int32_t nXScroll, int32_t nYScroll )
             if ( pSprite->SprFlags.Active == ON )
             {
 
-                if ( pSprite->SprFlags.Visible == ON )
+                if ( pSprite->SprFlags.Visible == ON )                                                                                 
                 {
                     int32_t nX     = pSprite->ScreenX;
                     int32_t nY     = pSprite->ScreenY;

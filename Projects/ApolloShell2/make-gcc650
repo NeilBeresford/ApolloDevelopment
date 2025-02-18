@@ -14,7 +14,7 @@ GDB		= ./.vscode/bgdbserver
 
 #Define Project Name and Directory (replace <project-name> and <directory-name>)
 PROJECT_NAME	= ApolloShell-backup
-PROJECT_DIR		= Projects/ApolloShell2
+PROJECT_DIR		= Projects/ApolloShell2/
 
 # Define ASM Compiler
 S_COMPILER = $(PREFIX)/bin/vasmm68k_mot

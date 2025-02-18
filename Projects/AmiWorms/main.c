@@ -38,14 +38,17 @@
 // Defines
 //-----------------------------------------------------------------------------
 
-#define BACKSCREENWIDTH  ( 1920 )
-#define BACKSCREENHEIGHT ( 960 )
-#define NUM_MAPS         ( 2 )
+#define BACKSCREENWIDTH      ( 1920 )
+#define BACKSCREENHEIGHT     ( 960 )
+#define NUM_MAPS             ( 2 )
 
-#define MOUSEMOVAREA     ( 50.0f )
-#define VISABLE_HEIGHT   ( 360 )
-#define VISABLE_WIDTH    ( 640 )
-#define MAPSCROLLSPEED   ( 12.0f )
+#define MOUSEMOVAREA         ( 50.0f )
+#define VISABLE_HEIGHT       ( 360 )
+#define VISABLE_WIDTH        ( 640 )
+#define MAPSCROLLSPEED       ( 12.0f )
+
+#define CHECK_KEY( key )     ( sKeyboardState.Keys[ key ] && ( sKeyboardState.KeysProcessed[ key ] == 0 ) )
+#define CHECK_KEYDOWN( key ) ( sKeyboardState.Keys[ key ] && ( sKeyboardState.KeysDown[ key ] == 1 ) )
 
 //-----------------------------------------------------------------------------
 // Forward declarations
@@ -115,6 +118,7 @@ PSPRHANDLE handles[ 256 ];
  --------------------------------------------------------------------------- */
 uint32_t main( int argc, char* argv[] )
 {
+
     uint32_t keyReturn = 0;
     uint8_t  Banner[]  = "\n"
                          "An Apollo v4 Production - by Neil Beresford\n"
@@ -126,18 +130,18 @@ uint32_t main( int argc, char* argv[] )
                          "/_/   \\_\\_| |_| |_|_|      \\_/\\_/ \\___/|_|  |_| |_| |_|___/\n\n\n"
                          "Written using ApolloCrossDev and Visual Studio Code\n\n";
 
-    printf( Banner );
-    printf( "Press 'ESC' to exit\n" );
+    // printf( Banner );
+    // printf( "Press 'ESC' to exit\n" );
 
     // Initialize the system and hardware
     LIB_Sprites_Init();
     LIB_SprManager_Init();
 
     ResourceHandling_Init();
-    ResourceHandling_InitStatus( theFileGroups );
+    // ResourceHandling_InitStatus( theFileGroups );
 
     // load in the files...
-    printf( "Loading misc files...\n" );
+    // printf( "Loading misc files...\n" );
 
     for ( uint32_t nFile = 0; nFile < 30; nFile++ )
     {
@@ -148,17 +152,17 @@ uint32_t main( int argc, char* argv[] )
     }
 
     // load all the sprite groups
-    printf( "Sprite files and remapping scene data...\n" );
+    // printf( "Sprite files and remapping scene data...\n" );
     ResourceHandling_LoadGroups( theFileGroups );
     LIB_SpriteFont_CalcFontWidthOffsets();
 
-    printf( "Files loaded\n" );
+    // printf( "Files loaded\n" );
     uint32_t nTotalSprs = ResourceHandling_GetTotalNumSprites();
-    printf( "Total number of sprites is %d\n", nTotalSprs );
-    printf( "Total memory for sprite dimentions is number of sprites is %d bytes\n", nTotalSprs * sizeof( SprDimention_t ) );
+    // printf( "Total number of sprites is %d\n", nTotalSprs );
+    // printf( "Total memory for sprite dimentions is number of sprites is %d bytes\n", nTotalSprs * sizeof( SprDimention_t ) );
     ResourceHandling_ScanAndSetSpriteDimentions();
 
-    printf( "Create the back screens\n" );
+    // printf( "Create the back screens\n" );
     Hardware_SetBackscreenBuffers();
 
     CreateBackScreens();
@@ -183,7 +187,7 @@ uint32_t main( int argc, char* argv[] )
 
 #endif
 
-    printf( "Initializing screen mode and other hardware\n" );
+    // printf( "Initializing screen mode and other hardware\n" );
 
     Hardware_Init();
 
@@ -254,8 +258,8 @@ uint32_t main( int argc, char* argv[] )
     // terminate the program
     Hardware_Close();
 
-    printf( "Time played %d minutes %d seconds\n", ulFrames / ( 60 * 60 ), ( ulFrames / 60 ) % 60 );
-    printf( "Exiting - have a nice day!\n\n" );
+    // printf( "Time played %d minutes %d seconds\n", ulFrames / ( 60 * 60 ), ( ulFrames / 60 ) % 60 );
+    // printf( "Exiting - have a nice day!\n\n" );
 
     return 0;
 }
@@ -312,6 +316,8 @@ void Main_DrawGameScreen( void )
     LIB_SpriteFont_Draw( eFont_GreenSmall, 5, 59, strBuffer );
     sprintf( strBuffer, "%02d %s", nMapType, ResourceHandling_GetGroupName( eGroups_Terrain01 + nMapType ) );
     LIB_SpriteFont_Draw( eFont_RedSmall, 5, 68, strBuffer );
+    sprintf( strBuffer, "%02d <-- Keystate", sKeyboardState.Current_Key );
+    LIB_SpriteFont_Draw( eFont_WhiteSmall, 5, 77, strBuffer );
 
 #endif
 }
@@ -403,19 +409,91 @@ bool Main_ControlGame( void )
             nScrollY = 960 - 360;
     }
 
-    if ( sKeyboardState.Current_Key == 0x45 )
+    //----------------------------------------------------
+    // sKeyboardState.Current_Key = Hardware_ReadKey();
+    ApolloKeyboard( &sKeyboardState );
+
+    // Action on key release - for the ESC key
+    if ( CHECK_KEY( KEYCODE_ESC ) )
     {
-        bDoQuit = true;
+        sKeyboardState.KeysProcessed[ KEYCODE_ESC ] = 1;
+        bDoQuit                                     = true;
     }
-    if ( sKeyboardState.Current_Key == 0x01 )
+    if ( CHECK_KEY( KEYCODE_1 ) )
     {
-        bMapMode = bMapMode ? false : true;
+        sKeyboardState.KeysProcessed[ KEYCODE_1 ] = 1;
+        bMapMode                                  = bMapMode ? false : true;
     }
-    if ( sKeyboardState.Current_Key == 0x02 )
+    if ( CHECK_KEY( KEYCODE_2 ) )
     {
+        sKeyboardState.KeysProcessed[ KEYCODE_2 ] = 1;
         CreateBackScreens();
         LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
     }
+    if ( CHECK_KEY( KEYCODE_3 ) )
+    {
+        sKeyboardState.KeysProcessed[ KEYCODE_3 ] = 1;
+        // control the type of map
+        nMapType++;
+        if ( nMapType > 29 )
+            nMapType = 0;
+        nMapGroup = nMapType + 5;
+        for ( int32_t clearCnt = 0; clearCnt < 3; clearCnt++ )
+        {
+            Hardware_ClearScreen();
+            Hardware_WaitVBL();
+            Hardware_FlipScreen();
+        }
+        CreateBackScreens();
+        Hardware_WaitVBL();
+        HWSCREEN_SetImagePalette( palettes[ nMapType ] );
+
+        LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
+    }
+    if ( CHECK_KEYDOWN( KEYCODE_HELP ) )
+    {
+        uint8_t strBuffer[ 64 ];
+        LIB_Sprites_SetOverwriteColour( 19 );
+        LIB_SpriteFont_Draw( eFont_CyanBig, 460 + 1, 40 + 1, "Mapped Keys:" );
+        LIB_SpriteFont_Draw( eFont_BlueSmall, 460 + 1, 65 + 1, "HELP - This information" );
+        LIB_SpriteFont_Draw( eFont_BlueSmall, 460 + 1, 74 + 1, "ESC - Quit Game" );
+        LIB_SpriteFont_Draw( eFont_BlueSmall, 460 + 1, 83 + 1, "NUM 1 - Toggle game and map mode" );
+        LIB_SpriteFont_Draw( eFont_BlueSmall, 460 + 1, 92 + 1, "NUM 2 - Generate new map" );
+        LIB_SpriteFont_Draw( eFont_BlueSmall, 460 + 1, 101 + 1, "NUM 3 - New3 level scheme" );
+        LIB_Sprites_SetOverwriteColour( 0 );
+        LIB_SpriteFont_Draw( eFont_WhiteBig, 460, 40, "Mapped Keys:" );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 460, 65, "HELP - This information" );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 460, 74, "ESC - Quit Game" );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 460, 83, "NUM 1 - Toggle game and map mode" );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 460, 92, "NUM 2 - Generate new map" );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 460, 101, "NUM 3 - New3 level scheme" );
+    }
+
+    if ( CHECK_KEYDOWN( KEYCODE_UP ) )
+    {
+        nScrollY -= 4;
+        if ( nScrollY < 0 )
+            nScrollY = 0;
+    }
+    if ( CHECK_KEYDOWN( KEYCODE_DOWN ) )
+    {
+        nScrollY += 4;
+        if ( nScrollY > 960 - 360 )
+            nScrollY = 960 - 360;
+    }
+    if ( CHECK_KEYDOWN( KEYCODE_LEFT ) )
+    {
+        nScrollX -= 4;
+        if ( nScrollX < 0 )
+            nScrollX = 0;
+    }
+    if ( CHECK_KEYDOWN( KEYCODE_RIGHT ) )
+    {
+        nScrollX += 4;
+        if ( nScrollX > 1920 - 640 )
+            nScrollX = 1920 - 640;
+    }
+    //----------------------------------------------------
 
     // check for joystick button A - change map
     if ( sJoypadState.Joypad_A == true && sJoypadState.Joypad_AActioned == false )

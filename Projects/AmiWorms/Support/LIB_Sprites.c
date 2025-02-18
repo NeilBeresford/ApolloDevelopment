@@ -68,8 +68,6 @@ SpriteCtrl SprCtrl = { .Flags = { .Flags = 0 } }; //!< Sprite Control structure
  -----------------------------------------------------------------------------*/
 void LIB_Sprites_Init( void )
 {
-    printf( "LIB_Sprites_Init\n" );
-
     // setup the sprite banks
     for ( uint32_t i = 0; i < MAX_SPRITE_BANKS; i++ )
     {
