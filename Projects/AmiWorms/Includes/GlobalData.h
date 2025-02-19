@@ -16,15 +16,16 @@
 
 #include "stdint.h"
 #include "stdbool.h"
-
+#include "../Includes/defines.h"
 //-----------------------------------------------------------------------------
 // Typedefs
 //-----------------------------------------------------------------------------
 
 typedef struct
 {
-    bool GamePaused;
-    bool HelpActivated;
+    bool    GamePaused;
+    bool    HelpActivated;
+    int32_t pMapHeight[ BACKSCREENWIDTH ];
 
 } sGLOBALDATA, *psGLOBALDATA;
 

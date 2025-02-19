@@ -22,6 +22,7 @@
 #include "string.h"
 #include "time.h"
 #include "Includes/defines.h"
+#include "Includes/GlobalData.h"
 #include "Includes/Hardware.h"
 #include "Includes/HWScreen.h"
 #include "Includes/ResourceFiles.h"
@@ -33,6 +34,7 @@
 #include "Includes/LIB_PerlinNoise.h"
 #include "Includes/LIB_SpriteFont.h"
 #include "Includes/LIB_SprManager.h"
+#include "Includes/GAME_Player.h"
 
 //-----------------------------------------------------------------------------
 // Defines
@@ -70,7 +72,6 @@ ApolloKeyBoardState sKeyboardState;
 ApolloJoypadState   sJoypadState;
 ApolloMouseState    sMouseState;
 
-int32_t             pMapHeight[ BACKSCREENWIDTH ];
 uint32_t            ulFrames        = 0;
 bool                bMapMode        = false;
 int32_t             nScrollX        = 400;
@@ -167,25 +168,9 @@ uint32_t main( int argc, char* argv[] )
 
     CreateBackScreens();
 
-#if 1
-
-    {
-        int32_t  x = 32, y = 0;
-        uint32_t nGroup = eGroups_Worms;
-
-        for ( int32_t i = 0; i < 30; i++ )
-        {
-            y            = pMapHeight[ x ] - 350 + 30;
-            handles[ i ] = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( nGroup ) + 426 + i, x, y, 0, 0, NULL );
-            LIB_SprManager_FlipSprite( handles[ i ], i & 1 );
-            LIB_SprManager_AddAnim( handles[ i ], i + 1, SPR_ANIM_LOOP, LIB_SprManager_GetTotalFrames( handles[ i ] ), NULL );
-            LIB_SprManager_SetFlags( handles[ i ], SPR_FLAGS_WORLDSPRITE );
-            x += 50;
-            y += 5;
-        }
-    }
-
-#endif
+    // Create player sprites
+    GAME_Player_Init();
+    GAME_Player_StartGame();
 
     // printf( "Initializing screen mode and other hardware\n" );
 
@@ -205,17 +190,16 @@ uint32_t main( int argc, char* argv[] )
         LIB_Sprites_DrawFlipped( ResourceHandling_GetGroupStartResource( eGroups_Panels ) + 2, 0, 320 + 22, 0 );
         LIB_Sprites_DrawFlipped( ResourceHandling_GetGroupStartResource( eGroups_Panels ) + 2, 0, 320 + 22, 19 );
 
-        LIB_Sprites_SetOverwriteColour( 16 );
-        LIB_SpriteFont_Draw( eFont_WhiteSmall, 35, 5, "THE BOYS" );
-        LIB_SpriteFont_Draw( eFont_WhiteSmall, 35, 24, "MYSTERY" );
+        LIB_Sprites_SetOverwriteColour( 19 );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 37, 5, "THE BOYS" );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 37, 24, "MYSTERY" );
         LIB_SpriteFont_Draw( eFont_WhiteSmall, 601 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "ROYALTY" ), 5, "ROYALTY" );
         LIB_SpriteFont_Draw( eFont_WhiteSmall, 601 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "OH NO!!" ), 24, "OH NO!!" );
-        LIB_Sprites_SetOverwriteColour( 19 );
-        LIB_SpriteFont_Draw( eFont_WhiteSmall, 34, 4, "THE BOYS" );
-        LIB_SpriteFont_Draw( eFont_WhiteSmall, 34, 23, "MYSTERY" );
-        LIB_SpriteFont_Draw( eFont_WhiteSmall, 602 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "ROYALTY" ), 4, "ROYALTY" );
-        LIB_SpriteFont_Draw( eFont_WhiteSmall, 602 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "OH NO!!" ), 23, "OH NO!!" );
         LIB_Sprites_SetOverwriteColour( 0 );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 36, 4, "THE BOYS" );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 36, 23, "MYSTERY" );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 600 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "ROYALTY" ), 4, "ROYALTY" );
+        LIB_SpriteFont_Draw( eFont_WhiteSmall, 600 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "OH NO!!" ), 23, "OH NO!!" );
 
         Hardware_WaitVBL();
         Hardware_FlipScreen();
@@ -231,6 +215,9 @@ uint32_t main( int argc, char* argv[] )
     uint32_t ulCol                 = 0xFE000000;
     uint32_t ulInc                 = 0x00080808;
     bool     bCycleDir             = false;
+
+    nScrollX                       = 400;
+    nScrollY                       = 300;
 
     // main loop -
     while ( true )
@@ -670,18 +657,6 @@ void CreateBackScreens( void )
     // Generate the map
     CreateMap();
 
-    {
-        int32_t  x = 32, y = 0;
-        uint32_t nGroup = eGroups_Worms;
-
-        for ( int32_t i = 0; i < 30; i++ )
-        {
-            y = pMapHeight[ x ] - 350 + 30;
-            LIB_SprManager_SetPosition( handles[ i ], x, y );
-            x += 50;
-        }
-    }
-
     // create reference back screen 2
     Hardware_SetScreenmode( 2 );
     uint32_t screenWidth        = Hardware_GetScreenWidth();
@@ -718,7 +693,7 @@ void CreateBackScreens( void )
 
     for ( uint32_t gx = 0; gx < BACKSCREENWIDTH; gx++ )
     {
-        uint32_t refY = pMapHeight[ gx ] - 350;
+        uint32_t refY = sGlobalData.pMapHeight[ gx ] - 350;
 
         for ( uint32_t grY = refY - ulGrassHeight, nCnt = 0; grY < refY; grY++, nCnt++ )
         {
@@ -740,7 +715,7 @@ void CreateBackScreens( void )
 	// Test worms
 	for( uint32_t gX = 0; gX < screenWidth; gX += (rand() & 31) + 20)
 	{
-		uint32_t gY = pMapHeight[ gX + 30 ] - 350 - 40;
+		uint32_t gY = sGlobalData.pMapHeight[ gX + 30 ] - 350 - 40;
 		if ( gY < 900-40 )
 		{
 			LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( 3 ), 0, gX, gY );
@@ -799,7 +774,7 @@ void CreateMap( void )
     float fRef = 0.00075f + ( 0.003f / rand() );
 
     LIB_PerlinNoise_Init( 123456 );
-    LIB_PerlinNoise_GenerateMap( pMapHeight, BACKSCREENWIDTH, 0, fRef );
+    LIB_PerlinNoise_GenerateMap( sGlobalData.pMapHeight, BACKSCREENWIDTH, 0, fRef );
 }
 
 //-----------------------------------------------------------------------------

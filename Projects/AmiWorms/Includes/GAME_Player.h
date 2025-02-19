@@ -21,6 +21,7 @@
 #include "stdbool.h"
 #include "stdio.h"
 #include "../Includes/defines.h"
+#include "../Includes/GlobalData.h"
 #include "../Includes/Hardware.h"
 #include "../Includes/LIB_Sprites.h"
 #include "../Includes/LIB_SprManager.h"
@@ -47,6 +48,7 @@ typedef enum
     eGameWormAnim_Hurt,
     eGameWormAnim_Die,
     eGameWormAnim_Total
+
 } eGAMEWORMANIM;
 
 typedef enum
@@ -57,6 +59,27 @@ typedef enum
     eGaameType_Total
 
 } eGAMETYPE;
+
+typedef enum
+{
+    eTeam_One = 0,
+    eTeam_Two,
+    eTeam_Three,
+    eTeam_Four,
+    eTeam_Total
+};
+typedef enum
+{
+    ePlayer_One = 0,
+    ePlayer_Two,
+    ePlayer_Three,
+    ePlayer_Four,
+    ePlayer_Five,
+    ePlayer_Six,
+    ePlayer_Seven,
+    ePlayer_Eight,
+    ePlayer_Total
+};
 
 typedef struct
 {
@@ -93,6 +116,10 @@ typedef struct
     uint8_t     strLevelName[ SMALL_STRING_LEN ];
     eGAMETYPE   eGameType;
     uint16_t    nTotalTeams;
+    uint8_t     nCurTeam;
+    uint8_t     nCurTeamMember;
+    uint8_t     nActiveTeams;
+
     sGamePlayer pPlayer[ TOTAL_TEAMS ];
 
 } sGAME, *psGAME;
@@ -101,7 +128,8 @@ typedef struct
 // External Functionality
 //-----------------------------------------------------------------------------
 
-void GAME_Players_Init( void );
+void GAME_Player_Init( void );
+void GAME_Player_StartGame( void );
 
 //-----------------------------------------------------------------------------
 

@@ -45,6 +45,7 @@
                 XDEF       _Hardware_GetScreenmode
                 XDEF       _Hardware_GetDebug
                 XDEF       _Hardware_RandomNumber
+                XDEF       _Hardware_SetRandSeed
                 XDEF       _Hardware_StoreLastKey
                 XDEF       _Hardware_CheckKeyUp
                 XDEF       _Hardware_SetMapX
@@ -441,26 +442,56 @@ _Hardware_RandomNumber
                 eor.l      d1,d0
 .ran1
                 dbf        d2,.ran0
+                and.l      #$7FFFFFFF,d0
                 move.l     d0,RanSeed			
-
                 movem.l    (sp)+,d1-d2
                 rts
 
+;** ---------------------------------------------------------------------------
+;	@brief 		Sets the random seed
+;	@ingroup 	AmiWorms
+;	@param 		d0 - random seed
+;	@return 	none
+; --------------------------------------------------------------------------- */
+_Hardware_SetRandSeed
+                move.l     d0,RanSeed
+                rts
+
+
+;/**---------------------------------------------------------------------------
+; @brief 		Sets the map X
+; @ingroup 	    AmiWorms
+; @param 		d0 - map X
+;----------------------------------------------------------------------------*/
 _Hardware_SetMapX
 
                 move.l     d0,mapX
                 rts
 
+;/**---------------------------------------------------------------------------
+; @brief 		Gets the map X
+; @ingroup 	    AmiWorms
+; @return 		d0 - map X
+;----------------------------------------------------------------------------*/
 _Hardware_GetMapX
 
                 move.l     mapX,d0
                 rts
-	
+;/**---------------------------------------------------------------------------
+; @brief 		Sets the map Y
+; @ingroup 	    AmiWorms
+; @param 		d0 - map Y
+;----------------------------------------------------------------------------*/
 _Hardware_SetMapY
 
                 move.l     d0,mapY
                 rts
 	
+;/**---------------------------------------------------------------------------
+; @brief 		Gets the map Y
+; @ingroup 	    AmiWorms
+; @return 		d0 - map Y
+;----------------------------------------------------------------------------*/
 _Hardware_GetMapY
 
                 move.l     mapY,d0

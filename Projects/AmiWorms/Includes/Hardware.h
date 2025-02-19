@@ -186,6 +186,7 @@ uint32_t Hardware_ReadKey( void );
 uint8_t* Hardware_GetScreenPtr( void );
 
 int      Hardware_RandomNumber( void );
+void     Hardware_SetRandSeed( _D0( uint32_t Seed ) );
 void     Hardware_SetScreenmode( _D0( uint32_t ScreenMode ) );
 void     Hardware_StoreLastKey( _D0( uint32_t lastKey ) );
 void     Hardware_CheckKeyUp( void );
