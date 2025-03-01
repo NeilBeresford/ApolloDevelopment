@@ -209,6 +209,7 @@ uint8_t* Hardware_GetSpriteDims( void );
 void     Hardware_DrawBlock( _D0( uint32_t x ), _D1( uint32_t y ), _D2( uint32_t width ), _D3( uint32_t height ), _D4( uint32_t colour ) );
 void     Hardware_DrawBackScreenBlock( _D0( uint32_t x ), _D1( uint32_t y ), _D2( uint32_t width ), _D3( uint32_t height ),
                                        _D4( uint32_t colour ) );
+void     Hardware_SetMousePosition( _D0( uint32_t x ), _D1( uint32_t y ) );
 
 //-----------------------------------------------------------------------------
 

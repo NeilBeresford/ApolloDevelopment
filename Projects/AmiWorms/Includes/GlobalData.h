@@ -23,9 +23,18 @@
 
 typedef struct
 {
-    bool    GamePaused;
-    bool    HelpActivated;
+    bool GamePaused;
+    bool GameEnded;
+    bool HelpActivated;
+
+    // map related ...
     int32_t pMapHeight[ BACKSCREENWIDTH ];
+    int32_t nScrollX;
+    int32_t nScrollY;
+    bool    bMapMode;
+
+    // system related ...
+    uint32_t ulFrames;
 
 } sGLOBALDATA, *psGLOBALDATA;
 

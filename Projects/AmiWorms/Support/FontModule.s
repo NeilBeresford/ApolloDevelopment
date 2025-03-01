@@ -19,17 +19,17 @@
 ; Includes
 ;-----------------------------------------------------------------------------
 
-    include "Defines.i"
-    include "Macros.i"
+         include    "Defines.i"
+         include    "Macros.i"
 
 ;-----------------------------------------------------------------------------
 ; External defines
 ;-----------------------------------------------------------------------------
 
-	XDEF _FontModule_DisplayString
-	XDEF _FontModule_DisplayChar
-	XDEF _FontModule_DisplayHex
-	XREF screenPtr
+         XDEF       _FontModule_DisplayString
+         XDEF       _FontModule_DisplayChar
+         XDEF       _FontModule_DisplayHex
+         XREF       screenPtr
 
 ;-----------------------------------------------------------------------------
 ; Functionality
@@ -45,44 +45,40 @@
 ;----------------------------------------------------------
 _FontModule_DisplayString:
 
-	movem.l	d0-a6,-(SP)
+         movem.l    d0-a6,-(SP)
 
-	move.l  #10,d0
-	move.l  #80,d1
-	lea		TestString,a0
-
-	move.l	d0,d3
-	clr.l	d2
-	move.b	#$10,fontCol 
+         move.l     d0,d3
+         clr.l      d2
+         move.b     #$10,fontCol 
 .print:
-	move.b	(a0)+,d2
-	beq	.endPrint
+         move.b     (a0)+,d2
+         beq        .endPrint
 
 	; check for carrage returnzxxxcv
 
-	cmp.b	#10,d2
-	bne.s	.checkMisc
-	move.l	d3,d0
-	add	#8,d1
-	bra.s	.print
+         cmp.b      #10,d2
+         bne.s      .checkMisc
+         move.l     d3,d0
+         add        #8,d1
+         bra.s      .print
 	
 .checkMisc:
 
-	cmp.b   #$99,d2
-	bne.s   .continue
-	move.b	(a0)+,fontCol
-	bra.s	.print
+         cmp.b      #$99,d2
+         bne.s      .continue
+         move.b     (a0)+,fontCol
+         bra.s      .print
 	
 .continue:
 
-	bsr	_FontModule_DisplayChar
-	add.w	#8,d0
-	bra.s	.print 
+         bsr        _FontModule_DisplayChar
+         add.w      #8,d0
+         bra.s      .print 
 
 .endPrint:
 
-	movem.l	(SP)+,d0-a6
-	rts
+         movem.l    (SP)+,d0-a6
+         rts
 
 
 ;----------------------------------------------------------
@@ -95,38 +91,38 @@ _FontModule_DisplayString:
 ;----------------------------------------------------------
 _FontModule_DisplayChar:
 
-	movem.l	d0-a6,-(SP)
+         movem.l    d0-a6,-(SP)
 
-	move.l	screenPtr,a0
-	lea	fontData,a1
+         move.l     screenPtr,a0
+         lea        fontData,a1
 
 FontModule_PrintChar:
 
-	mulu	#9,d2
-	add.l	d2,a1
-	mulu	#SCREENWIDTH,d1
-	add.l	d0,d1	
-	add.l	d1,a0		
+         mulu       #9,d2
+         add.l      d2,a1
+         mulu       #SCREENWIDTH,d1
+         add.l      d0,d1	
+         add.l      d1,a0		
 
-	moveq	#8-1,d2
+         moveq      #8-1,d2
 .charY:
-	moveq	#0,d1
-	move.b	(a1)+,d6
+         moveq      #0,d1
+         move.b     (a1)+,d6
 .charX:
-	btst	d1,d6
-	beq.b	.charCont
-	move.b	fontCol,(a0)
+         btst       d1,d6
+         beq.b      .charCont
+         move.b     fontCol,(a0)
 .charCont:
-	addq	#1,a0				
-	addq	#1,d1
-	cmp.l	#8,d1
-	bne.s	.charX
+         addq       #1,a0				
+         addq       #1,d1
+         cmp.l      #8,d1
+         bne.s      .charX
 
-	add	#SCREENWIDTH-8,a0
-	dbf	d2,.charY
+         add        #SCREENWIDTH-8,a0
+         dbf        d2,.charY
 
-	movem.l	(SP)+,d0-a6
-	rts
+         movem.l    (SP)+,d0-a6
+         rts
 
 ;----------------------------------------------------------
 ; DisplayHex
@@ -138,24 +134,24 @@ FontModule_PrintChar:
 ;----------------------------------------------------------
 _FontModule_DisplayHex:
 
-	movem.l	d0-d4/a0,-(SP)
+         movem.l    d0-d4/a0,-(SP)
 
-	moveq	#7,d3
-	add.l	#56,d0
-	move.l	d2,d4
-	lea	fontHex,a0
+         moveq      #7,d3
+         add.l      #56,d0
+         move.l     d2,d4
+         lea        fontHex,a0
 .loop:
-	move.l	d4,d2
-	and.l	#$f,d2
-	move.b	(a0,d2),d2
-	bsr	_FontModule_DisplayChar
-	sub.l	#8,d0
-	ror.l	#4,d4
-	dbra	d3,.loop
+         move.l     d4,d2
+         and.l      #$f,d2
+         move.b     (a0,d2),d2
+         bsr        _FontModule_DisplayChar
+         sub.l      #8,d0
+         ror.l      #4,d4
+         dbra       d3,.loop
 
 
-	movem.l (SP)+,d0-d4/a0
-	rts
+         movem.l    (SP)+,d0-d4/a0
+         rts
 
 
 
@@ -163,28 +159,24 @@ _FontModule_DisplayHex:
 ; Data
 ;-----------------------------------------------------------------------------
 
-	SECTION fdata,DATA_F
+         SECTION    fdata,DATA_F
 
-fontCol	dc.b	$99		; Store for the font colour
-	dc.b	0,0,0	
-fontHex	dc.b	"0123456789ABCDEF"
+fontCol  dc.b       $99                          ; Store for the font colour
+         dc.b       0,0,0	
+fontHex  dc.b       "0123456789ABCDEF"
 
 
 fontStrBuffer:
 
-	dcb.b	256		; large buffer	
+         dcb.b      256                          ; large buffer	
+
+         EVEN
 
 fontData:
 
-	include "font8x8_basic.i"
+         include    "font8x8_basic.i"
 
-    EVEN
-
-TestString:
-
-	dc.b	"123456",$99,$11," Neil Beresford",10,"RULES! ?/@!$%^&*()_+-",0
-
-	EVEN
+         EVEN
 
 ;-----------------------------------------------------------------------------
 ; Test Data

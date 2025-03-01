@@ -19,6 +19,11 @@
 // Defines
 //-----------------------------------------------------------------------------
 
+#define YES                   1 // Yes
+#define NO                    0 // No
+#define ON                    1 // On
+#define OFF                   0 // Off
+
 #define SCREENWIDTH           640                       // Screen width
 #define SCREENHEIGHT          480                       // Screen height
 #define SCREENWIDTH           640                       // Screen width

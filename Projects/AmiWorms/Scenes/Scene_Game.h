@@ -1,37 +1,31 @@
 /** ---------------------------------------------------------------------------
-    @file		GAME_Player.c
+    @file		Scene_Game.h
     @defgroup 	AmiWorms Apollo V4 source
-    @brief		Apollo V4 development - AmiWorms
+    @brief		Apollo V4 development - Shell
     @date		2025-01-31
  -----------------------------------------------------------------------------
     Notes
 
 --------------------------------------------------------------------------- */
 
-//-----------------------------------------------------------------------------
-// Includes
-//-----------------------------------------------------------------------------
-
-#include "../Includes/GlobalData.h"
+#ifndef _SCENE_GAME_H_
+#define _SCENE_GAME_H_
 
 //-----------------------------------------------------------------------------
-// Variables
-//-----------------------------------------------------------------------------
-
-sGLOBALDATA sGlobalData = { 0 };
 
 //-----------------------------------------------------------------------------
 // External Functionality
 //-----------------------------------------------------------------------------
 
-void GlobalData_Init( void )
-{
-    sGlobalData.GamePaused    = false;
-    sGlobalData.HelpActivated = false;
-    sGlobalData.bMapMode      = false;
-    sGlobalData.GameEnded     = false;
-}
+void SceneGame_Init( void );
+void SceneGame_Close( void );
+void SceneGame_Draw( void );
+void SceneGame_Update( void );
 
 //-----------------------------------------------------------------------------
-// End of file GlobalData.c
+
+#endif // _SCENE_GAME_H_
+
+//-----------------------------------------------------------------------------
+// End of file Scene_Game.h
 //-----------------------------------------------------------------------------

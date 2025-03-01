@@ -16,9 +16,11 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "../Includes/FlagStruct.h"
+#include "../Includes/GlobalData.h"
 #include "../Includes/defines.h"
 #include "../Includes/LIB_Sprites.h"
 #include "../Includes/LIB_SprManager.h"
+#include "../Modules/Module-Scene.h"
 
 extern bool bMapMode; // Naughty and lazy Neil!  :-)
 
@@ -177,11 +179,13 @@ bool LIB_SprManager_AddAnim( PSPRHANDLE pSprHandle, uint16_t nAnimID, uint16_t n
             {
                 // Allocate memory for the animation data
                 // Set the animation data
-                pSprite->AnimData.AnimID       = nAnimID;
-                pSprite->AnimData.AnimType     = nAnimType;
-                pSprite->AnimData.AnimFrames   = nAnimFrames;
-                pSprite->AnimData.AnimCurFrame = 0;
-                pSprite->SprFlags.Animated     = ON;
+                pSprite->AnimData.AnimID          = nAnimID;
+                pSprite->AnimData.AnimType        = nAnimType;
+                pSprite->AnimData.AnimFrames      = nAnimFrames;
+                pSprite->AnimData.AnimCurFrame    = 0;
+                pSprite->AnimData.AnimDelayCnt    = 4;
+                pSprite->AnimData.AnimCurDelayCnt = 0;
+                pSprite->SprFlags.Animated        = ON;
 
                 if ( pSprite->AnimData.pFrames != NULL )
                 {
@@ -196,6 +200,38 @@ bool LIB_SprManager_AddAnim( PSPRHANDLE pSprHandle, uint16_t nAnimID, uint16_t n
     }
 
     return bResult;
+}
+
+/**-----------------------------------------------------------------------------
+    @brief		Change the Sprite Anim, please note - this needs the SPRITE structure
+    @ingroup	AmiWorms
+    @param		pSprite        - Pointer to the sprite structure
+    @param		nAnimID        - Animation ID
+    @param		nAnimType      - Animation Type
+    @param		nAnimFrames    - Animation Frames
+    @param		pFrameData     - Pointer to the frame data
+    @return		None
+  -----------------------------------------------------------------------------*/
+void LIB_SprManager_ChangeSpriteAnim( PSPRITE pSprite, uint16_t nAnimID, uint16_t nAnimType, uint16_t nAnimFrames, uint16_t* pFrameData )
+{
+    if ( pSprite->SprFlags.Active == ON )
+    {
+        // Allocate memory for the animation data
+        // Set the animation data
+        pSprite->AnimData.AnimID          = nAnimID;
+        pSprite->AnimData.AnimType        = nAnimType;
+        pSprite->AnimData.AnimFrames      = nAnimFrames;
+        pSprite->AnimData.AnimCurFrame    = 0;
+        pSprite->AnimData.AnimDelayCnt    = 4;
+        pSprite->AnimData.AnimCurDelayCnt = 0;
+        pSprite->SprFlags.Animated        = ON;
+
+        if ( pSprite->AnimData.pFrames != NULL )
+        {
+            // Allocate memory for the frame data
+            pSprite->AnimData.pFrames = pFrameData;
+        }
+    }
 }
 
 /** ---------------------------------------------------------------------------
@@ -215,17 +251,47 @@ void LIB_SprManager_Update( void )
             {
                 if ( pSprite->SprFlags.Animated == ON )
                 {
-                    // Update the animation
-                    if ( pSprite->AnimData.AnimType == SPR_ANIM_LOOP )
-                    {
-                        pSprite->AnimData.AnimCurFrame++;
-                        if ( pSprite->AnimData.AnimCurFrame >= pSprite->AnimData.AnimFrames )
-                        {
-                            pSprite->AnimData.AnimCurFrame = 0;
-                        }
 
-                        // Set the frame
-                        pSprite->SprNum = pSprite->AnimData.AnimCurFrame;
+                    if ( ++pSprite->AnimData.AnimCurDelayCnt >= pSprite->AnimData.AnimDelayCnt )
+                    {
+                        pSprite->AnimData.AnimCurDelayCnt = 0;
+
+                        // Update the animation
+                        switch ( pSprite->AnimData.AnimType )
+                        {
+                            case SPR_ANIM_LOOP:
+                            {
+                                pSprite->AnimData.AnimCurFrame++;
+                                if ( pSprite->AnimData.AnimCurFrame >= pSprite->AnimData.AnimFrames )
+                                {
+                                    pSprite->AnimData.AnimCurFrame = 0;
+                                }
+
+                                // Set the frame
+                                pSprite->SprNum = pSprite->AnimData.AnimCurFrame;
+                                break;
+                            }
+                            // Update the animation
+                            case SPR_ANIM_ONCE:
+                            {
+                                pSprite->AnimData.AnimCurFrame++;
+                                if ( pSprite->AnimData.AnimCurFrame >= pSprite->AnimData.AnimFrames )
+                                {
+                                    pSprite->AnimData.AnimType     = SPR_ANIM_NONE;
+                                    pSprite->AnimData.AnimCurFrame = 0;
+                                    pSprite->SprResourceID         = pSprite->SprResetResourceID;
+                                }
+
+                                // Set the frame
+                                pSprite->SprNum = pSprite->AnimData.AnimCurFrame;
+                                break;
+                            }
+                            case SPR_ANIM_NONE:
+                            default:
+                            {
+                                break;
+                            }
+                        }
                     }
                 }
 
@@ -258,14 +324,19 @@ void LIB_SprManager_Draw( int32_t nXScroll, int32_t nYScroll )
             if ( pSprite->SprFlags.Active == ON )
             {
 
-                if ( pSprite->SprFlags.Visible == ON )                                                                                 
+                if ( pSprite->SprFlags.Visible == ON )
                 {
-                    int32_t nX     = pSprite->ScreenX;
-                    int32_t nY     = pSprite->ScreenY;
-                    int32_t nHalfW = pSprite->SprWidth / 2;
-                    int32_t nHalfH = pSprite->SprHeight / 2;
+                    pSprDimention_t pSprDim = NULL;
+                    int32_t         nX      = pSprite->ScreenX;
+                    int32_t         nY      = pSprite->ScreenY;
+                    int32_t         nHalfW  = 0;
+                    int32_t         nHalfH  = 0;
 
-                    if ( bMapMode == false )
+                    pSprDim                 = ResourceHandling_GetSpriteFrameDimention( pSprite->SprResourceID, pSprite->SprNum );
+                    nHalfW                  = ( LIB_Sprites_GetWidth( pSprite->SprResourceID ) / 2 );
+                    nHalfH                  = ( LIB_Sprites_GetHeight( pSprite->SprResourceID ) / 2 );
+
+                    if ( sGlobalData.bMapMode == false )
                     {
                         if ( pSprite->SprFlags.WorldSprite == YES )
                         {
@@ -279,10 +350,13 @@ void LIB_SprManager_Draw( int32_t nXScroll, int32_t nYScroll )
                     }
                     else
                     {
+                        nHalfW = ( LIB_Sprites_GetWidth( pSprite->SprResourceID ) / 2 ) / 3;
+                        nHalfH = ( LIB_Sprites_GetHeight( pSprite->SprResourceID ) / 2 ) / 3;
                         nX /= 3;
-                        nX += 20;
+                        nX -= nHalfW;
                         nY /= 3;
-                        nY += 76;
+                        nY -= nHalfH;
+                        nY += 68;
                         if ( pSprite->SprFlags.Flipped == ON )
                             LIB_Sprites_DrawMapFlipped( pSprite->SprResourceID, pSprite->SprNum, nX - nHalfW, nY - nHalfH );
                         else
@@ -477,6 +551,36 @@ void LIB_SprManager_ClearFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags )
         if ( pSprHandle && pSprHandle->SprIndex < TOTAL_SPRITES )
         {
             sSprMgr.Sprites[ pSprHandle->SprIndex ].SprFlags.Flags &= ~ulFlags;
+        }
+    }
+}
+
+/** ---------------------------------------------------------------------------
+    @brief		Sets a sprite variable
+    @ingroup	AmiWorms
+    @param		pSprHandle 	- Pointer to the sprite handle
+    @param		Var 		- Variable to set
+    @param		VarValue 	- Value to set
+    @return		void
+ --------------------------------------------------------------------------- */
+void LIB_SprManager_SetVariable( PSPRHANDLE pSprHandle, uint32_t Var, uint32_t VarValue )
+{
+    if ( sSprMgr.sFlags.Initialized == ON )
+    {
+        if ( pSprHandle && pSprHandle->SprIndex < TOTAL_SPRITES )
+        {
+            switch ( Var )
+            {
+                case eSPRVAR_DEFAULTRESOURCE:
+                {
+                    sSprMgr.Sprites[ pSprHandle->SprIndex ].SprResetResourceID = VarValue;
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
         }
     }
 }

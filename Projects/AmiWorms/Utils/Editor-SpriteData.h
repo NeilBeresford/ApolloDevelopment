@@ -1,37 +1,31 @@
 /** ---------------------------------------------------------------------------
-    @file		GAME_Player.c
+    @file		Editor_SpriteData.h
     @defgroup 	AmiWorms Apollo V4 source
-    @brief		Apollo V4 development - AmiWorms
+    @brief		Apollo V4 development - Shell
     @date		2025-01-31
  -----------------------------------------------------------------------------
     Notes
 
 --------------------------------------------------------------------------- */
 
-//-----------------------------------------------------------------------------
-// Includes
-//-----------------------------------------------------------------------------
-
-#include "../Includes/GlobalData.h"
+#ifndef _EDITOR_SPRITEDATA_H_
+#define _EDITOR_SPRITEDATA_H_
 
 //-----------------------------------------------------------------------------
-// Variables
-//-----------------------------------------------------------------------------
-
-sGLOBALDATA sGlobalData = { 0 };
 
 //-----------------------------------------------------------------------------
 // External Functionality
 //-----------------------------------------------------------------------------
 
-void GlobalData_Init( void )
-{
-    sGlobalData.GamePaused    = false;
-    sGlobalData.HelpActivated = false;
-    sGlobalData.bMapMode      = false;
-    sGlobalData.GameEnded     = false;
-}
+void Editor_SpriteData_Init( void );
+void Editor_SpriteData_Close( void );
+void Editor_SpriteData_Draw( void );
+void Editor_SpriteData_Update( void );
 
 //-----------------------------------------------------------------------------
-// End of file GlobalData.c
+
+#endif // _EDITOR_SPRITEDATA_H_
+
+//-----------------------------------------------------------------------------
+// End of file Editor_SpriteData.h
 //-----------------------------------------------------------------------------

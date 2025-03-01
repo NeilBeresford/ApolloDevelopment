@@ -16,10 +16,17 @@
 //-----------------------------------------------------------------------------
 
 #define SPRADDFAILERROR ( 0xFFFF ) // Error code for failed sprite add
+#define TOTAL_TEMPDATA  ( 8 )      // Total temporary data
 
 //-----------------------------------------------------------------------------
 // Typedefs and Enums
 //-----------------------------------------------------------------------------
+
+typedef enum
+{
+    eSPRVAR_DEFAULTRESOURCE = 0,
+    eSPRVAR_TOTAL
+};
 
 typedef union
 {
@@ -150,6 +157,8 @@ typedef struct
     uint16_t  AnimType;
     uint16_t  AnimFrames;
     uint16_t  AnimCurFrame;
+    uint16_t  AnimDelayCnt;
+    uint16_t  AnimCurDelayCnt;
     SPRFRAME* pFrames;
 
 } SPRANIM, *PSPRANIM;
@@ -159,13 +168,13 @@ typedef void ( *fnSprControl )( void* pSprite );
 
 typedef struct _SPRITE
 {
-
     // General Sprite Information
     uint8_t  SprID;
     uint8_t  SprNum;
     uint8_t  SprGroup;
     SPRFLAG  SprFlags;
     uint32_t SprResourceID;
+    uint32_t SprResetResourceID;
     uint16_t ScreenX;
     uint16_t ScreenY;
     float    fWorldX;
@@ -187,6 +196,9 @@ typedef struct _SPRITE
     float fMoveX;
     float fMoveY;
 
+    // Temporary Information
+    uint32_t TempData[ TOTAL_TEMPDATA ];
+
     // Control Callbacks
     fnSprControl fnControl;
 
@@ -199,12 +211,15 @@ typedef struct _SPRITE
 void       LIB_SprManager_Init( void );
 void       LIB_SprManager_Draw( int32_t nXScroll, int32_t nYScroll );
 PSPRHANDLE LIB_SprManager_Add( uint32_t nSprIndex, uint16_t nX, uint16_t nY, uint16_t nGroup, uint16_t nZ, fnSprControl fnControl );
-bool     LIB_SprManager_AddAnim( PSPRHANDLE pSprHandle, uint16_t nAnimID, uint16_t nAnimType, uint16_t nAnimFrames, uint16_t* pFrameData );
-void     LIB_SprManager_Update( void );
-uint32_t LIB_SprManager_GetTotalFrames( PSPRHANDLE pSprHandle );
-void     LIB_SprManager_SetFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags );
-void     LIB_SprManager_ClearFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags );
-void     LIB_SprManager_SetPosition( PSPRHANDLE pSprHandle, int32_t nX, int32_t nY );
+bool       LIB_SprManager_AddAnim( PSPRHANDLE pSprHandle, uint16_t nAnimID, uint16_t nAnimType, uint16_t nAnimFrames, uint16_t* pFrameData );
+void       LIB_SprManager_ChangeSpriteAnim( PSPRITE pSprite, uint16_t nAnimID, uint16_t nAnimType, uint16_t nAnimFrames, uint16_t* pFrameData );
+void       LIB_SprManager_Update( void );
+uint32_t   LIB_SprManager_GetTotalFrames( PSPRHANDLE pSprHandle );
+void       LIB_SprManager_SetFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags );
+void       LIB_SprManager_ClearFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags );
+void       LIB_SprManager_SetPosition( PSPRHANDLE pSprHandle, int32_t nX, int32_t nY );
+void       LIB_SprManager_SetVariable( PSPRHANDLE pSprHandle, uint32_t Var, uint32_t VarValue );
+
 //-----------------------------------------------------------------------------
 
 #endif // _LIB_SPRMANAGER_H_

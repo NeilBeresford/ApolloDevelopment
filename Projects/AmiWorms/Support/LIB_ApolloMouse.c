@@ -12,6 +12,10 @@
 // Includes
 //-----------------------------------------------------------------------------
 
+#include "dos/dos.h"
+#include <clib/exec_protos.h>
+#include <intuition/intuition.h>
+#include <devices/input.h>
 #include "../Includes/LIB_ApolloInput.h"
 
 //-----------------------------------------------------------------------------

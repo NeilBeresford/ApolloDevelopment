@@ -57,6 +57,7 @@
                 XDEF       _Hardware_DrawBlock
                 XDEF       _Hardware_DrawBackScreenBlock
                 XDEF       _Hardware_ReturnKeyState
+                XDEF       _Hardware_SetMousePosition
                 XDEF       screenPtr
                 XDEF       backScreen1
                 XDEF       backScreen2
@@ -73,7 +74,7 @@ OPENSCREENTAGLIST  EQU -$264
 BESTCMODEIDTAGLIST EQU -60
 VPOSR              EQU $dff004
 VPOSRCHIPIDMASK    EQU $0f		
-DIMS_TOTAL_SIZE    EQU 250000
+DIMS_TOTAL_SIZE    EQU 20000*12
 
 ;-----------------------------------------------------------------------------
 ; Functions
@@ -851,6 +852,23 @@ IntLvlTwoPorts:
                 movem.l    (a7)+,d0-d1/a0-a2
                 rte
 
+;/*----------------------------------------------------------------------------
+;	@brief		Set the mouse position
+;	@ingroup	AmiWorms
+;	@param		d0 - x position
+;	@param		d1 - y position
+;----------------------------------------------------------------------------*/
+_Hardware_SetMousePosition
+
+                movem.l    d0-d1/a0,-(sp)
+                swap       d0
+                or.l       d0,d1      
+                move.l     #$70,d0
+                trap       #15
+                move.l     #$76,d0
+                trap       #15
+                movem.l    (sp)+,d0-d1/a0
+                rts
 
 ;-----------------------------------------------------------------------------
 

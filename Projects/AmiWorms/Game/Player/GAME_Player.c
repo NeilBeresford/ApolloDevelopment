@@ -12,11 +12,26 @@
 // Includes
 //-----------------------------------------------------------------------------
 
-#include "../Includes/GAME_Player.h"
-#include "../Includes/ResourceFiles.h"
+#include "../../Includes/GAME_Player.h"
+#include "../../Includes/ResourceFiles.h"
 
 //-----------------------------------------------------------------------------
-// Vaariables
+// Typedefs and Enums
+//-----------------------------------------------------------------------------
+
+enum
+{
+    eWormTemp_IdleDelay = 0,
+};
+
+//-----------------------------------------------------------------------------
+// Forward declarations
+//-----------------------------------------------------------------------------
+
+void GAME_Player_SprWormCtrl( void* pSprite );
+
+//-----------------------------------------------------------------------------
+// Variables
 //-----------------------------------------------------------------------------
 
 sGAME sGame;
@@ -88,8 +103,8 @@ void GAME_Player_StartGame( void )
             pWorm->eCurAnim    = eGameWormAnim_Idle;
 
             // create sprite
-            int32_t nXpos = ( rand() % 1890 ) + 15;
-            int32_t nYpos = sGlobalData.pMapHeight[ nXpos ] - 350 + 30;
+            int32_t nXpos = 0;
+            int32_t nYpos = 960;
 
             while ( nYpos > 910 )
             {
@@ -98,10 +113,39 @@ void GAME_Player_StartGame( void )
             }
 
             // create sprite
-            pWorm->pSprHandle = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Worms ), nXpos, nYpos, 0, 0, NULL );
+            pWorm->pSprHandle = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Worms ), nXpos, nYpos, 0, 0, GAME_Player_SprWormCtrl );
             LIB_SprManager_FlipSprite( pWorm->pSprHandle, Hardware_RandomNumber() & 1 );
-            LIB_SprManager_AddAnim( pWorm->pSprHandle, 1, SPR_ANIM_LOOP, LIB_SprManager_GetTotalFrames( pWorm->pSprHandle ), NULL );
+            LIB_SprManager_SetVariable( pWorm->pSprHandle, eSPRVAR_DEFAULTRESOURCE, ResourceHandling_GetGroupStartResource( eGroups_Worms ) );
+            LIB_SprManager_AddAnim( pWorm->pSprHandle, 1, SPR_ANIM_ONCE, LIB_SprManager_GetTotalFrames( pWorm->pSprHandle ), NULL );
             LIB_SprManager_SetFlags( pWorm->pSprHandle, SPR_FLAGS_WORLDSPRITE );
+        }
+    }
+}
+
+/** ---------------------------------------------------------------------------
+    @brief 		Control the game players
+    @ingroup 	AmiWorms
+    @param      pSprite     Pointer to the sprite structure (void*)
+ --------------------------------------------------------------------------- */
+void GAME_Player_SprWormCtrl( void* pSprite )
+{
+    PSPRITE pSpr = (PSPRITE)pSprite;
+
+    if ( pSpr->SprFlags.Active == ON )
+    {
+        // Idle processing ...
+        if ( pSpr->AnimData.AnimType == SPR_ANIM_NONE )
+        {
+            if ( pSpr->TempData[ eWormTemp_IdleDelay ] == 0 )
+            {
+                pSpr->TempData[ eWormTemp_IdleDelay ] = ( rand() % 300 ) + 100;
+                pSpr->SprResourceID                   = ResourceHandling_GetGroupStartResource( eGroups_Worms ) + ( rand() % 400 );
+                LIB_SprManager_ChangeSpriteAnim( pSpr, 1, SPR_ANIM_ONCE, LIB_Sprites_GetFrames( pSpr->SprResourceID ), NULL );
+            }
+            else
+            {
+                pSpr->TempData[ eWormTemp_IdleDelay ]--;
+            }
         }
     }
 }

@@ -66,6 +66,7 @@ typedef struct
 {
     FlagStruct_t     Flags;
     ResourceHeader_t Resource[ TOTAL_RESOURCES ];
+    uint32_t         DimGroupOffsets[ TOTAL_RESOURCES ];
     pSprDimention_t  pSpriteDim;
     psFileGroup      Groups;
     uint32_t         ulResourceCount;
@@ -160,8 +161,7 @@ bool ResourceHandling_Close( void )
     @param      pResourceData   - Resource data
     @return 	bool            - true if successful
  -----------------------------------------------------------------------------*/
-bool ResourceHandling_Add( uint32_t ulResourceID, uint32_t ulResourceSize, uint32_t ulResourceType, uint8_t* pszResourceName,
-                           uint8_t* pResourceData )
+bool ResourceHandling_Add( uint32_t ulResourceID, uint32_t ulResourceSize, uint32_t ulResourceType, uint8_t* pszResourceName, uint8_t* pResourceData )
 {
     bool bReturn = false;
 
@@ -326,17 +326,13 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
 
                 if ( LIB_Files_Load( sRHCtrl.tmpFileName, &pFileBuffer, &ulFileSize ) == true )
                 {
-                    if ( ResourceHandling_Add( ulResourceID, ulFileSize, psFileDetails->eFileType, psFileDetails->pszResourceName,
-                                               pFileBuffer )
-                         == false )
+                    if ( ResourceHandling_Add( ulResourceID, ulFileSize, psFileDetails->eFileType, psFileDetails->pszResourceName, pFileBuffer ) == false )
                     {
                         // Exit error
                         printf( "Resource failed to add: %s\n", sRHCtrl.tmpFileName );
                         return false;
                     }
-                    if ( LIB_Sprites_RegisterBank( ulResourceID, psFileDetails->eFileType, ulResourceID, pFileBuffer, ulFileSize,
-                                                   psFileDetails->ulNumber, psFileDetails->ulWidth, psFileDetails->ulHeight )
-                         == false )
+                    if ( LIB_Sprites_RegisterBank( ulResourceID, psFileDetails->eFileType, ulResourceID, pFileBuffer, ulFileSize, psFileDetails->ulNumber, psFileDetails->ulWidth, psFileDetails->ulHeight ) == false )
                     {
                         // Exit error
                         printf( "Resource failed to register: %s\n", sRHCtrl.tmpFileName );
@@ -413,7 +409,7 @@ void ResourceHandling_InitStatus( psFileGroup groups )
     sRHCtrl.nTotalGroups    = ulIndex;
     sRHCtrl.ulTotalFiles    = ulTotalFiles;
     sRHCtrl.ulCurLoadedFile = 0;
-    sRHCtrl.bStatusNeeded   = true;
+    sRHCtrl.bStatusNeeded   = false; // remove debug
 }
 
 /** ----------------------------------------------------------------------------
@@ -478,23 +474,26 @@ uint32_t ResourceHandling_GetTotalNumSprites( void )
  -----------------------------------------------------------------------------*/
 bool ResourceHandling_ScanAndSetSpriteDimentions( void )
 {
-    bool     bRet        = false;
-    uint32_t nRefIndex   = 0;
-    uint32_t nCurScanned = 0;
+    bool      bRet        = false;
+    uint32_t* pDimOffsets = sRHCtrl.DimGroupOffsets;
+    uint32_t  nRefIndex   = 0;
+    uint32_t  nCurScanned = 0;
+    uint32_t  nCurFile    = 0;
 
-    if ( sRHCtrl.Groups != NULL && sRHCtrl.nTotalSprites != 0 )
+    if ( sRHCtrl.Groups != NULL )
     {
-        sRHCtrl.pSpriteDim =
-            (pSprDimention_t)Hardware_GetSpriteDims(); // (pSprDimention_t)malloc( sRHCtrl.nTotalSprites * sizeof( SprDimention_t ) );
+        sRHCtrl.pSpriteDim         = (pSprDimention_t)Hardware_GetSpriteDims(); // (pSprDimention_t)malloc( sRHCtrl.nTotalSprites * sizeof( SprDimention_t ) );
         pSprDimention_t pSpriteDim = sRHCtrl.pSpriteDim;
 
         for ( int32_t nGroup = 0; nGroup < sRHCtrl.nTotalGroups; nGroup++ )
         {
+
             psFileDetails psFD  = sRHCtrl.Groups[ nGroup ].psFileDetails;
             uint32_t      nFile = 0;
             while ( psFD->pszResourceName != NULL )
             {
-                uint32_t nSprs = LIB_Sprites_GetTotalNumSprites( nFile + nRefIndex );
+                uint32_t nSprs            = LIB_Sprites_GetTotalNumSprites( nFile + nRefIndex );
+                pDimOffsets[ nCurFile++ ] = nCurScanned;
                 for ( int32_t nSpr = 0; nSpr < nSprs; nSpr++ )
                 {
                     LIB_Sprites_GetSpriteDimentions( nRefIndex + nFile, nSpr, pSpriteDim );
@@ -502,7 +501,7 @@ bool ResourceHandling_ScanAndSetSpriteDimentions( void )
                 }
                 nCurScanned += nSprs;
 
-                pSpriteDim++;
+                // pSpriteDim++;
                 nFile++;
                 psFD++;
 
@@ -525,6 +524,23 @@ bool ResourceHandling_ScanAndSetSpriteDimentions( void )
     }
 
     return bRet;
+}
+
+/** ----------------------------------------------------------------------------
+    @brief 		Get the sprite frame dimentions
+    @ingroup 	AmiWorms
+    @param      ulResourceID    - Resource ID
+    @param      ulFrame         - Frame index
+    @return 	pSprDim         - Pointer to the sprite dimentions
+ -----------------------------------------------------------------------------*/
+pSprDimention_t ResourceHandling_GetSpriteFrameDimention( uint32_t ulResourceID, uint32_t ulFrame )
+{
+    pSprDimention_t pSprDim = sRHCtrl.pSpriteDim;
+    pSprDim                 = sRHCtrl.pSpriteDim;
+    pSprDim += sRHCtrl.DimGroupOffsets[ ulResourceID ];
+    pSprDim += ulFrame;
+
+    return pSprDim;
 }
 
 //-----------------------------------------------------------------------------

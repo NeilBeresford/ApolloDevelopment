@@ -11,7 +11,7 @@ IncludeBlocks: Preserve
 UseTab: Never
 IndentWidth: 4
 TabWidth: 4
-ColumnLimit: 140
+ColumnLimit: 240
 # -----------------------------------------------------------------------------
 # FUNCTIONS / SCOPES
 # -----------------------------------------------------------------------------
