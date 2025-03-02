@@ -41,17 +41,18 @@ extern uint32_t* palettes[ 30 ];
 // Defines
 //-----------------------------------------------------------------------------
 
-#define BACKSCREENWIDTH      ( 1920 )
-#define BACKSCREENHEIGHT     ( 960 )
-#define NUM_MAPS             ( 2 )
+#define BACKSCREENWIDTH           ( 1920 )
+#define BACKSCREENHEIGHT          ( 960 )
+#define NUM_MAPS                  ( 2 )
 
-#define MOUSEMOVAREA         ( 50.0f )
-#define VISABLE_HEIGHT       ( 360 )
-#define VISABLE_WIDTH        ( 640 )
-#define MAPSCROLLSPEED       ( 12.0f )
+#define MOUSEMOVAREA              ( 50.0f )
+#define VISABLE_HEIGHT            ( 360 )
+#define VISABLE_WIDTH             ( 640 )
+#define MAPSCROLLSPEED            ( 12.0f )
 
-#define CHECK_KEY( key )     ( sKeyboardState.Keys[ key ] && ( sKeyboardState.KeysProcessed[ key ] == 0 ) )
-#define CHECK_KEYDOWN( key ) ( sKeyboardState.Keys[ key ] && ( sKeyboardState.KeysDown[ key ] == 1 ) )
+#define CHECK_KEY( key )          ( sKeyboardState.Keys[ key ] && ( sKeyboardState.KeysProcessed[ key ] == 0 ) )
+#define CHECK_KEYDOWN( key )      ( sKeyboardState.Keys[ key ] && ( sKeyboardState.KeysDown[ key ] == 1 ) )
+#define CHECK_KEY_RELEASED( key ) ( sKeyboardState.KeysProcessed[ key ] && ( sKeyboardState.KeysDown[ key ] == 0 ) )
 
 //-----------------------------------------------------------------------------
 // Typedefs and Enums
@@ -108,6 +109,7 @@ uint32_t nMapGrass       = 3;
  --------------------------------------------------------------------------- */
 void SceneGame_Init( void )
 {
+
     SceneGame_CreateBackScreens();
 
     // Draw panel to all three screens
@@ -133,7 +135,7 @@ void SceneGame_Init( void )
         LIB_SpriteFont_Draw( eFont_WhiteSmall, 600 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "ROYALTY" ), 4, "ROYALTY" );
         LIB_SpriteFont_Draw( eFont_WhiteSmall, 600 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "OH NO!!" ), 23, "OH NO!!" );
 
-        Hardware_WaitVBL();
+        // Hardware_WaitVBL();
         Hardware_FlipScreen();
     }
     LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
@@ -143,11 +145,25 @@ void SceneGame_Init( void )
     ulSprHeight                    = LIB_Sprites_GetHeight( ulWaterSprIndex );
     sMouseState.MouseX_Pointer_Max = 640;
     sMouseState.MouseY_Pointer_Max = 360;
-
+    sMouseState.MouseX_Pointer     = 310;
+    sMouseState.MouseY_Pointer     = 230;
+    sMouseState.MouseX_Value_Old   = 310;
+    sMouseState.MouseY_Value_Old   = 230;
     sGlobalData.nScrollX           = 400;
     sGlobalData.nScrollY           = 300;
+    sGlobalData.bMapMode           = false;
 
-    sGlobalData.bMapMode           = true;
+    // LIB_SprManager_Update();
+    // Hardware_WaitVBL();
+    // Hardware_FlipScreen();
+    GAME_Player_StartGame();
+
+    sKeyboardState.Previous_Key = NOKEY;
+    sKeyboardState.Current_Key  = NOKEY;
+    ApolloKeyboardClear( &sKeyboardState );
+    ApolloMouse_SetXY( &sMouseState, 310, 230 );
+    // ApolloMouse( &sMouseState );
+    // SceneGame_Update();
 }
 
 /** ---------------------------------------------------------------------------
@@ -156,6 +172,7 @@ void SceneGame_Init( void )
  --------------------------------------------------------------------------- */
 void SceneGame_Close( void )
 {
+    LIB_SprManager_RemoveAll();
 }
 
 /** ---------------------------------------------------------------------------
@@ -183,8 +200,7 @@ void SceneGame_Update( void )
     // check for exit
     if ( SceneGame_ControlGame() == true )
     {
-        // TODO need to close the game
-        sGlobalData.GameEnded = true;
+        ModuleScene_SetActiveScene( 1 );
     }
 }
 
@@ -337,10 +353,21 @@ bool SceneGame_ControlGame( void )
     // sKeyboardState.Current_Key = Hardware_ReadKey();
     ApolloKeyboard( &sKeyboardState );
 
+    if ( CHECK_KEY( KEYCODE_F1 ) )
+    {
+        LIB_SprManager_RemoveAll();
+        GAME_Player_StartGame();
+        LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Menu ), 320, 80, 0, 0, NULL );
+    }
+
     // Action on key release - for the ESC key
     if ( CHECK_KEY( KEYCODE_ESC ) )
     {
         sKeyboardState.KeysProcessed[ KEYCODE_ESC ] = 1;
+    }
+    if ( sKeyboardState.Previous_Key == KEYCODE_ESC && sKeyboardState.Current_Key == NOKEY )
+    {
+        sKeyboardState.KeysProcessed[ KEYCODE_ESC ] = 0;
         bDoQuit                                     = true;
     }
     if ( CHECK_KEY( KEYCODE_1 ) )
@@ -485,9 +512,13 @@ bool SceneGame_ControlGame( void )
 
     if ( sGlobalData.bMapMode == false && !( sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN ) )
     {
-        uint32_t ulMouseX    = sMouseState.MouseX_Pointer;
-        uint32_t ulMouseY    = sMouseState.MouseY_Pointer;
-        uint8_t  ulMouseMove = 0;
+        int32_t ulMouseX, ulMouseY;
+        uint8_t ulMouseMove = 0;
+        sGlobalData.nMouseX = sMouseState.MouseX_Pointer;
+        sGlobalData.nMouseY = sMouseState.MouseY_Pointer;
+        ulMouseX            = sGlobalData.nMouseX;
+        ulMouseY            = sGlobalData.nMouseY;
+
         // simple joystick map position control
         if ( ulMouseX < MOUSEMOVAREA )
         {
@@ -644,25 +675,12 @@ void SceneGame_CreateBackScreens( void )
         }
     }
 
-#if 0
-	// Test worms
-	for( uint32_t gX = 0; gX < screenWidth; gX += (rand() & 31) + 20)
-	{
-		uint32_t gY = sGlobalData.pMapHeight[ gX + 30 ] - 350 - 40;
-		if ( gY < 900-40 )
-		{
-			LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( 3 ), 0, gX, gY );
-		}
-	}
-#endif
-
     // colour the remainder with water
     Hardware_DrawBackScreenBlock( 0, 900, BACKSCREENWIDTH, 60, 0xD3D3D3D3 );
 
     // reset the screen mode
     Hardware_CopyBack2ToBack1();
     Hardware_SetScreenmode( 0 );
-
     LIB_Sprites_SetClipArea( 0, 0, 640, 480 );
 }
 

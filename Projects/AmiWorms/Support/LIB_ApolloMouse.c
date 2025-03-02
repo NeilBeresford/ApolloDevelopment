@@ -16,11 +16,28 @@
 #include <clib/exec_protos.h>
 #include <intuition/intuition.h>
 #include <devices/input.h>
+#include "../Includes/GlobalData.h"
 #include "../Includes/LIB_ApolloInput.h"
 
 //-----------------------------------------------------------------------------
 // External Functionality
 //-----------------------------------------------------------------------------
+
+/** ---------------------------------------------------------------------------
+    @brief 		Sets the Mouse position
+    @ingroup 	AmiWorms
+    @param 		MouseState		Pointer to the Mouse state
+ --------------------------------------------------------------------------- */
+void ApolloMouse_SetXY( ApolloMouseState* MouselistState, uint16_t X, uint16_t Y )
+{
+    // set the pointer and make sure vaalue is the saame as value old for both x and y
+    MouselistState->MouseX_Pointer   = X;
+    MouselistState->MouseY_Pointer   = Y;
+    MouselistState->MouseX_Value     = *( (signed char*)APOLLO_MOUSE_GET_X );
+    MouselistState->MouseY_Value     = *( (signed char*)APOLLO_MOUSE_GET_Y );
+    MouselistState->MouseX_Value_Old = MouselistState->MouseX_Value;
+    MouselistState->MouseY_Value_Old = MouselistState->MouseY_Value;
+}
 
 /** ---------------------------------------------------------------------------
     @brief 		Handles the Mouse input

@@ -36,6 +36,7 @@
 #include "Includes/ResourceFiles.h"
 #include "Includes/ResourceHandling.h"
 #include "Modules/Module-Scene.h"
+#include "Scenes/Scene_Intro.h"
 #include "Scenes/Scene_Game.h"
 
 //-----------------------------------------------------------------------------
@@ -113,17 +114,14 @@ uint32_t main( int argc, char* argv[] )
     Hardware_Init();
     HWSCREEN_SetImagePalette( palettes[ 0 ] );
 
-    // Create player sprites
+    // Initialize Player Control
     GAME_Player_Init();
+
     // setup the scenes...
     ModuleScene_Init();
     ModuleScene_RegisterScene( 0, SceneGame_Init, SceneGame_Close, SceneGame_Draw, SceneGame_Update );
-    ModuleScene_SetActiveScene( 0 );
-
-    LIB_SprManager_Update();
-    Hardware_WaitVBL();
-    Hardware_FlipScreen();
-    GAME_Player_StartGame();
+    ModuleScene_RegisterScene( 1, SceneIntro_Init, SceneIntro_Close, SceneIntro_Draw, SceneIntro_Update );
+    ModuleScene_SetActiveScene( 1 );
 
     // main loop -
     while ( true )
@@ -132,36 +130,17 @@ uint32_t main( int argc, char* argv[] )
         Hardware_WaitVBL();
         Hardware_FlipScreen();
 
-#if 0
-        if ( sGlobalData.bMapMode == false )
-        {
-            Main_DrawGameScreen();
-        }
-        else
-        {
-            Main_DrawMapScreen();
-        }
-
-        // check for exit
-        if ( Main_ControlGame() == true )
-            break;
-#endif
-
+        // process the game logic
         ModuleScene_Draw();
         ModuleScene_Update();
         if ( sGlobalData.GameEnded == true )
             break;
 
-        // process the game logic
         LIB_SprManager_Update();
     }
 
     // terminate the program
     Hardware_Close();
-    printf( "game ended = %d\n", sGlobalData.GameEnded );
-
-    // printf( "Time played %d minutes %d seconds\n", ulFrames / ( 60 * 60 ), ( ulFrames / 60 ) % 60 );
-    // printf( "Exiting - have a nice day!\n\n" );
 
     return 0;
 }

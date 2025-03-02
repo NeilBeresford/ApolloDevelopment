@@ -180,6 +180,7 @@ void     Hardware_Close( void );
 void     Hardware_WaitVBL( void );
 void     Hardware_FlipScreen( void );
 void     Hardware_ClearScreen( void );
+void     Hardware_ClearAllScreen( void );
 void     Hardware_TestScreen( void );
 
 uint32_t Hardware_ReadKey( void );
@@ -207,8 +208,7 @@ uint32_t Hardware_JoystickButtonPressed( void );
 uint32_t Haardware_ReturnKeyState( void );
 uint8_t* Hardware_GetSpriteDims( void );
 void     Hardware_DrawBlock( _D0( uint32_t x ), _D1( uint32_t y ), _D2( uint32_t width ), _D3( uint32_t height ), _D4( uint32_t colour ) );
-void     Hardware_DrawBackScreenBlock( _D0( uint32_t x ), _D1( uint32_t y ), _D2( uint32_t width ), _D3( uint32_t height ),
-                                       _D4( uint32_t colour ) );
+void     Hardware_DrawBackScreenBlock( _D0( uint32_t x ), _D1( uint32_t y ), _D2( uint32_t width ), _D3( uint32_t height ), _D4( uint32_t colour ) );
 void     Hardware_SetMousePosition( _D0( uint32_t x ), _D1( uint32_t y ) );
 
 //-----------------------------------------------------------------------------

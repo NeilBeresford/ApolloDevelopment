@@ -21,8 +21,8 @@
 // Defines
 //-----------------------------------------------------------------------------
 
-#define APOLLO_POINTER_SET_X           0xDFF1D0
-#define APOLLO_POINTER_SET_Y           0xDFF1D2
+#define APOLLO_POINTER_SET_X           0xDFE1D4
+#define APOLLO_POINTER_SET_Y           0xDFE106
 #define APOLLO_POINTER_GET_X           0xDFE1D0
 #define APOLLO_POINTER_GET_Y           0xDFE1D2
 
@@ -125,7 +125,9 @@ typedef struct
 //-----------------------------------------------------------------------------
 
 void ApolloMouse( ApolloMouseState* MouseState );
+void ApolloMouse_SetXY( ApolloMouseState* MouseState, uint16_t X, uint16_t Y );
 void ApolloKeyboard( ApolloKeyBoardState* KeyboardState );
+void ApolloKeyboardClear( ApolloKeyBoardState* KeyboardState );
 void ApolloJoypad( ApolloJoypadState* JoypadState );
 
 //-----------------------------------------------------------------------------

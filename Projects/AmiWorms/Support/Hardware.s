@@ -33,6 +33,7 @@
                 XDEF       _Hardware_GetScreenPtr
                 XDEF       _Hardware_ReadKey
                 XDEF       _Hardware_ClearScreen
+                XDEF       _Hardware_ClearAllScreen
                 XDEF       _Hardware_TestScreen
                 XDEF       _Hardware_SwapLong
                 XDEF       _Hardware_GetScreenWidth
@@ -383,7 +384,7 @@ _Hardware_GetScreenHeight
                 rts
 
 ;** ---------------------------------------------------------------------------
-;	@brief 		Clears the screen
+;	@brief 		Clears the game area of screen
 ;	@ingroup 	AmiWorms
 ;	@return 	none
 ; --------------------------------------------------------------------------- */
@@ -402,6 +403,27 @@ _Hardware_ClearScreen
 
                 movem.l    (sp)+,d1-d2/a0
                 rts
+
+;** ---------------------------------------------------------------------------
+;	@brief 		Clears the full screen
+;	@ingroup 	AmiWorms
+;	@return 	none
+; --------------------------------------------------------------------------- */
+_Hardware_ClearAllScreen
+
+                movem.l    d1-d2/a0,-(sp)
+
+                move.l     screenPtr,a0
+                moveq      #0,d1
+                move.l     #(480*SCREENWIDTH)/4,d2
+.clear	
+                move.l     d1,(a0)+
+                SUBQ.L     #1,d2,
+                BNE.S      .clear
+
+                movem.l    (sp)+,d1-d2/a0
+                rts
+
 
 
 ;** ---------------------------------------------------------------------------

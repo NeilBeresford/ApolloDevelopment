@@ -175,7 +175,7 @@ bool LIB_SprManager_AddAnim( PSPRHANDLE pSprHandle, uint16_t nAnimID, uint16_t n
         {
             PSPRITE pSprite = &sSprMgr.Sprites[ pSprHandle->SprIndex ];
 
-            if ( pSprite->SprFlags.Active == ON )
+            if ( pSprite->SprFlags.Active == ON && pSprite->SprFlags.Animated == OFF )
             {
                 // Allocate memory for the animation data
                 // Set the animation data
@@ -235,7 +235,7 @@ void LIB_SprManager_ChangeSpriteAnim( PSPRITE pSprite, uint16_t nAnimID, uint16_
 }
 
 /** ---------------------------------------------------------------------------
-    @brief		Remove a sprite from the manager
+    @brief		Update controller
     @ingroup	AmiWorms
     @param		uint16_t nSpriteID
     @return		None
@@ -244,12 +244,18 @@ void LIB_SprManager_Update( void )
 {
     if ( sSprMgr.sFlags.Initialized == ON )
     {
+
         PSPRITE pSprite = sSprMgr.Sprites;
         for ( uint16_t i = 0, cnt = 0; i < TOTAL_SPRITES && cnt != sSprMgr.SprCount; i++ )
         {
             if ( pSprite->SprFlags.Active == ON )
             {
-                if ( pSprite->SprFlags.Animated == ON )
+
+                if ( pSprite->SprFlags.DeleteMe == YES )
+                {
+                    pSprite->SprFlags.Active = OFF;
+                }
+                else if ( pSprite->SprFlags.Animated == ON )
                 {
 
                     if ( ++pSprite->AnimData.AnimCurDelayCnt >= pSprite->AnimData.AnimDelayCnt )
@@ -293,16 +299,101 @@ void LIB_SprManager_Update( void )
                             }
                         }
                     }
-                }
-
-                if ( pSprite->fnControl != NULL )
-                {
-                    pSprite->fnControl( &sSprMgr.Sprites[ i ] );
+                    if ( pSprite->fnControl != NULL )
+                    {
+                        pSprite->fnControl( &sSprMgr.Sprites[ i ] );
+                    }
                 }
 
                 cnt++;
             }
             pSprite++;
+        }
+    }
+}
+
+/** ---------------------------------------------------------------------------
+    @brief		Remove all sprites from the manager
+    @ingroup	AmiWorms
+    @param		uint16_t nSpriteID
+    @return		None
+ --------------------------------------------------------------------------- */
+void LIB_SprManager_RemoveAll( void )
+{
+    if ( sSprMgr.sFlags.Initialized == ON )
+    {
+        for ( uint16_t i = 0; i < TOTAL_SPRITES; i++ )
+        {
+            sSprMgr.Sprites[ i ].SprFlags.Flags        = 0;
+            sSprMgr.Sprites[ i ].fnControl             = NULL;
+            sSprMgr.Sprites[ 1 ].SprNum                = 0;
+            sSprMgr.Sprites[ i ].SprResetResourceID    = 0;
+            sSprMgr.Sprites[ i ].SprResourceID         = 0;
+            sSprMgr.Sprites[ i ].ScreenX               = 0;
+            sSprMgr.Sprites[ i ].ScreenY               = 0;
+            sSprMgr.Sprites[ i ].fWorldX               = 0;
+            sSprMgr.Sprites[ i ].fWorldY               = 0;
+            sSprMgr.Sprites[ i ].SprWidth              = 0;
+            sSprMgr.Sprites[ i ].SprHeight             = 0;
+            sSprMgr.Sprites[ i ].SprZ                  = 0;
+            sSprMgr.Sprites[ i ].AnimData.AnimID       = 0;
+            sSprMgr.Sprites[ i ].AnimData.AnimType     = SPR_ANIM_NONE;
+            sSprMgr.Sprites[ i ].AnimData.AnimFrames   = 0;
+            sSprMgr.Sprites[ i ].AnimData.AnimCurFrame = 0;
+            sSprMgr.Sprites[ i ].AnimData.AnimDelayCnt = 0;
+            sSprMgr.Sprites[ i ].AnimData.pFrames      = NULL;
+            sSprMgr.Sprites[ i ].CurAnimIndex          = 0;
+            sSprMgr.Sprites[ i ].fMoveSpeed            = 0;
+            sSprMgr.Sprites[ i ].fMoveAngle            = 0;
+            sSprMgr.Sprites[ i ].fMoveX                = 0;
+            sSprMgr.Sprites[ i ].fMoveY                = 0;
+            sSprMgr.SprHandles[ i ].SprIndex           = 0;
+            sSprMgr.SprHandles[ i ].Flags.Flags        = 0;
+            sSprMgr.SprHandles[ i ].Flags.Initialized  = YES;
+        }
+        sSprMgr.SprCount = 0;
+    }
+}
+
+/** ---------------------------------------------------------------------------
+    @brief		Remove a sprite from the manager
+    @ingroup	AmiWorms
+    @param		uint16_t nSpriteID
+    @return		None
+ --------------------------------------------------------------------------- */
+void LIB_SprManager_Remove( uint16_t nSpriteID )
+{
+    if ( sSprMgr.sFlags.Initialized == ON )
+    {
+        if ( nSpriteID < TOTAL_SPRITES )
+        {
+            sSprMgr.Sprites[ nSpriteID ].SprFlags.Flags        = 0;
+            sSprMgr.Sprites[ nSpriteID ].fnControl             = NULL;
+            sSprMgr.Sprites[ nSpriteID ].SprNum                = 0;
+            sSprMgr.Sprites[ nSpriteID ].SprResetResourceID    = 0;
+            sSprMgr.Sprites[ nSpriteID ].SprResourceID         = 0;
+            sSprMgr.Sprites[ nSpriteID ].ScreenX               = 0;
+            sSprMgr.Sprites[ nSpriteID ].ScreenY               = 0;
+            sSprMgr.Sprites[ nSpriteID ].fWorldX               = 0;
+            sSprMgr.Sprites[ nSpriteID ].fWorldY               = 0;
+            sSprMgr.Sprites[ nSpriteID ].SprWidth              = 0;
+            sSprMgr.Sprites[ nSpriteID ].SprHeight             = 0;
+            sSprMgr.Sprites[ nSpriteID ].SprZ                  = 0;
+            sSprMgr.Sprites[ nSpriteID ].AnimData.AnimID       = 0;
+            sSprMgr.Sprites[ nSpriteID ].AnimData.AnimType     = SPR_ANIM_NONE;
+            sSprMgr.Sprites[ nSpriteID ].AnimData.AnimFrames   = 0;
+            sSprMgr.Sprites[ nSpriteID ].AnimData.AnimCurFrame = 0;
+            sSprMgr.Sprites[ nSpriteID ].AnimData.AnimDelayCnt = 0;
+            sSprMgr.Sprites[ nSpriteID ].AnimData.pFrames      = NULL;
+            sSprMgr.Sprites[ nSpriteID ].CurAnimIndex          = 0;
+            sSprMgr.Sprites[ nSpriteID ].fMoveSpeed            = 0;
+            sSprMgr.Sprites[ nSpriteID ].fMoveAngle            = 0;
+            sSprMgr.Sprites[ nSpriteID ].fMoveX                = 0;
+            sSprMgr.Sprites[ nSpriteID ].fMoveY                = 0;
+            sSprMgr.SprHandles[ nSpriteID ].Flags.Flags        = 0;
+            sSprMgr.SprHandles[ nSpriteID ].SprIndex           = 0;
+            sSprMgr.SprHandles[ nSpriteID ].Flags.Initialized  = YES;
+            sSprMgr.SprCount--;
         }
     }
 }

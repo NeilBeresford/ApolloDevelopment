@@ -219,6 +219,8 @@ void       LIB_SprManager_SetFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags );
 void       LIB_SprManager_ClearFlags( PSPRHANDLE pSprHandle, uint32_t ulFlags );
 void       LIB_SprManager_SetPosition( PSPRHANDLE pSprHandle, int32_t nX, int32_t nY );
 void       LIB_SprManager_SetVariable( PSPRHANDLE pSprHandle, uint32_t Var, uint32_t VarValue );
+void       LIB_SprManager_Remove( uint16_t nSpriteID );
+void       LIB_SprManager_RemoveAll( void );
 
 //-----------------------------------------------------------------------------
 

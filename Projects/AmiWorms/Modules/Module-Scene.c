@@ -80,6 +80,7 @@ void ModuleScene_Init( void )
     {
         // setup screen...
         memset( &SceneCtrl, 0, sizeof( SCENECTRL ) );
+        SceneCtrl.CurActiveScene    = NO_SCENE_SET;
         SceneCtrl.Flags.Initialized = YES;
         for ( int32_t nIndex = 0; nIndex < TOTAL_SCENES; nIndex++ )
         {

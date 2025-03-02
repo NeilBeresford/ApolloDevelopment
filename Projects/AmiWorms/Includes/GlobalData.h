@@ -31,6 +31,8 @@ typedef struct
     int32_t pMapHeight[ BACKSCREENWIDTH ];
     int32_t nScrollX;
     int32_t nScrollY;
+    int32_t nMouseX;
+    int32_t nMouseY;
     bool    bMapMode;
 
     // system related ...
