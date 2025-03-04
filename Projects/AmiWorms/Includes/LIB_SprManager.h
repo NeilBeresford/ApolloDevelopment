@@ -221,6 +221,7 @@ void       LIB_SprManager_SetPosition( PSPRHANDLE pSprHandle, int32_t nX, int32_
 void       LIB_SprManager_SetVariable( PSPRHANDLE pSprHandle, uint32_t Var, uint32_t VarValue );
 void       LIB_SprManager_Remove( uint16_t nSpriteID );
 void       LIB_SprManager_RemoveAll( void );
+PSPRITE    LIB_SprManager_GetSprite( PSPRHANDLE pH );
 
 //-----------------------------------------------------------------------------
 

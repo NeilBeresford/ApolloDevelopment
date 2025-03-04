@@ -186,6 +186,7 @@ bool LIB_SprManager_AddAnim( PSPRHANDLE pSprHandle, uint16_t nAnimID, uint16_t n
                 pSprite->AnimData.AnimDelayCnt    = 4;
                 pSprite->AnimData.AnimCurDelayCnt = 0;
                 pSprite->SprFlags.Animated        = ON;
+                pSprite->AnimData.pFrames         = pFrameData;
 
                 if ( pSprite->AnimData.pFrames != NULL )
                 {
@@ -225,6 +226,7 @@ void LIB_SprManager_ChangeSpriteAnim( PSPRITE pSprite, uint16_t nAnimID, uint16_
         pSprite->AnimData.AnimDelayCnt    = 4;
         pSprite->AnimData.AnimCurDelayCnt = 0;
         pSprite->SprFlags.Animated        = ON;
+        pSprite->AnimData.pFrames         = pFrameData;
 
         if ( pSprite->AnimData.pFrames != NULL )
         {
@@ -246,18 +248,23 @@ void LIB_SprManager_Update( void )
     {
 
         PSPRITE pSprite = sSprMgr.Sprites;
+
         for ( uint16_t i = 0, cnt = 0; i < TOTAL_SPRITES && cnt != sSprMgr.SprCount; i++ )
         {
             if ( pSprite->SprFlags.Active == ON )
             {
+                // movement
+                pSprite->fWorldX += pSprite->fMoveX;
+                pSprite->fWorldY += pSprite->fMoveY;
 
+                // Deletion
                 if ( pSprite->SprFlags.DeleteMe == YES )
                 {
                     pSprite->SprFlags.Active = OFF;
                 }
                 else if ( pSprite->SprFlags.Animated == ON )
                 {
-
+                    // anim - needs improvement in code
                     if ( ++pSprite->AnimData.AnimCurDelayCnt >= pSprite->AnimData.AnimDelayCnt )
                     {
                         pSprite->AnimData.AnimCurDelayCnt = 0;
@@ -399,6 +406,29 @@ void LIB_SprManager_Remove( uint16_t nSpriteID )
 }
 
 /** ---------------------------------------------------------------------------
+    @brief		Returns the PSPRITE for the PSPRHANDLE
+                PLEASE be careful with this function, it is wise to hack the
+                sprite data
+    @ingroup	AmiWorms
+    @param		pH          - Sprite handle to get the sprite for
+    @return		PSPRITE     - linked to haandle, or NULL
+ --------------------------------------------------------------------------- */
+PSPRITE LIB_SprManager_GetSprite( PSPRHANDLE pH )
+{
+    PSPRITE pResult = NULL;
+
+    if ( sSprMgr.sFlags.Initialized == ON )
+    {
+        if ( pH && pH->SprIndex < TOTAL_SPRITES )
+        {
+            pResult = &sSprMgr.Sprites[ pH->SprIndex ];
+        }
+    }
+
+    return pResult;
+}
+
+/** ---------------------------------------------------------------------------
     @brief		Draw all sprites
     @ingroup	AmiWorms
     @param		None
@@ -445,9 +475,10 @@ void LIB_SprManager_Draw( int32_t nXScroll, int32_t nYScroll )
                         nHalfH = ( LIB_Sprites_GetHeight( pSprite->SprResourceID ) / 2 ) / 3;
                         nX /= 3;
                         nX -= nHalfW;
+                        nX += 10;
                         nY /= 3;
                         nY -= nHalfH;
-                        nY += 68;
+                        nY += 66;
                         if ( pSprite->SprFlags.Flipped == ON )
                             LIB_Sprites_DrawMapFlipped( pSprite->SprResourceID, pSprite->SprNum, nX - nHalfW, nY - nHalfH );
                         else

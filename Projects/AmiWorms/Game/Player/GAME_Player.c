@@ -92,7 +92,7 @@ void GAME_Player_StartGame( void )
     {
         sGame.pPlayer[ nI ].nActive = 0;
 
-        for ( int32_t nJ = 0; nJ < 4; nJ++ )
+        for ( int32_t nJ = 0; nJ < 24; nJ++ )
         {
             psGameWorm pWorm   = &sGame.pPlayer[ nI ].pSprWorm[ nJ ];
 

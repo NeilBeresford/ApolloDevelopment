@@ -35,6 +35,7 @@
 #include "../Includes/ResourceFiles.h"
 #include "../Includes/ResourceHandling.h"
 
+extern void      Main_Start_Track( int32_t nTrack );
 extern uint32_t* palettes[ 30 ];
 
 //-----------------------------------------------------------------------------
@@ -117,6 +118,7 @@ void SceneGame_Init( void )
     LIB_Sprites_SetClipArea( 0, 0, 640, 480 );
     for ( int32_t count = 0; count < 3; count++ )
     {
+        Hardware_ClearAllScreen();
         LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Panels ) + 4, 0, 0, 400 );
         LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Panels ), 0, 320 - 20, 10 );
         LIB_Sprites_Draw( ResourceHandling_GetGroupStartResource( eGroups_Panels ) + 2, 0, 320 - 24 - 268, 0 );
@@ -135,9 +137,10 @@ void SceneGame_Init( void )
         LIB_SpriteFont_Draw( eFont_WhiteSmall, 600 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "ROYALTY" ), 4, "ROYALTY" );
         LIB_SpriteFont_Draw( eFont_WhiteSmall, 600 - LIB_SpriteFont_GetStringLength( eFont_WhiteSmall, "OH NO!!" ), 23, "OH NO!!" );
 
-        // Hardware_WaitVBL();
+        Hardware_WaitVBL();
         Hardware_FlipScreen();
     }
+
     LIB_Sprites_SetClipArea( 0, 42, 640, 360 );
 
     // setup the water and mouse and clipping area
@@ -153,17 +156,17 @@ void SceneGame_Init( void )
     sGlobalData.nScrollY           = 300;
     sGlobalData.bMapMode           = false;
 
-    // LIB_SprManager_Update();
-    // Hardware_WaitVBL();
-    // Hardware_FlipScreen();
+    LIB_SprManager_Update();
+    Hardware_WaitVBL();
+    Hardware_FlipScreen();
     GAME_Player_StartGame();
 
     sKeyboardState.Previous_Key = NOKEY;
     sKeyboardState.Current_Key  = NOKEY;
     ApolloKeyboardClear( &sKeyboardState );
     ApolloMouse_SetXY( &sMouseState, 310, 230 );
-    // ApolloMouse( &sMouseState );
-    // SceneGame_Update();
+
+    Main_Start_Track( 1 );
 }
 
 /** ---------------------------------------------------------------------------
@@ -357,7 +360,6 @@ bool SceneGame_ControlGame( void )
     {
         LIB_SprManager_RemoveAll();
         GAME_Player_StartGame();
-        LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Menu ), 320, 80, 0, 0, NULL );
     }
 
     // Action on key release - for the ESC key

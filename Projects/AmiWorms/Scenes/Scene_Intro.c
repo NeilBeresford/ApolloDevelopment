@@ -35,6 +35,8 @@
 #include "../Includes/ResourceFiles.h"
 #include "../Includes/ResourceHandling.h"
 
+extern void Main_Start_Track( int32_t nTrack );
+
 //-----------------------------------------------------------------------------
 // Typedefs
 //-----------------------------------------------------------------------------
@@ -42,6 +44,8 @@
 #define CHECK_KEY( key )          ( sICtrl.sKeyboardState.Keys[ key ] && ( sICtrl.sKeyboardState.KeysProcessed[ key ] == 0 ) )
 #define CHECK_KEYDOWN( key )      ( sICtrl.sKeyboardState.Keys[ key ] && ( sICtrl.sKeyboardState.KeysDown[ key ] == 1 ) )
 #define CHECK_KEY_RELEASED( key ) ( sICtrl.sKeyboardState.KeysProcessed[ key ] && ( sICtrl.sKeyboardState.KeysDown[ key ] == 0 ) )
+
+#define TOTAL_BACKGROND_SPRITES   100
 
 //-----------------------------------------------------------------------------
 // Typedefs
@@ -57,6 +61,12 @@ typedef struct
     ApolloMouseState    sMouseState;
 
 } sIntroCtrl, *psIntroCtrl;
+
+//-----------------------------------------------------------------------------
+// Prototypes
+//-----------------------------------------------------------------------------
+
+void fnSpannerCtrl( void* pSprData );
 
 //-----------------------------------------------------------------------------
 // Variables
@@ -80,15 +90,35 @@ void SceneIntro_Init( void )
         sGlobalData.bMapMode = false;
         LIB_SprManager_RemoveAll();
 
+        for ( int32_t i = 0; i < TOTAL_BACKGROND_SPRITES; i++ )
+        {
+            int16_t    nX          = rand() % 640;
+            int16_t    nY          = rand() % 480;
+
+            PSPRHANDLE sprHSpanner = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Menu ) + 1, nX, nY, 0, 0, fnSpannerCtrl );
+            LIB_SprManager_AddAnim( sprHSpanner, 1, SPR_ANIM_LOOP, LIB_SprManager_GetTotalFrames( sprHSpanner ) - 1, NULL );
+            LIB_SprManager_SetFlags( sprHSpanner, SPR_FLAGS_WORLDSPRITE | SPR_FLAGS_VISIBLE );
+            PSPRITE pSpr = LIB_SprManager_GetSprite( sprHSpanner );
+            if ( pSpr != NULL )
+            {
+                pSpr->fMoveX                = ( (float)( rand() % 3 ) - 1.5f ) * 0.5f;
+                pSpr->fMoveY                = ( (float)( rand() % 8 ) + 1 ) * 0.5f;
+                pSpr->AnimData.AnimCurFrame = rand() % 160;
+            }
+        }
+
+        // The worms
+        PSPRHANDLE spW = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Worms ) + 353, 150, 80, 0, 0, NULL );
+        LIB_SprManager_AddAnim( spW, 200, SPR_ANIM_LOOP, LIB_SprManager_GetTotalFrames( spW ) - 1, NULL );
+        LIB_SprManager_SetFlags( spW, SPR_FLAGS_WORLDSPRITE | SPR_FLAGS_VISIBLE | SPR_FLAGS_FLIPPED );
+        spW = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Worms ) + 353, 490, 80, 0, 0, NULL );
+        LIB_SprManager_AddAnim( spW, 201, SPR_ANIM_LOOP, LIB_SprManager_GetTotalFrames( spW ) - 1, NULL );
+        LIB_SprManager_SetFlags( spW, SPR_FLAGS_WORLDSPRITE | SPR_FLAGS_VISIBLE );
+
         // Add the title sprite ...
         sICtrl.pSprHTitle = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Menu ), 320, 80, 0, 0, NULL );
         LIB_SprManager_AddAnim( sICtrl.pSprHTitle, 2, SPR_ANIM_LOOP, 1, NULL );
         LIB_SprManager_SetFlags( sICtrl.pSprHTitle, SPR_FLAGS_WORLDSPRITE | SPR_FLAGS_VISIBLE );
-
-        // Add anim for the spanner ...
-        sICtrl.pSprHSpanner = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Menu ) + 1, 320, 300, 0, 0, NULL );
-        LIB_SprManager_AddAnim( sICtrl.pSprHSpanner, 1, SPR_ANIM_LOOP, LIB_SprManager_GetTotalFrames( sICtrl.pSprHSpanner ), NULL );
-        LIB_SprManager_SetFlags( sICtrl.pSprHSpanner, SPR_FLAGS_WORLDSPRITE | SPR_FLAGS_VISIBLE );
 
         // clear the controllers and set clip aand screen
         LIB_Sprites_SetClipArea( 0, 0, 640, 480 );
@@ -96,6 +126,8 @@ void SceneIntro_Init( void )
         sICtrl.sKeyboardState.Current_Key  = NOKEY;
         ApolloKeyboardClear( &sICtrl.sKeyboardState );
         Hardware_SetScreenmode( 0 );
+
+        Main_Start_Track( 0 );
 
         // All completed
         sICtrl.Flags.Initialized = YES;
@@ -150,6 +182,30 @@ void SceneIntro_Update( void )
     }
 }
 
+//-----------------------------------------------------------------------------
+// Internal Functionality
+//-----------------------------------------------------------------------------
+
+/** ---------------------------------------------------------------------------
+    @brief 		Control the spanner sprite
+    @ingroup 	AmiWorms
+    @param		pSprData 	- Pointer to the sprite data
+ --------------------------------------------------------------------------- */
+void fnSpannerCtrl( void* pSprData )
+{
+    PSPRITE pSpr = (PSPRITE)pSprData;
+
+    if ( ( pSpr->fWorldX < -24 ) || ( pSpr->fWorldX > SCREENWIDTH + 20 ) || ( pSpr->fWorldY < -100 ) || ( pSpr->fWorldY > SCREENHEIGHT + 20 ) )
+    {
+        int16_t nX                  = rand() % 640;
+        int16_t nY                  = -24 + ( rand() % 40 );
+        pSpr->fWorldX               = nX;
+        pSpr->fWorldY               = nY;
+        pSpr->fMoveX                = ( (float)( rand() % 3 ) - 1.5f ) * 0.5f;
+        pSpr->fMoveY                = ( (float)( rand() % 8 ) + 1 ) * 0.5f;
+        pSpr->AnimData.AnimCurFrame = rand() % 160;
+    }
+}
 //-----------------------------------------------------------------------------
 // End of file: Scene_Intro.c
 //-----------------------------------------------------------------------------
