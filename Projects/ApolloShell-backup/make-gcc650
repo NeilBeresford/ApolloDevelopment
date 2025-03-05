@@ -13,8 +13,8 @@ ACP 	= ./.vscode/acp
 GDB		= ./.vscode/bgdbserver
 
 #Define Project Name and Directory (replace <project-name> and <directory-name>)
-PROJECT_NAME	= ApolloShell
-PROJECT_DIR		= Projects/ApolloShell
+PROJECT_NAME	= ApolloShell-backup
+PROJECT_DIR		= Projects/ApolloShell2
 
 # Define ASM Compiler
 S_COMPILER = $(PREFIX)/bin/vasmm68k_mot
@@ -48,7 +48,7 @@ init:
 	@echo "\e[1;31mApollo\e[1;30mCrossDev \e[37mGCC-6.50-Stable Edition v0.8\e[0m"    
 	@echo "\e[36mC-Sources : \e[37m$(C_FILES)\e[0m"
 	@echo "\e[36mS-Sources : \e[37m$(S_FILES)\e[0m"
-	@echo "\e[36mExecutable: \e[37m$(EXE)\e[0m"
+	@echo "\e[36mExeceeeutable: \e[37m$(EXE)\e[0m"
 
 cleanbefore:
 	@rm -f $(C_OBJECTDIR)/*.o $(S_OBJECTDIR)/*.o $(PROJECT_DIR)/log*.txt $(EXE)

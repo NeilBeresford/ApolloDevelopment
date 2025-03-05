@@ -10,9 +10,9 @@
 			"hwscreen.h": "c",
 			"lib_sprites.h": "c",
 			"math.h": "c",
-
-		"string.h": "c",
-			"resourcefiles.h": "c"
+			"string.h": "c",
+			"resourcefiles.h": "c",
+			"lib_apolloinput.h": "c"
 		},
 		"C_Cpp.intelliSenseCacheSize": 512,
 		"search.useIgnoreFiles": false,
