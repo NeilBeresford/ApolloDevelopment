@@ -110,7 +110,6 @@ uint32_t nMapGrass       = 3;
  --------------------------------------------------------------------------- */
 void SceneGame_Init( void )
 {
-
     SceneGame_CreateBackScreens();
 
     // Draw panel to all three screens
@@ -156,17 +155,12 @@ void SceneGame_Init( void )
     sGlobalData.nScrollY           = 300;
     sGlobalData.bMapMode           = false;
 
-    LIB_SprManager_Update();
-    Hardware_WaitVBL();
-    Hardware_FlipScreen();
     GAME_Player_StartGame();
 
     sKeyboardState.Previous_Key = NOKEY;
     sKeyboardState.Current_Key  = NOKEY;
     ApolloKeyboardClear( &sKeyboardState );
     ApolloMouse_SetXY( &sMouseState, 310, 230 );
-
-    Main_Start_Track( 1 );
 }
 
 /** ---------------------------------------------------------------------------
@@ -175,7 +169,6 @@ void SceneGame_Init( void )
  --------------------------------------------------------------------------- */
 void SceneGame_Close( void )
 {
-    LIB_SprManager_RemoveAll();
 }
 
 /** ---------------------------------------------------------------------------
@@ -203,7 +196,7 @@ void SceneGame_Update( void )
     // check for exit
     if ( SceneGame_ControlGame() == true )
     {
-        ModuleScene_SetActiveScene( 1 );
+        sGlobalData.nNewScene = 1;
     }
 }
 

@@ -7,33 +7,6 @@
     },
     "tasks": [
         {
-<<<<<<< HEAD
-=======
-            "label": "Build Shell2",
-            "type": "shell",
-            "command": "make -f Projects/ApolloShell2/make-gcc650",
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "problemMatcher": [
-                "$gcc"
-            ]
-        },
-        {
-            "label": "Build Shell",
-            "type": "shell",
-            "command": "make -f Projects/Shell/make-gcc650",
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "problemMatcher": [
-                "$gcc"
-            ]
-        },
-        {
->>>>>>> refs/remotes/origin/develop
             "label": "Build ApolloCoreDisplay",
             "type": "shell",
             "command": "make -f Projects/ApolloCoreDisplay/make-gcc650",

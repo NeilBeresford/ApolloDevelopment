@@ -1,13 +1,13 @@
 /** ---------------------------------------------------------------------------
 <<<<<<< HEAD:Projects/ApolloShell/Includes/defines.h
-	@file		Defines.h
-	@defgroup 	MainShell Apollo V4 Shell
-	@brief		Basic defines, taken from defines.i (assembler)
+    @file		Defines.h
+    @defgroup 	MainShell Apollo V4 Shell
+    @brief		Basic defines, taken from defines.i (assembler)
     @date		2024-10-31
-	@version	0.1
-	@copyright	Neil Beresford 2024	
+    @version	0.1
+    @copyright	Neil Beresford 2024
  -----------------------------------------------------------------------------
-	Notes
+    Notes
 =======
     @file		Defines.h
     @defgroup 	AmiWorms Apollo V4 Shell
@@ -30,22 +30,6 @@
 // Defines
 //-----------------------------------------------------------------------------
 
-<<<<<<< HEAD:Projects/ApolloShell/Includes/defines.h
-#define SCREENWIDTH 		640						// Screen width
-#define SCREENHEIGHT 		480						// Screen height
-#define SCREENWIDTH 		640						// Screen width
-#define SCREENHEIGHT 		480						// Screen height
-#define SCREENSIZE 		    SCREENWIDTH*SCREENHEIGHT	// Size of screen in pixels
-#define TOTALSCREENSSIZE    SCREENSIZE * 3 + 64       // Total bytes needed for the screens
-#define SCREENCOLORDEPTH 	8							// 256 colours
-#define SCREENMODE 		    $0501						// Set to 640x480 mode
-#define SCREENMODE 		    $0501						// Set to 640x480 mode
-#define SCREENCLEARCOLOUR	$98989898					// Set to a light green
-#define BACKSCREENWIDTH     SCREENWIDTH*3             // Back screen width (640*4)
-#define BACKSCREENHEIGHT    960                       // Back screen height
-
-
-=======
 #define YES                   1 // Yes
 #define NO                    0 // No
 #define ON                    1 // On
@@ -148,7 +132,6 @@
 #define KEYCODE_NUM1          0x1d
 #define KEYCODE_NUM2          0x1e
 #define KEYCODE_NUM3          0x1f
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Includes/defines.h
 
 //-----------------------------------------------------------------------------
 

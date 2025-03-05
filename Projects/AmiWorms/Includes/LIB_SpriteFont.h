@@ -1,16 +1,12 @@
 /** ---------------------------------------------------------------------------
-	@file		LIB_SpriteFont.h
-<<<<<<< HEAD:Projects/ApolloShell/Includes/LIB_SpriteFont.h
-	@defgroup 	MainShell Apollo V4 Shell
-=======
-	@defgroup 	AmiWorms Apollo V4 Shell
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Includes/LIB_SpriteFont.h
-	@brief		Display of sprite based fonts
-	@date		2020-06-01
-	@version	0.1
-	@copyright	Neil Beresford 2024
+    @file		LIB_SpriteFont.h
+    @defgroup 	AmiWorms Apollo V4 Shell
+    @brief		Display of sprite based fonts
+    @date		2020-06-01
+    @version	0.1
+    @copyright	Neil Beresford 2024
  -----------------------------------------------------------------------------
-	Notes
+    Notes
 
 --------------------------------------------------------------------------- */
 
@@ -21,9 +17,9 @@
 // External Functionality
 //-----------------------------------------------------------------------------
 
-void LIB_SpriteFont_Draw( uint32_t ulSpriteIndex,  int32_t ulX, int32_t ulY, uint8_t* pszText );
-void LIB_SpriteFont_CalcFontWidthOffsets( void );
-uint8_t LIB_SpriteFont_ConverAscii( uint8_t cChar );
+void     LIB_SpriteFont_Draw( uint32_t ulSpriteIndex, int32_t ulX, int32_t ulY, uint8_t* pszText );
+void     LIB_SpriteFont_CalcFontWidthOffsets( void );
+uint8_t  LIB_SpriteFont_ConverAscii( uint8_t cChar );
 uint32_t LIB_SpriteFont_GetStringLength( uint32_t ulSpriteIndex, uint8_t* pszText );
 
 //-----------------------------------------------------------------------------
@@ -33,4 +29,3 @@ uint32_t LIB_SpriteFont_GetStringLength( uint32_t ulSpriteIndex, uint8_t* pszTex
 //-----------------------------------------------------------------------------
 // End of file: LIB_SpriteFont.h
 //-----------------------------------------------------------------------------
-

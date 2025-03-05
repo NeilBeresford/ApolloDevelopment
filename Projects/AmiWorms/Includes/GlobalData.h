@@ -17,6 +17,9 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "../Includes/defines.h"
+
+#define NO_SCENE_SET ( -1 )
+
 //-----------------------------------------------------------------------------
 // Typedefs
 //-----------------------------------------------------------------------------
@@ -37,6 +40,7 @@ typedef struct
 
     // system related ...
     uint32_t ulFrames;
+    uint32_t nNewScene;
 
 } sGLOBALDATA, *psGLOBALDATA;
 

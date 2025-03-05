@@ -88,7 +88,6 @@ void SceneIntro_Init( void )
     {
         // iniitialise the global data and make sure map mode is off
         sGlobalData.bMapMode = false;
-        LIB_SprManager_RemoveAll();
 
         for ( int32_t i = 0; i < TOTAL_BACKGROND_SPRITES; i++ )
         {
@@ -127,8 +126,6 @@ void SceneIntro_Init( void )
         ApolloKeyboardClear( &sICtrl.sKeyboardState );
         Hardware_SetScreenmode( 0 );
 
-        Main_Start_Track( 0 );
-
         // All completed
         sICtrl.Flags.Initialized = YES;
     }
@@ -140,8 +137,6 @@ void SceneIntro_Init( void )
  --------------------------------------------------------------------------- */
 void SceneIntro_Close( void )
 {
-    LIB_SprManager_RemoveAll();
-    LIB_SprManager_Update();
     sICtrl.Flags.Initialized = NO;
 }
 
@@ -178,7 +173,7 @@ void SceneIntro_Update( void )
     }
     if ( CHECK_KEY( KEYCODE_RETURN ) || sICtrl.sJoypadState.Joypad_A )
     {
-        ModuleScene_SetActiveScene( 0 );
+        sGlobalData.nNewScene = 0;
     }
 }
 

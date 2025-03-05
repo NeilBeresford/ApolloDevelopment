@@ -92,7 +92,7 @@ void GAME_Player_StartGame( void )
     {
         sGame.pPlayer[ nI ].nActive = 0;
 
-        for ( int32_t nJ = 0; nJ < 24; nJ++ )
+        for ( int32_t nJ = 0; nJ < 8; nJ++ )
         {
             psGameWorm pWorm   = &sGame.pPlayer[ nI ].pSprWorm[ nJ ];
 
@@ -116,7 +116,7 @@ void GAME_Player_StartGame( void )
             pWorm->pSprHandle = LIB_SprManager_Add( ResourceHandling_GetGroupStartResource( eGroups_Worms ), nXpos, nYpos, 0, 0, GAME_Player_SprWormCtrl );
             LIB_SprManager_FlipSprite( pWorm->pSprHandle, Hardware_RandomNumber() & 1 );
             LIB_SprManager_SetVariable( pWorm->pSprHandle, eSPRVAR_DEFAULTRESOURCE, ResourceHandling_GetGroupStartResource( eGroups_Worms ) );
-            LIB_SprManager_AddAnim( pWorm->pSprHandle, 1, SPR_ANIM_ONCE, LIB_SprManager_GetTotalFrames( pWorm->pSprHandle ), NULL );
+            LIB_SprManager_AddAnim( pWorm->pSprHandle, 1, SPR_ANIM_ONCE, LIB_SprManager_GetTotalFrames( pWorm->pSprHandle ) - 1, NULL );
             LIB_SprManager_SetFlags( pWorm->pSprHandle, SPR_FLAGS_WORLDSPRITE );
         }
     }

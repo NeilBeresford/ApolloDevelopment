@@ -127,11 +127,13 @@ PSPRHANDLE LIB_SprManager_Add( uint32_t nResourceID, uint16_t nX, uint16_t nY, u
                     pSprite->fWorldX       = nX;
                     pSprite->fWorldY       = nY;
                     pSprite->SprZ          = nZ;
+                    pSprite->SprNum        = 0;
                     pSprite->SprWidth      = LIB_Sprites_GetWidth( nResourceID );
                     pSprite->SprHeight     = LIB_Sprites_GetHeight( nResourceID );
                     pSprite->fnControl     = fnControl;
 
                     // Set the sprite flags
+                    pSprite->SprFlags.Animated = OFF;
                     pSprite->SprFlags.Active   = ON;
                     pSprite->SprFlags.OnScreen = ON;
                     pSprite->SprFlags.Visible  = ON;
@@ -226,6 +228,7 @@ void LIB_SprManager_ChangeSpriteAnim( PSPRITE pSprite, uint16_t nAnimID, uint16_
         pSprite->AnimData.AnimDelayCnt    = 4;
         pSprite->AnimData.AnimCurDelayCnt = 0;
         pSprite->SprFlags.Animated        = ON;
+        pSprite->SprNum                   = 0;
         pSprite->AnimData.pFrames         = pFrameData;
 
         if ( pSprite->AnimData.pFrames != NULL )

@@ -27,19 +27,11 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "stdlib.h"
-<<<<<<< HEAD:Projects/ApolloShell/ResourceHandling.c
-#include "Includes/FlagStruct.h"
-#include "Includes/ResourceFiles.h"
-#include "Includes/Hardware.h"
-#include "Includes/LIB_Sprites.h"
-#include "Includes/ResourceHandling.h"
-=======
 #include "../Includes/FlagStruct.h"
 #include "../Includes/ResourceFiles.h"
 #include "../Includes/Hardware.h"
 #include "../Includes/LIB_Sprites.h"
 #include "../Includes/ResourceHandling.h"
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Resources/ResourceHandling.c
 
 //-----------------------------------------------------------------------------
 // Defines
@@ -52,10 +44,6 @@
 // Typedefs and enums
 //-----------------------------------------------------------------------------
 
-<<<<<<< HEAD:Projects/ApolloShell/ResourceHandling.c
-
-=======
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Resources/ResourceHandling.c
 /** ----------------------------------------------------------------------------
     @brief   	Resource handling structure
     @ingroup 	AmiWorms
@@ -76,20 +64,6 @@ typedef struct
 ----------------------------------------------------------------------------- */
 typedef struct
 {
-<<<<<<< HEAD:Projects/ApolloShell/ResourceHandling.c
-    FlagStruct_t 	    Flags;
-    ResourceHeader_t 	Resource[ TOTAL_RESOURCES ];
-    pSprDimention_t     pSpriteDim;
-    psFileGroup         Groups;
-    uint32_t 		    ulResourceCount;
-    uint32_t 		    nTotalGroups;
-    uint32_t 		    ulCurrentResourceID;
-    uint8_t             tmpFileName[ 256 ];
-    uint32_t            ulTotalFiles;
-    uint32_t            ulCurLoadedFile;
-    uint32_t            nTotalSprites;
-    bool                bStatusNeeded;
-=======
     FlagStruct_t     Flags;
     ResourceHeader_t Resource[ TOTAL_RESOURCES ];
     uint32_t         DimGroupOffsets[ TOTAL_RESOURCES ];
@@ -103,7 +77,6 @@ typedef struct
     uint32_t         ulCurLoadedFile;
     uint32_t         nTotalSprites;
     bool             bStatusNeeded;
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Resources/ResourceHandling.c
 
 } RHCtrl_t, *pRHCtrl_t;
 
@@ -324,11 +297,7 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
             fflush( stdout );
         }
 
-<<<<<<< HEAD:Projects/ApolloShell/ResourceHandling.c
-        sRHCtrl.Groups = groups;    
-=======
         sRHCtrl.Groups = groups;
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Resources/ResourceHandling.c
 
         while ( psGroup->pszDirectory != NULL )
         {
@@ -374,11 +343,7 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
                         if ( psGroup->reMapValue != 0 && psFileDetails->eFileType == eRAW )
                         {
                             ulTotalFilesRemapped++;
-<<<<<<< HEAD:Projects/ApolloShell/ResourceHandling.c
-                            if ( strncmp((int8_t*)(psFileDetails->pszResourceName),"gradient-8-", 11 ) == 0 )   
-=======
                             if ( strncmp( (int8_t*)( psFileDetails->pszResourceName ), "gradient-8-", 11 ) == 0 )
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Resources/ResourceHandling.c
                             {
                                 LIB_Sprites_Remap( ulResourceID, 184 );
                             }
@@ -412,13 +377,6 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
             printf( "Total files remapped : %d\n", ulTotalFilesRemapped );
             printf( "Total resource size  : %dKB \n", ( ulTotalSize >> 10 ) + 1 );
         }
-<<<<<<< HEAD:Projects/ApolloShell/ResourceHandling.c
-        printf( "Sprite Resource Loaded into fast memory\n" );
-        printf( "Total files loaded   : %d\n", ulNumLoaded );
-        printf( "Total files remapped : %d\n", ulTotalFilesRemapped );
-        printf( "Total resource size  : %dKB \n", (ulTotalSize >> 10) + 1 );
-=======
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Resources/ResourceHandling.c
     }
 
     return true;
@@ -447,15 +405,9 @@ void ResourceHandling_InitStatus( psFileGroup groups )
 
         ulIndex++;
     }
-<<<<<<< HEAD:Projects/ApolloShell/ResourceHandling.c
- 
-    sRHCtrl.nTotalGroups = ulIndex;
-    sRHCtrl.ulTotalFiles = ulTotalFiles;
-=======
 
     sRHCtrl.nTotalGroups    = ulIndex;
     sRHCtrl.ulTotalFiles    = ulTotalFiles;
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Resources/ResourceHandling.c
     sRHCtrl.ulCurLoadedFile = 0;
     sRHCtrl.bStatusNeeded   = false; // remove debug
 }
@@ -473,11 +425,7 @@ uint32_t ResourceHandling_GetGroupStartResource( uint32_t nGroupIndex )
 
 /** ----------------------------------------------------------------------------
     @brief 		Get the resource name
-<<<<<<< HEAD:Projects/ApolloShell/ResourceHandling.c
-    @ingroup 	MainShell
-=======
     @ingroup 	AmiWorms
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Resources/ResourceHandling.c
     @param      ulResourceID    - Resource ID
     @return 	uint8_t*        - Pointer to the resource name
  -----------------------------------------------------------------------------*/
@@ -485,103 +433,6 @@ uint8_t* ResourceHandling_GetGroupName( uint32_t nGroupIndex )
 {
     return theFileGroups[ nGroupIndex ].pszDirectory;
 }
-<<<<<<< HEAD:Projects/ApolloShell/ResourceHandling.c
-
-
-/** ----------------------------------------------------------------------------
-    @brief 		Get the total number of sprites
-    @ingroup 	MainShell
-    @return 	uint32_t        - Total number of sprites
- -----------------------------------------------------------------------------*/
-uint32_t ResourceHandling_GetTotalNumSprites( void )
-{
-    uint32_t nRefIndex = 0;
-    uint32_t nTotal = 0;
-
-    if ( sRHCtrl.Groups != NULL )
-    {
-        for ( int32_t nGroup = 0; nGroup < sRHCtrl.nTotalGroups; nGroup++ )
-        {
-            psFileDetails psFD = sRHCtrl.Groups[ nGroup ].psFileDetails;
-            uint32_t nFile = 0;
-            while( psFD->pszResourceName != NULL )
-            {
-                nTotal += LIB_Sprites_GetTotalNumSprites( nFile + nRefIndex );
-
-                nFile++;
-                psFD++;
-            }
-
-            nRefIndex += nFile;
-        }
-
-        sRHCtrl.nTotalSprites = nTotal;
-    }
-
-    return nTotal;
-}
-
-/** ----------------------------------------------------------------------------
-    @brief 		Scan and set the sprite dimentions
-    @ingroup 	MainShell
-    @return 	bool            - true if successful
- -----------------------------------------------------------------------------*/
-bool ResourceHandling_ScanAndSetSpriteDimentions( void )
-{
-    bool        bRet = false;
-    uint32_t    nRefIndex = 0;
-    uint32_t    nCurScanned = 0;
-    
-    if ( sRHCtrl.Groups != NULL && sRHCtrl.nTotalSprites != 0 )
-    {
-        sRHCtrl.pSpriteDim = (pSprDimention_t)Hardware_GetSpriteDims();  // (pSprDimention_t)malloc( sRHCtrl.nTotalSprites * sizeof( SprDimention_t ) );
-        pSprDimention_t pSpriteDim = sRHCtrl.pSpriteDim;
-
-        for ( int32_t nGroup = 0; nGroup < sRHCtrl.nTotalGroups; nGroup++ )
-        {
-            psFileDetails psFD = sRHCtrl.Groups[ nGroup ].psFileDetails;
-            uint32_t nFile = 0;
-            while( psFD->pszResourceName != NULL )
-            {
-                uint32_t nSprs = LIB_Sprites_GetTotalNumSprites( nFile + nRefIndex );
-                for( int32_t nSpr = 0; nSpr < nSprs; nSpr++ )
-                {
-                    LIB_Sprites_GetSpriteDimentions( nRefIndex + nFile, nSpr, pSpriteDim );
-                    pSpriteDim++;
-                }
-                nCurScanned += nSprs;
-
-                pSpriteDim++;
-                nFile++;
-                psFD++;
-
-                if ( sRHCtrl.bStatusNeeded == true )
-                {
-                    printf( "Setting sprite dimentions : %d of %d sprites       \r", nCurScanned, sRHCtrl.nTotalSprites );
-                    fflush(stdout);
-                }
-            }
-            nRefIndex += nFile;
-
-        }
-
-        bRet = true;
-
-        if ( sRHCtrl.bStatusNeeded == true )
-        {
-            printf( "\n" );
-            fflush(stdout);
-        }
-    }
-
-
-    return bRet;
-}
-
-
-
-=======
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Resources/ResourceHandling.c
 
 /** ----------------------------------------------------------------------------
     @brief 		Get the total number of sprites
@@ -661,14 +512,6 @@ bool ResourceHandling_ScanAndSetSpriteDimentions( void )
                 }
             }
             nRefIndex += nFile;
-        }
-
-        bRet = true;
-
-        if ( sRHCtrl.bStatusNeeded == true )
-        {
-            printf( "\n" );
-            fflush( stdout );
         }
     }
 

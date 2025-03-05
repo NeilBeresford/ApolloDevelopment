@@ -30,6 +30,7 @@ void GlobalData_Init( void )
     sGlobalData.HelpActivated = false;
     sGlobalData.bMapMode      = false;
     sGlobalData.GameEnded     = false;
+    sGlobalData.nNewScene   = NO_SCENE_SET;
 }
 
 //-----------------------------------------------------------------------------

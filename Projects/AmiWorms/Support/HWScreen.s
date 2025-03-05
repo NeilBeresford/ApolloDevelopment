@@ -82,11 +82,7 @@ _HWSCREEN_SetImagePalette:
 
 ;** ---------------------------------------------------------------------------
 ;	@brief 		Sets the single colour. Format 0xIIRRGGBB
-<<<<<<< HEAD:Projects/ApolloShell/Support/HWScreen.s
-;	@ingroup 	MainShell
-=======
 ;	@ingroup 	AmiWorms
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Support/HWScreen.s
 ;	@param [IN]	D0 - Colour with Index/Red/Green/Blue
 ;	@return 	none
 ; --------------------------------------------------------------------------- */

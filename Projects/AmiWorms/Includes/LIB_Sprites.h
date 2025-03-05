@@ -69,11 +69,7 @@ typedef struct
 
 /**-----------------------------------------------------------------------------
     @brief      Sprite Dimentions structure
-<<<<<<< HEAD:Projects/ApolloShell/Includes/LIB_Sprites.h
-    @ingroup 	MainShell
-=======
     @ingroup 	AmiWorms
->>>>>>> refs/remotes/origin/develop:Projects/AmiWorms/Includes/LIB_Sprites.h
  ---------------------------------------------------------------------------- */
 typedef struct 
 {
