@@ -159,6 +159,7 @@ bool LIB_Sprites_RegisterBank( eSpriteBank_t eBank, eSpriteType_t eType, uint32_
     {
         // store the sprite bank data
         SprCtrl.SpriteBanks[ eBank ].ulSpriteSize   = ulSpriteSize;
+        SprCtrl.SpriteBanks[ eBank ].ulSpriteBank   = eBank;
         SprCtrl.SpriteBanks[ eBank ].pSpriteData    = pSpriteData;
         SprCtrl.SpriteBanks[ eBank ].ulSpriteID     = ulResourceID;
         SprCtrl.SpriteBanks[ eBank ].ulSpriteType   = eType;
@@ -1202,6 +1203,38 @@ uint32_t LIB_Sprites_GetTotalNumSprites( eSpriteBank_t eBank )
     if ( eBank < MAX_SPRITE_BANKS && SprCtrl.Flags.Initialized == true )
     {
         ulRet = SprCtrl.SpriteBanks[ eBank ].ulNumSprites;
+    }
+
+    return ulRet;
+}
+
+/** ----------------------------------------------------------------------------
+    @brief 		Set the sprite bank group
+    @ingroup 	AmiWorms
+    @param      eBank           - Sprite bank to draw from
+    @return     pSpriteBank_t   - Pointer to the sprite bank data
+ -----------------------------------------------------------------------------*/
+void LIB_Sprites_SetSpriteBank( uint32_t ResourceID, uint32_t ulBank )
+{
+    if ( ResourceID < MAX_SPRITE_BANKS && SprCtrl.Flags.Initialized == true )
+    {
+        SprCtrl.SpriteBanks[ ResourceID ].ulSpriteBank = ulBank;
+    }
+}
+
+/** ----------------------------------------------------------------------------
+    @brief 		Get the sprite bank data
+    @ingroup 	AmiWorms
+    @param      eBank           - Sprite bank to draw from
+    @return     pSpriteBank_t   - Pointer to the sprite bank data
+ -----------------------------------------------------------------------------*/
+uint32_t LIB_Sprites_GetSpriteBank( uint32_t ResourceID )
+{
+    uint32_t ulRet = 0;
+
+    if ( ResourceID < MAX_SPRITE_BANKS && SprCtrl.Flags.Initialized == true )
+    {
+        ulRet = SprCtrl.SpriteBanks[ ResourceID ].ulSpriteBank;
     }
 
     return ulRet;

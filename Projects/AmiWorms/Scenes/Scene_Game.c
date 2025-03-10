@@ -161,6 +161,10 @@ void SceneGame_Init( void )
     sKeyboardState.Current_Key  = NOKEY;
     ApolloKeyboardClear( &sKeyboardState );
     ApolloMouse_SetXY( &sMouseState, 310, 230 );
+
+    // Start the music
+    Hardware_StopAudio( 0 );
+    Main_Start_Track( 3 );
 }
 
 /** ---------------------------------------------------------------------------

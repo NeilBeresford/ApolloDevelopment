@@ -187,7 +187,7 @@ uint32_t Hardware_ReadKey( void );
 uint8_t* Hardware_GetScreenPtr( void );
 
 void     Hardware_StartAudio( _D0( uint32_t channel ), _D1( uint32_t musicPtr ), _D2( uint32_t musicLen ), _D3( uint32_t volume ), _D4( uint32_t ctrl ), _D5( uint32_t period ) );
-
+void     Hardware_StopAudio( _D0( uint32_t channel ) );
 int      Hardware_RandomNumber( void );
 void     Hardware_SetRandSeed( _D0( uint32_t Seed ) );
 void     Hardware_SetScreenmode( _D0( uint32_t ScreenMode ) );

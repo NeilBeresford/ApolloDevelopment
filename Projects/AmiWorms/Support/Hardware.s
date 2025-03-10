@@ -60,6 +60,8 @@
                  XDEF       _Hardware_ReturnKeyState
                  XDEF       _Hardware_SetMousePosition
                  XDEF       _Hardware_StartAudio
+                 XDEF       _Hardware_StopAudio
+            
                  XDEF       screenPtr
                  XDEF       backScreen1
                  XDEF       backScreen2
@@ -257,9 +259,12 @@ _Hardware_Init
 ;   @param      d4 - music ctrl
 ;   @param      d5 - music period
 ;-----------------------------------------------------------------------------
+; Check slot free ...
+; DFF202 - DFF203 - Audio DMA Control (slot0 - DFF202+1 #1,slot12 - DFF202 #1)
 ;-----------------------------------------------------------------------------
 ;   @return 	none
 ;-----------------------------------------------------------------------------
+
 _Hardware_StartAudio
 
                  movem.l    d0-d6/a0-a1,-(sp)
@@ -287,7 +292,35 @@ _Hardware_StartAudio
                  move.w     (a1,d6.w),$DFF096
                  bra.s      .end
 .other
-                 move.w     (a1,d3.w),$DFF296
+                 move.w     (a1,d6.w),$DFF296
+.end
+                 movem.l    (sp)+,d0-d6/a0-a1
+                 rts
+
+
+;** ---------------------------------------------------------------------------
+;	@brief 		Stop Audio
+;	@ingroup 	AmiWorms
+;   @paraan     D0 - DMA channel
+;	@return 	none
+; --------------------------------------------------------------------------- */
+_Hardware_StopAudio
+
+                 movem.l    d0-d6/a0-a1,-(sp)
+
+                 move.l     #AUDIO_ON,a1
+                 move.l     d0,d6
+                 asl.l      #1,d6
+                 cmpi.l     #4,d0
+                 bge.s      .other
+                 move.w     (a1,d6.w),d0
+                 bclr       #15,d0
+                 move.w     d0,$DFF096
+                 bra.s      .end
+.other
+                 move.w     (a1,d6.w),d0
+                 bclr       #15,d0
+                 move.w     d0,$DFF296
 .end
                  movem.l    (sp)+,d0-d6/a0-a1
                  rts

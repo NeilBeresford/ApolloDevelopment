@@ -13,6 +13,7 @@
 //-----------------------------------------------------------------------------
 
 #include "../../Includes/GAME_Player.h"
+#include "../../Includes/Markers_ActiveWorm.h"
 #include "../../Includes/ResourceFiles.h"
 
 //-----------------------------------------------------------------------------
@@ -29,6 +30,7 @@ enum
 //-----------------------------------------------------------------------------
 
 void GAME_Player_SprWormCtrl( void* pSprite );
+void GAME_Player_ActivateNextWorm( void );
 
 //-----------------------------------------------------------------------------
 // Variables
@@ -97,6 +99,7 @@ void GAME_Player_StartGame( void )
             psGameWorm pWorm   = &sGame.pPlayer[ nI ].pSprWorm[ nJ ];
 
             pWorm->bAlive      = true;
+            pWorm->bActive     = false;
             pWorm->nHealth     = 100;
             pWorm->nDamageDone = 0;
             pWorm->nKills      = 0;
@@ -120,6 +123,47 @@ void GAME_Player_StartGame( void )
             LIB_SprManager_SetFlags( pWorm->pSprHandle, SPR_FLAGS_WORLDSPRITE );
         }
     }
+
+    GAME_Player_ActivateNextWorm();
+}
+
+//-----------------------------------------------------------------------------
+// Internal Functionality
+//-----------------------------------------------------------------------------
+
+/** ---------------------------------------------------------------------------
+    @brief 		Activate the next worm
+    @ingroup 	AmiWorms
+ --------------------------------------------------------------------------- */
+void GAME_Player_ActivateNextWorm( void )
+{
+    // activate the next worm
+    psGameWorm pWorm = &sGame.pPlayer[ sGame.nCurTeam ].pSprWorm[ sGame.pPlayer[ sGame.nCurTeam ].nActive ];
+
+    if ( pWorm->bAlive == true )
+    {
+        // activate the worm
+        pWorm->bActive = true;
+    }
+    else
+    {
+        // find the next worm
+        for ( int32_t nI = 0; nI < TOTAl_IN_TEAM; nI++ )
+        {
+            pWorm = &sGame.pPlayer[ sGame.nCurTeam ].pSprWorm[ nI ];
+
+            if ( pWorm->bAlive == true )
+            {
+                // activate the worm
+                pWorm->bActive                          = true;
+                sGame.pPlayer[ sGame.nCurTeam ].nActive = nI;
+                break;
+            }
+        }
+    }
+
+    // activate marker!
+    Markers_ActiveWorm_Init( LIB_SprManager_GetSprite( pWorm->pSprHandle ) );
 }
 
 /** ---------------------------------------------------------------------------

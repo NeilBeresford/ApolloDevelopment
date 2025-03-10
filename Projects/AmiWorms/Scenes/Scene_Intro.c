@@ -128,6 +128,10 @@ void SceneIntro_Init( void )
 
         // All completed
         sICtrl.Flags.Initialized = YES;
+
+        // Start the music
+        Hardware_StopAudio( 0 );
+        Main_Start_Track( 0 );
     }
 }
 

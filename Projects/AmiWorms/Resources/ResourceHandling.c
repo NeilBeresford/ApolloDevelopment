@@ -340,6 +340,7 @@ bool ResourceHandling_LoadGroups( psFileGroup groups )
                     }
                     else
                     {
+                        LIB_Sprites_SetSpriteBank( ulResourceID, ulGroupCount );
                         if ( psGroup->reMapValue != 0 && psFileDetails->eFileType == eRAW )
                         {
                             ulTotalFilesRemapped++;

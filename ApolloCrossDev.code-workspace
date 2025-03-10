@@ -12,7 +12,8 @@
 			"math.h": "c",
 			"string.h": "c",
 			"resourcefiles.h": "c",
-			"lib_apolloinput.h": "c"
+			"lib_apolloinput.h": "c",
+			"flagstruct.h": "c"
 		},
 		"C_Cpp.intelliSenseCacheSize": 512,
 		"search.useIgnoreFiles": false,

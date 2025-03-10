@@ -309,12 +309,12 @@ void LIB_SprManager_Update( void )
                             }
                         }
                     }
-                    if ( pSprite->fnControl != NULL )
-                    {
-                        pSprite->fnControl( &sSprMgr.Sprites[ i ] );
-                    }
                 }
 
+                if ( pSprite->fnControl != NULL )
+                {
+                    pSprite->fnControl( &sSprMgr.Sprites[ i ] );
+                }
                 cnt++;
             }
             pSprite++;

@@ -224,7 +224,7 @@ uint32_t main( int argc, char* argv[] )
         {
             nTestCount    = 0;
             int32_t voice = rand() % TOTAL_SPEECH_SAMPLES;
-            // Hardware_StartAudio( 2, (uint32_t)SpeechData[ voice ].pMusicData, SpeechData[ voice ].nMusicSize, 0x8080, 7, 280 );
+            Hardware_StartAudio( 2, (uint32_t)SpeechData[ voice ].pMusicData, SpeechData[ voice ].nMusicSize, 0x8080, 7, 280 );
         }
 
         // process the game logic
@@ -237,15 +237,6 @@ uint32_t main( int argc, char* argv[] )
         if ( sGlobalData.nNewScene != NO_SCENE_SET )
         {
             LIB_SprManager_RemoveAll();
-
-            #if 0
-            if ( sGlobalData.nNewScene == 1 )
-            {
-                // terminate the program
-                Hardware_Close();
-                exit( 0 ); // terminate the program
-            }
-            #endif
             ModuleScene_SetActiveScene( sGlobalData.nNewScene );
             sGlobalData.nNewScene = NO_SCENE_SET;
         }
@@ -255,6 +246,9 @@ uint32_t main( int argc, char* argv[] )
 
     // terminate the program
     Hardware_Close();
+
+    printf( "\n\nThank you for playing AmiWorms\n" );
+    printf( "Please support Apollo and their brilliant accelerators!\n\n" );
 
     return 0;
 }
