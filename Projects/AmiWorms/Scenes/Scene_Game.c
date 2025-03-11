@@ -164,7 +164,7 @@ void SceneGame_Init( void )
 
     // Start the music
     Hardware_StopAudio( 0 );
-    Main_Start_Track( 3 );
+    Main_Start_Track( 2 );
 }
 
 /** ---------------------------------------------------------------------------
