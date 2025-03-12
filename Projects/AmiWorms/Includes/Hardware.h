@@ -182,6 +182,8 @@ void     Hardware_FlipScreen( void );
 void     Hardware_ClearScreen( void );
 void     Hardware_ClearAllScreen( void );
 void     Hardware_TestScreen( void );
+void     Hardware_TurnOffInts( void );
+void     Hardware_TurnOnInts( void );
 
 uint32_t Hardware_ReadKey( void );
 uint8_t* Hardware_GetScreenPtr( void );

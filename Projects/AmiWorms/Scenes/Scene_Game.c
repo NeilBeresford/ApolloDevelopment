@@ -34,6 +34,7 @@
 #include "../Includes/GAME_Player.h"
 #include "../Includes/ResourceFiles.h"
 #include "../Includes/ResourceHandling.h"
+#include "../Includes/Map_Scroll.h"
 
 extern void      Main_Start_Track( int32_t nTrack );
 extern uint32_t* palettes[ 30 ];
@@ -154,7 +155,7 @@ void SceneGame_Init( void )
     sGlobalData.nScrollX           = 400;
     sGlobalData.nScrollY           = 300;
     sGlobalData.bMapMode           = false;
-
+    Map_Scroll_Init();
     GAME_Player_StartGame();
 
     sKeyboardState.Previous_Key = NOKEY;
@@ -197,7 +198,10 @@ void SceneGame_Draw( void )
  --------------------------------------------------------------------------- */
 void SceneGame_Update( void )
 {
-    // check for exit
+
+    // update the map and game
+    Map_Scroll_Update();
+    // Check controllers aand keyboard, also for exit
     if ( SceneGame_ControlGame() == true )
     {
         sGlobalData.nNewScene = 1;
@@ -358,6 +362,16 @@ bool SceneGame_ControlGame( void )
         LIB_SprManager_RemoveAll();
         GAME_Player_StartGame();
     }
+    if ( CHECK_KEY( KEYCODE_F2 ) )
+    {
+        sKeyboardState.KeysProcessed[ KEYCODE_F2 ] = 1;
+    }
+    if ( sKeyboardState.Previous_Key == KEYCODE_F2 && sKeyboardState.Current_Key == NOKEY )
+    {
+        sKeyboardState.KeysProcessed[ KEYCODE_F2 ] = 0;
+        sKeyboardState.Previous_Key                = KEYCODE_0;
+        Map_Scroll_ScrollTo( ( rand() % 2220 ) - 300, ( rand() % 1260 ) - 300 );
+    }
 
     // Action on key release - for the ESC key
     if ( CHECK_KEY( KEYCODE_ESC ) )
@@ -509,7 +523,7 @@ bool SceneGame_ControlGame( void )
             sGlobalData.nScrollY = 960 - 360;
     }
 
-    if ( sGlobalData.bMapMode == false && !( sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN ) )
+    if ( sGlobalData.bMapMode == false && ( sMouseState.Button_State & APOLLOMOUSE_LEFTDOWN ) )
     {
         int32_t ulMouseX, ulMouseY;
         uint8_t ulMouseMove = 0;

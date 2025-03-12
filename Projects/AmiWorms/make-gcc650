@@ -74,7 +74,7 @@ S_OBJECTDIR = $(PROJECT_DIR)
 # Define Object Filelist
 C_FILES = $(wildcard $(C_SOURCEDIR)/*.c) $(wildcard $(C_SOURCEDIR)/Support/*.c)  $(wildcard $(C_SOURCEDIR)/Game/*.c) $(wildcard $(C_SOURCEDIR)/Resources/*.c) $(wildcard $(C_SOURCEDIR)/Source/*.c)
 C_FILES += $(wildcard $(C_SOURCEDIR)/Game/Player/*.c) $(wildcard $(C_SOURCEDIR)/Utils/*.c) $(wildcard $(C_SOURCEDIR)/Modules/*.c) $(wildcard $(C_SOURCEDIR)/Scenes/*.c) $(wildcard $(C_SOURCEDIR)/Game/Markers/*.c) 
-#C_FILES += $(wildcard $(C_SOURCEDIR)/Source/*.c)
+C_FILES += $(wildcard $(C_SOURCEDIR)/Game/Map/*.c)
 S_FILES = $(wildcard $(S_SOURCEDIR)/*.s) $(wildcard $(C_SOURCEDIR)/Support/*.s)
 #S_FILES += $(wildcard $(C_SOURCEDIR)/Support/*.s)
 O_FILES = $(patsubst $(C_SOURCEDIR)/%.c,$(C_OBJECTDIR)/%.o,$(C_FILES)) $(patsubst $(S_SOURCEDIR)/%.s,$(S_OBJECTDIR)/%.o,$(S_FILES))

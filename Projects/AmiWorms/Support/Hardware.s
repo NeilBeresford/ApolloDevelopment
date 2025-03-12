@@ -61,7 +61,8 @@
                  XDEF       _Hardware_SetMousePosition
                  XDEF       _Hardware_StartAudio
                  XDEF       _Hardware_StopAudio
-            
+                 XDEF       _Hardware_TurnOnInts
+                 XDEF       _Hardware_TurnOffInts            
                  XDEF       screenPtr
                  XDEF       backScreen1
                  XDEF       backScreen2
@@ -248,6 +249,38 @@ _Hardware_Init
 
 
 
+;-----------------------------------------------------------------------------
+;   @brief 	    Turn on interrupts
+;   @ingroup 	AmiWorms
+;-----------------------------------------------------------------------------
+_Hardware_TurnOnInts
+
+                 move.w     $DFF002,INTDMACONSTORE                                        ; SAVE DMACON
+                 move.w     $DFF01C,INTINTENASTORE                                        ; SAVE INTENA
+
+                 move.w     #$7FFF,$DFF096				* Goto back to DOS                          ;
+                 move.w     DMACONSTORE,D0				*
+                 or.w       #$8000,D0					*
+                 move.w     D0,$DFF096					*
+                 move.w     #$7FFF,$DFF09A				* ALL INTENA OFF
+                 move.w     INTENASTORE,D0				*
+                 or.w       #$8000,D0					*
+                 move.w     D0,$DFF09A					*
+                 rts
+
+;-----------------------------------------------------------------------------
+;   @brief 	    Turn off interrupts
+;   @ingroup 	AmiWorms
+;-----------------------------------------------------------------------------
+_Hardware_TurnOffInts
+
+                 move.w     INTDMACONSTORE,d0
+                 or.w       #$8000,d0
+                 move.w     d0,$DFF096                                                    ; ALL DMA OFF
+                 move.w     INTINTENASTORE,d0
+                 or.w       #$8000,d0
+                 move.w     #$7FFF,$DFF09A                                                ; ALL INTENA OFF
+                 rts        
 
 ;-----------------------------------------------------------------------------
 ;   @brief 	Start Music
@@ -1167,6 +1200,9 @@ ECS              dc.w       0                                                   
 SCREENMASK       dc.w       0
 DMACONSTORE      dc.w       0
 INTENASTORE      dc.w       0
+INTDMACONSTORE   dc.w       0
+INTINTENASTORE   dc.w       0
+
 
 RanSeed          dc.l       $12345678
 lastKey          dc.b       0
